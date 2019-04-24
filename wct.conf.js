@@ -19,7 +19,7 @@ module.exports = {
       dir: './coverage',
       reporters: ['text-summary', 'lcov'],
       include: [
-        '**/vaadin-rich-text-editor/src/*.html'
+        '**/incubator-rich-text-editor/src/*.html'
       ],
       exclude: [],
       thresholds: {

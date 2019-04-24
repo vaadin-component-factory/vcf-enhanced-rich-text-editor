@@ -1,4 +1,4 @@
-gemini.suite('vaadin-rich-text-editor', function(rootSuite) {
+gemini.suite('incubator-rich-text-editor', function(rootSuite) {
   function wait(actions, find) {
     return actions
       .waitForJSCondition(function(window) {
@@ -23,7 +23,7 @@ gemini.suite('vaadin-rich-text-editor', function(rootSuite) {
         suite
           .setUrl(`/${state}.html?theme=${theme}`)
           .setCaptureElements(`#${state}`)
-          .capture(`vaadin-rich-text-editor`);
+          .capture(`incubator-rich-text-editor`);
       });
     });
   });

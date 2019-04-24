@@ -1,12 +1,12 @@
 {
-  "name": "@vaadin/vaadin-rich-text-editor",
-  "version": "1.0.2",
-  "description": "vaadin-rich-text-editor",
-  "main": "vaadin-rich-text-editor.html",
-  "repository": "vaadin/vaadin-rich-text-editor",
+  "name": "@vaadin/incubator-rich-text-editor",
+  "version": "1.0.0",
+  "description": "incubator-rich-text-editor",
+  "main": "incubator-rich-text-editor.html",
+  "repository": "vaadin/incubator-rich-text-editor",
   "keywords": [
     "Vaadin",
-    "vaadin-rich-text-editor",
+    "incubator-rich-text-editor",
     "web-components",
     "web-component",
     "polymer"
@@ -14,7 +14,7 @@
   "author": "Vaadin Ltd",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/vaadin/vaadin-rich-text-editor/issues"
+    "url": "https://github.com/vaadin/incubator-rich-text-editor/issues"
   },
   "homepage": "https://vaadin.com/components",
   "files": [
@@ -34,7 +34,7 @@
     "lint:html": "eslint *.html src demo test --ext .html",
     "lint:js": "eslint *.js test",
     "lint:polymer": "polymer lint --rules polymer-2 --input ./src/*.html ./theme/**/*.html",
-    "prestart": "polymer analyze vaadin-* > analysis.json",
+    "prestart": "polymer analyze incubator-* > analysis.json",
     "start": "polymer serve --port 3000 --open",
     "preversion": "magi update-version"
   },
@@ -43,5 +43,8 @@
     "gulp": "^4.0.0",
     "gulp-cli": "^2.0.1",
     "gulp-iconfont": "^10.0.1"
+  },
+  "dependencies": {
+    "polymer-cli": "^1.9.8"
   }
 }

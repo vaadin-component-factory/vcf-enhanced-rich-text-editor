@@ -1,17 +1,17 @@
 {
-  "name": "vaadin-rich-text-editor",
+  "name": "incubator-rich-text-editor",
   "homepage": "https://vaadin.com/components",
   "authors": [
     "Vaadin Ltd"
   ],
-  "description": "vaadin-rich-text-editor",
+  "description": "incubator-rich-text-editor",
   "main": [
-    "vaadin-rich-text-editor.html",
-    "theme/material/vaadin-rich-text-editor.html"
+    "incubator-rich-text-editor.html",
+    "theme/material/incubator-rich-text-editor.html"
   ],
   "keywords": [
     "Vaadin",
-    "vaadin-rich-text-editor",
+    "incubator-rich-text-editor",
     "editor",
     "rich text",
     "web-components",

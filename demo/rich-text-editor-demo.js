@@ -8,13 +8,13 @@ window.RichTextEditorDemo = superClass => {
       super.ready();
       Array.from(this.shadowRoot.querySelectorAll('vaadin-demo-snippet')).forEach(demo => {
         setTimeout(() => {
-          const rte = demo.shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('vaadin-rich-text-editor');
+          const rte = demo.shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('incubator-rich-text-editor');
           if (!rte.hasAttribute('theme') && rte.className.indexOf('min-height') === -1) {
             rte.value = `[
               {"insert":"High quality rich text editor for the web"},
               {"attributes":{"header":2},"insert":"\\n"},
               {"insert":{"readonly":"Some readonly text"}},
-              {"insert":"<vaadin-rich-text-editor> is a Web Component providing rich text editor functionality, part of the "},{"attributes":{"link":"https://vaadin.com/components"},"insert":"Vaadin components"},
+              {"insert":"<incubator-rich-text-editor> is a Web Component providing rich text editor functionality, part of the "},{"attributes":{"link":"https://vaadin.com/components"},"insert":"Vaadin components"},
               {"insert":".\\nIt handles the following formatting:\\n"},
               {"attributes":{"bold":true},"insert":"Bold"},
               {"attributes":{"list":"bullet"},"insert":"\\n"},
@@ -44,7 +44,7 @@ window.RichTextEditorDemo = superClass => {
               {"insert":"Code blocks"},
               {"attributes":{"header":3},"insert":"\\n"},{"insert":"<body>"},
               {"attributes":{"code-block":true},"insert":"\\n"},
-              {"insert":"  <vaadin-rich-text-editor></vaadin-rich-text-editor>"},
+              {"insert":"  <incubator-rich-text-editor></incubator-rich-text-editor>"},
               {"attributes":{"code-block":true},"insert":"\\n"},
               {"insert":"</body>"},
               {"attributes":{"code-block":true},"insert":"\\n"},

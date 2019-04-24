@@ -6,12 +6,12 @@
   <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
   <script>
     const theme = window.location.search.replace(/.*theme=(\w+).*/, '$1') || 'lumo';
-    document.write('<link rel="import" href="../../theme/' + theme + '/vaadin-rich-text-editor.html">');
+    document.write('<link rel="import" href="../../theme/' + theme + '/incubator-rich-text-editor.html">');
     window.addEventListener('WebComponentsReady', function() {
-      customElements.whenDefined('vaadin-rich-text-editor').then(function() {
+      customElements.whenDefined('incubator-rich-text-editor').then(function() {
         window.webComponentsAreReady = true; // Checked in gemini before capture callback
 
-        const rte = window.document.querySelector('vaadin-rich-text-editor');
+        const rte = window.document.querySelector('incubator-rich-text-editor');
         rte.value = `[
           {"insert":"High quality rich text editor for the web"},
           {"attributes":{"header":2},"insert":"\\n"},
@@ -40,7 +40,7 @@
           {"insert":"Code blocks"},
           {"attributes":{"header":3},"insert":"\\n"},{"insert":"<body>"},
           {"attributes":{"code-block":true},"insert":"\\n"},
-          {"insert":"  <vaadin-rich-text-editor></vaadin-rich-text-editor>"},
+          {"insert":"  <incubator-rich-text-editor></incubator-rich-text-editor>"},
           {"attributes":{"code-block":true},"insert":"\\n"},
           {"insert":"</body>"},
           {"attributes":{"code-block":true},"insert":"\\n"},
@@ -54,7 +54,7 @@
 <body>
 
   <span id="max-height">
-    <vaadin-rich-text-editor style="max-height: 500px;"></vaadin-rich-text-editor>
+    <incubator-rich-text-editor style="max-height: 500px;"></incubator-rich-text-editor>
   </span>
 
 </body>

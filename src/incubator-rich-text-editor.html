@@ -16,12 +16,12 @@ This program is available under Apache License Version 2.0, available at https:/
 <link rel="import" href="../../vaadin-license-checker/vaadin-license-checker.html">
 
 <link rel="import" href="../vendor/vaadin-quill.html">
-<link rel="import" href="vaadin-rich-text-editor-styles.html">
-<link rel="import" href="vaadin-rich-text-editor-toolbar-styles.html">
+<link rel="import" href="incubator-rich-text-editor-styles.html">
+<link rel="import" href="incubator-rich-text-editor-toolbar-styles.html">
 
-<dom-module id="vaadin-rich-text-editor">
+<dom-module id="incubator-rich-text-editor">
   <template>
-    <style include="vaadin-rich-text-editor-styles">
+    <style include="incubator-rich-text-editor-styles">
       :host {
         display: flex;
         flex-direction: column;
@@ -42,7 +42,7 @@ This program is available under Apache License Version 2.0, available at https:/
         display: none;
       }
 
-      .vaadin-rich-text-editor-container {
+      .incubator-rich-text-editor-container {
         display: flex;
         flex-direction: column;
         min-height: inherit;
@@ -58,7 +58,7 @@ This program is available under Apache License Version 2.0, available at https:/
       }
     </style>
 
-    <div class="vaadin-rich-text-editor-container">
+    <div class="incubator-rich-text-editor-container">
 
       <!-- Create toolbar container -->
       <div part="toolbar">
@@ -246,12 +246,12 @@ This program is available under Apache License Version 2.0, available at https:/
       const TAB_KEY = 9;
 
       /**
-       * `<vaadin-rich-text-editor>` is a Web Component for rich text editing.
+       * `<incubator-rich-text-editor>` is a Web Component for rich text editing.
        * It provides a set of toolbar controls to apply formatting on the content,
        * which is stored and can be accessed as HTML5 or JSON string.
        *
        * ```
-       * <vaadin-rich-text-editor></vaadin-rich-text-editor>
+       * <incubator-rich-text-editor></incubator-rich-text-editor>
        * ```
        *
        * Vaadin Rich Text Editor focuses on the structure, not the styling of content.
@@ -316,7 +316,7 @@ This program is available under Apache License Version 2.0, available at https:/
        */
       class RichTextEditorElement extends Vaadin.ElementMixin(Vaadin.ThemableMixin(Polymer.Element)) {
         static get is() {
-          return 'vaadin-rich-text-editor';
+          return 'incubator-rich-text-editor';
         }
 
         static get version() {
@@ -677,7 +677,7 @@ This program is available under Apache License Version 2.0, available at https:/
 
           // exclude Quill shift-tab bindings, except for code block,
           // as some of those are breaking when on a newline in the list
-          // https://github.com/vaadin/vaadin-rich-text-editor/issues/67
+          // https://github.com/vaadin/incubator-rich-text-editor/issues/67
           const originalBindings = bindings.filter(b => !b.shiftKey || b.format && b.format['code-block']);
           const moveFocusBinding = {key: TAB_KEY, shiftKey: true, handler: focusToolbar};
 

@@ -1,41 +1,41 @@
-[![npm version](https://badgen.net/npm/v/@vaadin/vaadin-rich-text-editor)](https://www.npmjs.com/package/@vaadin/vaadin-rich-text-editor)
-[![Bower version](https://badgen.net/github/release/vaadin/vaadin-rich-text-editor)](https://github.com/vaadin/vaadin-rich-text-editor/releases)
-[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/vaadin/vaadin-rich-text-editor)
-[![Build Status](https://travis-ci.org/vaadin/vaadin-rich-text-editor.svg?branch=master)](https://travis-ci.org/vaadin/vaadin-rich-text-editor)
-[![Coverage Status](https://coveralls.io/repos/github/vaadin/vaadin-rich-text-editor/badge.svg?branch=master)](https://coveralls.io/github/vaadin/vaadin-rich-text-editor?branch=master)
+[![npm version](https://badgen.net/npm/v/@vaadin/incubator-rich-text-editor)](https://www.npmjs.com/package/@vaadin/incubator-rich-text-editor)
+[![Bower version](https://badgen.net/github/release/vaadin/incubator-rich-text-editor)](https://github.com/vaadin/incubator-rich-text-editor/releases)
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/vaadin/incubator-rich-text-editor)
+[![Build Status](https://travis-ci.org/vaadin/incubator-rich-text-editor.svg?branch=master)](https://travis-ci.org/vaadin/incubator-rich-text-editor)
+[![Coverage Status](https://coveralls.io/repos/github/vaadin/incubator-rich-text-editor/badge.svg?branch=master)](https://coveralls.io/github/vaadin/incubator-rich-text-editor?branch=master)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/vaadin/web-components?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
- [![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/vaadinvaadin-rich-text-editor)
-[![Stars on vaadin.com/directory](https://img.shields.io/vaadin-directory/star/vaadin-rich-text-editor-directory-urlidentifier.svg)](https://vaadin.com/directory/component/vaadinvaadin-rich-text-editor)
+ [![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/vaadinincubator-rich-text-editor)
+[![Stars on vaadin.com/directory](https://img.shields.io/vaadin-directory/star/incubator-rich-text-editor-directory-urlidentifier.svg)](https://vaadin.com/directory/component/vaadinincubator-rich-text-editor)
 
 
-# &lt;vaadin-rich-text-editor&gt;
+# &lt;incubator-rich-text-editor&gt;
 
-[Live Demo ↗](https://cdn.vaadin.com/vaadin-rich-text-editor/1.0.0-alpha6/demo/)
+[Live Demo ↗](https://cdn.vaadin.com/incubator-rich-text-editor/1.0.0-alpha6/demo/)
 |
-[API documentation ↗](https://cdn.vaadin.com/vaadin-rich-text-editor/1.0.0-alpha6)
+[API documentation ↗](https://cdn.vaadin.com/incubator-rich-text-editor/1.0.0-alpha6)
 
 
-[&lt;vaadin-rich-text-editor&gt;](https://vaadin.com/components/vaadin-rich-text-editor) is a Web Component providing rich text editor functionality, part of the [Vaadin components](https://vaadin.com/components).
+[&lt;incubator-rich-text-editor&gt;](https://vaadin.com/components/incubator-rich-text-editor) is a Web Component providing rich text editor functionality, part of the [Vaadin components](https://vaadin.com/components).
 
 <!--
 ```
 <custom-element-demo>
   <template>
     <script src="../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="vaadin-rich-text-editor.html">
+    <link rel="import" href="incubator-rich-text-editor.html">
     <next-code-block></next-code-block>
   </template>
 </custom-element-demo>
 ```
 -->
 ```html
-<vaadin-rich-text-editor>
+<incubator-rich-text-editor>
   ...
-</vaadin-rich-text-editor>
+</incubator-rich-text-editor>
 ```
 
-[<img src="https://raw.githubusercontent.com/vaadin/vaadin-rich-text-editor/master/screenshot.png" width="200" alt="Screenshot of vaadin-rich-text-editor">](https://vaadin.com/components/vaadin-rich-text-editor)
+[<img src="https://raw.githubusercontent.com/vaadin/incubator-rich-text-editor/master/screenshot.png" width="200" alt="Screenshot of incubator-rich-text-editor">](https://vaadin.com/components/incubator-rich-text-editor)
 
 
 ## Installation
@@ -49,31 +49,31 @@ are only published on npm, not pushed to GitHub repositories.
 
 ### Polymer 2 and HTML Imports compatible version
 
-Install `vaadin-rich-text-editor`:
+Install `incubator-rich-text-editor`:
 
 ```sh
-bower i vaadin/vaadin-rich-text-editor --save
+bower i vaadin/incubator-rich-text-editor --save
 ```
 
 Once installed, import it in your application:
 
 ```html
-<link rel="import" href="bower_components/vaadin-rich-text-editor/vaadin-rich-text-editor.html">
+<link rel="import" href="bower_components/incubator-rich-text-editor/incubator-rich-text-editor.html">
 ```
 
 ### Polymer 3 and ES Modules compatible version
 
 
-Install `vaadin-rich-text-editor`:
+Install `incubator-rich-text-editor`:
 
 ```sh
-npm i @vaadin/vaadin-rich-text-editor --save
+npm i @vaadin/incubator-rich-text-editor --save
 ```
 
 Once installed, import it in your application:
 
 ```js
-import '@vaadin/vaadin-rich-text-editor/vaadin-rich-text-editor.js';
+import '@vaadin/incubator-rich-text-editor/incubator-rich-text-editor.js';
 ```
 
 ### Bundling with webpack
@@ -92,7 +92,7 @@ module: {
   rules: [
   ...
   {
-    test: require.resolve('@vaadin/vaadin-rich-text-editor/vendor/vaadin-quill.js'),
+    test: require.resolve('@vaadin/incubator-rich-text-editor/vendor/vaadin-quill.js'),
     use: [{
       loader: 'expose-loader',
       options: 'Quill'
@@ -110,24 +110,24 @@ To use the Material theme, import the correspondent file from the `theme/materia
 
 - The component with the Lumo theme:
 
-  `theme/lumo/vaadin-rich-text-editor.html`
+  `theme/lumo/incubator-rich-text-editor.html`
 
 - The component with the Material theme:
 
-  `theme/material/vaadin-rich-text-editor.html`
+  `theme/material/incubator-rich-text-editor.html`
 
-- Alias for `theme/lumo/vaadin-rich-text-editor.html`:
+- Alias for `theme/lumo/incubator-rich-text-editor.html`:
 
-  `vaadin-rich-text-editor.html`
+  `incubator-rich-text-editor.html`
 
 
 ## Running demos and tests in a browser
 
-1. Fork the `vaadin-rich-text-editor` repository and clone it locally.
+1. Fork the `incubator-rich-text-editor` repository and clone it locally.
 
 1. Make sure you have [npm](https://www.npmjs.com/) and [Bower](https://bower.io) installed.
 
-1. When in the `vaadin-rich-text-editor` directory, run `npm install` and then `bower install` to install dependencies.
+1. When in the `incubator-rich-text-editor` directory, run `npm install` and then `bower install` to install dependencies.
 
 1. Make sure you have [polymer-cli](https://www.npmjs.com/package/polymer-cli) installed globally: `npm i -g polymer-cli`.
 
@@ -135,13 +135,13 @@ To use the Material theme, import the correspondent file from the `theme/materia
 
 1. You can also open demo or in-browser tests by adding **demo** or **test** to the URL, for example:
 
-  - http://127.0.0.1:3000/components/vaadin-rich-text-editor/demo
-  - http://127.0.0.1:3000/components/vaadin-rich-text-editor/test
+  - http://127.0.0.1:3000/components/incubator-rich-text-editor/demo
+  - http://127.0.0.1:3000/components/incubator-rich-text-editor/test
 
 
 ## Running tests from the command line
 
-1. When in the `vaadin-rich-text-editor` directory, run `polymer test`
+1. When in the `incubator-rich-text-editor` directory, run `polymer test`
 
 
 ## Following the coding style
