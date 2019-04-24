@@ -13,6 +13,7 @@ window.RichTextEditorDemo = superClass => {
             rte.value = `[
               {"insert":"High quality rich text editor for the web"},
               {"attributes":{"header":2},"insert":"\\n"},
+              {"insert":{"readonly":"Some readonly text"}},
               {"insert":"<vaadin-rich-text-editor> is a Web Component providing rich text editor functionality, part of the "},{"attributes":{"link":"https://vaadin.com/components"},"insert":"Vaadin components"},
               {"insert":".\\nIt handles the following formatting:\\n"},
               {"attributes":{"bold":true},"insert":"Bold"},

@@ -23,11 +23,6 @@
     "vendor",
     "theme"
   ],
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
-  },
   "scripts": {
     "test": "wct",
     "check": "npm-run-all --parallel check:*",
