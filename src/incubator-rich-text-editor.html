@@ -5,6 +5,7 @@ This program is available under Apache License Version 2.0, available at https:/
 -->
 
 <link rel="import" href="../../polymer/polymer-element.html">
+<link rel="import" href="../../polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../polymer/lib/utils/async.html">
 <link rel="import" href="../../polymer/lib/utils/debounce.html">
 <link rel="import" href="../../polymer/lib/utils/gestures.html">
@@ -63,89 +64,149 @@ This program is available under Apache License Version 2.0, available at https:/
       <!-- Create toolbar container -->
       <div part="toolbar">
 
-        <span part="toolbar-group toolbar-group-history">
-          <!-- Undo and Redo -->
-          <button type="button" part="toolbar-button toolbar-button-undo" on-click="_undo"
-            title$="[[i18n.undo]]"></button>
-          <button type="button" part="toolbar-button toolbar-button-redo" on-click="_redo"
-            title$="[[i18n.redo]]"></button>
-        </span>
+        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'history')]]" restamp>
+          <span part="toolbar-group toolbar-group-history">
+            <!-- Undo and Redo -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'undo')]]" restamp>
+              <button type="button" part="toolbar-button toolbar-button-undo" on-click="_undo"
+                title$="[[i18n.undo]]"></button>
+            </template>
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'redo')]]" restamp>
+              <button type="button" part="toolbar-button toolbar-button-redo" on-click="_redo"
+                title$="[[i18n.redo]]"></button>
+            </template>
+          </span>
+        </template>
 
-        <span part="toolbar-group toolbar-group-emphasis">
-          <!-- Bold -->
-          <button class="ql-bold" part="toolbar-button toolbar-button-bold" title$="[[i18n.bold]]"></button>
+        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'emphasis')]]" restamp>
+          <span part="toolbar-group toolbar-group-emphasis">
+            <!-- Bold -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'bold')]]" restamp>
+              <button class="ql-bold" part="toolbar-button toolbar-button-bold" title$="[[i18n.bold]]"></button>
+            </template>
 
-          <!-- Italic -->
-          <button class="ql-italic" part="toolbar-button toolbar-button-italic" title$="[[i18n.italic]]"></button>
+            <!-- Italic -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'italic')]]" restamp>
+              <button class="ql-italic" part="toolbar-button toolbar-button-italic" title$="[[i18n.italic]]"></button>
+            </template>
 
-          <!-- Underline -->
-          <button class="ql-underline" part="toolbar-button toolbar-button-underline"
-            title$="[[i18n.underline]]"></button>
+            <!-- Underline -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'underline')]]" restamp>
+              <button class="ql-underline" part="toolbar-button toolbar-button-underline"
+                title$="[[i18n.underline]]"></button>
+            </template>
 
-          <!-- Strike -->
-          <button class="ql-strike" part="toolbar-button toolbar-button-strike" title$="[[i18n.strike]]"></button>
-        </span>
+            <!-- Strike -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'strike')]]" restamp>
+              <button class="ql-strike" part="toolbar-button toolbar-button-strike" title$="[[i18n.strike]]"></button>
+            </template>
+          </span>
+        </template>
 
-        <span part="toolbar-group toolbar-group-heading">
-          <!-- Header buttons -->
-          <button type="button" class="ql-header" value="1" part="toolbar-button toolbar-button-h1"
-            title$="[[i18n.h1]]"></button>
-          <button type="button" class="ql-header" value="2" part="toolbar-button toolbar-button-h2"
-            title$="[[i18n.h2]]"></button>
-          <button type="button" class="ql-header" value="3" part="toolbar-button toolbar-button-h3"
-            title$="[[i18n.h3]]"></button>
-        </span>
+        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'heading')]]" restamp>
+          <span part="toolbar-group toolbar-group-heading">
+            <!-- Header buttons -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'h1')]]" restamp>
+              <button type="button" class="ql-header" value="1" part="toolbar-button toolbar-button-h1"
+                title$="[[i18n.h1]]"></button>
+            </template>
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'h2')]]" restamp>
+              <button type="button" class="ql-header" value="2" part="toolbar-button toolbar-button-h2"
+                title$="[[i18n.h2]]"></button>
+            </template>
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'h3')]]" restamp>
+              <button type="button" class="ql-header" value="3" part="toolbar-button toolbar-button-h3"
+                title$="[[i18n.h3]]"></button>
+            </template>
+          </span>
+        </template>
 
-        <span part="toolbar-group toolbar-group-glyph-transformation">
-          <!-- Subscript and superscript -->
-          <button class="ql-script" value="sub" part="toolbar-button toolbar-button-subscript"
-            title$="[[i18n.subscript]]"></button>
-          <button class="ql-script" value="super" part="toolbar-button toolbar-button-superscript"
-            title$="[[i18n.superscript]]"></button>
-        </span>
+        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'glyph-transformation')]]" restamp>
+          <span part="toolbar-group toolbar-group-glyph-transformation">
+            <!-- Subscript and superscript -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'subscript')]]" restamp>
+              <button class="ql-script" value="sub" part="toolbar-button toolbar-button-subscript"
+                title$="[[i18n.subscript]]"></button>
+            </template>
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'superscript')]]" restamp>
+              <button class="ql-script" value="super" part="toolbar-button toolbar-button-superscript"
+                title$="[[i18n.superscript]]"></button>
+            </template>
+          </span>
+        </template>
 
-        <span part="toolbar-group toolbar-group-list">
-          <!-- List buttons -->
-          <button type="button" class="ql-list" value="ordered" part="toolbar-button toolbar-button-list-ordered"
-            title$="[[i18n.listOrdered]]"></button>
-          <button type="button" class="ql-list" value="bullet" part="toolbar-button toolbar-button-list-bullet"
-            title$="[[i18n.listBullet]]"></button>
-        </span>
+        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'list')]]" restamp>
+          <span part="toolbar-group toolbar-group-list">
+            <!-- List buttons -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'listOrdered')]]" restamp>
+              <button type="button" class="ql-list" value="ordered" part="toolbar-button toolbar-button-list-ordered"
+                title$="[[i18n.listOrdered]]"></button>
+            </template>
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'listBullet')]]" restamp>
+              <button type="button" class="ql-list" value="bullet" part="toolbar-button toolbar-button-list-bullet"
+                title$="[[i18n.listBullet]]"></button>
+            </template>
+          </span>
+        </template>
 
-        <span part="toolbar-group toolbar-group-alignment">
-          <!-- Align buttons -->
-          <button type="button" class="ql-align" value="" part="toolbar-button toolbar-button-align-left"
-            title$="[[i18n.alignLeft]]"></button>
-          <button type="button" class="ql-align" value="center" part="toolbar-button toolbar-button-align-center"
-            title$="[[i18n.alignCenter]]"></button>
-          <button type="button" class="ql-align" value="right" part="toolbar-button toolbar-button-align-right"
-            title$="[[i18n.alignRight]]"></button>
-        </span>
+        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'alignment')]]" restamp>
+          <span part="toolbar-group toolbar-group-alignment">
+            <!-- Align buttons -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'alignLeft')]]" restamp>
+              <button type="button" class="ql-align" value="" part="toolbar-button toolbar-button-align-left"
+                title$="[[i18n.alignLeft]]"></button>
+            </template>
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'alignCenter')]]" restamp>
+              <button type="button" class="ql-align" value="center" part="toolbar-button toolbar-button-align-center"
+                title$="[[i18n.alignCenter]]"></button>
+            </template>
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'alignRight')]]" restamp>
+              <button type="button" class="ql-align" value="right" part="toolbar-button toolbar-button-align-right"
+                title$="[[i18n.alignRight]]"></button>
+            </template>
+          </span>
+        </template>
 
-        <span part="toolbar-group toolbar-group-rich-text">
-          <!-- Image -->
-          <button type="button" part="toolbar-button toolbar-button-image" title$="[[i18n.image]]"
-            on-touchend="_onImageTouchEnd" on-click="_onImageClick"></button>
-          <!-- Link -->
-          <button type="button" part="toolbar-button toolbar-button-link" title$="[[i18n.link]]"
-            on-click="_onLinkClick"></button>
-        </span>
+        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'rich-text')]]" restamp>
+          <span part="toolbar-group toolbar-group-rich-text">
+            <!-- Image -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'image')]]" restamp>
+              <button type="button" part="toolbar-button toolbar-button-image" title$="[[i18n.image]]"
+                on-touchend="_onImageTouchEnd" on-click="_onImageClick"></button>
+            </template>
+            <!-- Link -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'link')]]" restamp>
+              <button type="button" part="toolbar-button toolbar-button-link" title$="[[i18n.link]]"
+                on-click="_onLinkClick"></button>
+            </template>
+          </span>
+        </template>
 
-        <span part="toolbar-group toolbar-group-block">
-          <!-- Blockquote -->
-          <button type="button" class="ql-blockquote" part="toolbar-button toolbar-button-blockquote"
-            title$="[[i18n.blockquote]]"></button>
+        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'block')]]" restamp>
+          <span part="toolbar-group toolbar-group-block">
+            <!-- Blockquote -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'blockquote')]]" restamp>
+              <button type="button" class="ql-blockquote" part="toolbar-button toolbar-button-blockquote"
+                title$="[[i18n.blockquote]]"></button>
+            </template>
 
-          <!-- Code block -->
-          <button type="button" class="ql-code-block" part="toolbar-button toolbar-button-code-block"
-            title$="[[i18n.codeBlock]]"></button>
-        </span>
+            <!-- Code block -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'codeBlock')]]" restamp>
+              <button type="button" class="ql-code-block" part="toolbar-button toolbar-button-code-block"
+                title$="[[i18n.codeBlock]]"></button>
+            </template>
+          </span>
+        </template>
 
-        <span part="toolbar-group toolbar-group-format">
-          <!-- Clean -->
-          <button type="button" class="ql-clean" part="toolbar-button toolbar-button-clean"
-            title$="[[i18n.clean]]"></button>
-        </span>
+        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'format')]]" restamp>
+          <span part="toolbar-group toolbar-group-format">
+            <!-- Clean -->
+            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'clean')]]" restamp>
+              <button type="button" class="ql-clean" part="toolbar-button toolbar-button-clean"
+                title$="[[i18n.clean]]"></button>
+            </template>
+          </span>
+        </template>
 
         <input id="fileInput" type="file" accept="image/png, image/gif, image/jpeg, image/bmp, image/x-icon"
           on-change="_uploadImage">
@@ -157,10 +218,10 @@ This program is available under Apache License Version 2.0, available at https:/
           style="overflow: hidden; box-sizing: content-box; border-color: rgb(158, 170, 182); border-style: solid; border-width: 0 1px 1px 0; width: 14px !important; height: 14px !important;">
         </div>
         <div
-          style="overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-horizontal.png&quot;)]]') repeat-x; width: 100% !important; height: 15px !important;">
+          style="overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-horizontal.png&quot;)]]') repeat-x; flex-grow: 1; height: 15px !important;">
         </div>
       </div>
-      <div style="display: flex; flex-shrink: 0;">
+      <div style="display: flex; flex-grow: 1;">
         <div
           style="overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-vertical.png&quot;)]]') repeat-y; width: 15px !important; flex-shrink: 0;">
         </div>
@@ -189,9 +250,10 @@ This program is available under Apache License Version 2.0, available at https:/
   </template>
 
   <script>
-    const BlockEmbed = window.Quill.import('blots/block/embed');
-    const Inline = window.Quill.import('blots/inline');
-    const Text = window.Quill.import('blots/text');
+    const Quill = window.Quill;
+    const BlockEmbed = Quill.import('blots/block/embed');
+    const Inline = Quill.import('blots/inline');
+    const Text = Quill.import('blots/text');
 
     class ReadOnlyBlot extends BlockEmbed {
       static create(data) {
@@ -212,9 +274,59 @@ This program is available under Apache License Version 2.0, available at https:/
     ReadOnlyBlot.className = 'readonly-section';
     ReadOnlyBlot.allowedChildren = [Inline, Text];
 
-    window.Quill.register(ReadOnlyBlot);
+    Quill.register(ReadOnlyBlot);
 
-    (function() {
+    // let Parchment = Quill.import("parchment");
+
+    // class SpanBlot extends Inline {
+    //   static create(value) {
+    //     let node = super.create();
+    //     node.setAttribute("class", "ql-fixed-" + value);
+    //     return node;
+    //   }
+
+    //   static formats(node) {
+    //     let classList = node.getAttribute("class");
+
+    //     if (classList) {
+    //       classList = classList.split(" ");
+
+    //       for (let i in classList)
+    //         if (classList[i].startsWith("ql-fixed-"))
+    //           return parseInt(classList[i].substr("ql-fixed-".length));
+    //     }
+
+    //     return false;
+    //   }
+
+    //   format(name, value) {
+    //     if (name === "span" && value)
+    //       this.domNode.setAttribute("class", "ql-fixed-" + value);
+    //     else
+    //       super.format(name, value);
+    //   }
+
+    // }
+
+    // SpanBlot.blotName = "span";
+    // SpanBlot.tagName = "span";
+
+    // let config = {
+    //   scope: Parchment.Scope.INLINE,
+    //   whitelist: ['right', 'center', 'justify']
+    // };
+
+    // // let AlignClass = new Parchment.Attributor.Class('align', 'ql-alignbla', config);
+    // // let AlignStyle = new Parchment.Attributor.Style('align', 'text-align', config);
+
+    // // Register changes
+    // Quill.register({
+    //   // 'attributors/class/align': AlignClass,
+    //   // 'attributors/style/align': AlignStyle,
+    //   "formats/span": SpanBlot
+    // }, false);
+
+    (function () {
       'use strict';
 
       const Quill = window.Quill;
@@ -231,6 +343,18 @@ This program is available under Apache License Version 2.0, available at https:/
         'blockquote',
         'code-block'
       ];
+
+      const TOOLBAR_BUTTON_GROUPS = {
+        "history": ["undo", "redo"],
+        "emphasis": ["bold", "italic", "unserline", "strike"],
+        "heading": ["h1", "h2", "h3"],
+        "glyph-transformation": ["subscript", "superscript"],
+        "list": ["listOrdered", "listBullet"],
+        "alignment": ["alignLeft", "alignCenter", "alignRight"],
+        "rich-text": ["image", "link"],
+        "block": ["blockquote", "codeBlock"],
+        "format": ["clean"]
+      };
 
       const SOURCE = {
         USER: 'user',
@@ -411,6 +535,15 @@ This program is available under Apache License Version 2.0, available at https:/
               }
             },
 
+            /**
+             * An object used to show/hide toolbar buttons.
+             * Default value of any unspecified button is true.
+             */
+            toolbarButtons: {
+              type: Object,
+              value: {}
+            },
+
             _editor: {
               type: Object
             },
@@ -444,6 +577,24 @@ This program is available under Apache License Version 2.0, available at https:/
               value: ''
             }
           };
+        }
+
+        _isButtonVisible(toolbarButtons, button) {
+          if (toolbarButtons[button] == false)
+            return false;
+          return true;
+        }
+
+        _isButtonGroupVisible(toolbarButtons, group) {
+          var visible = false;
+          TOOLBAR_BUTTON_GROUPS[group].forEach(button => {
+            if (toolbarButtons[button] != false) {
+              visible = true;
+              return;
+            }
+          });
+
+          return visible;
         }
 
         static get observers() {
@@ -521,7 +672,7 @@ This program is available under Apache License Version 2.0, available at https:/
           const toolbar = {
             container: this.shadowRoot.querySelector('[part="toolbar"]'),
             handlers: {
-              clean: function() {
+              clean: function () {
                 self._markToolbarClicked();
                 clean.call(this);
               }
@@ -630,8 +781,8 @@ This program is available under Apache License Version 2.0, available at https:/
 
           editorContent.addEventListener('mousedown', e => {
             if (!this._editor.hasFocus()) {
-              const {x, y} = e;
-              const {offset, offsetNode} = document.caretPositionFromPoint(x, y);
+              const { x, y } = e;
+              const { offset, offsetNode } = document.caretPositionFromPoint(x, y);
               focusFake().then(() => {
                 focusBack(offsetNode, offset);
               });
@@ -652,7 +803,7 @@ This program is available under Apache License Version 2.0, available at https:/
           // add custom link button to toggle state attribute
           toolbar.controls.push(['link', this.shadowRoot.querySelector('[part~="toolbar-button-link"]')]);
 
-          toolbar.update = function(range) {
+          toolbar.update = function (range) {
             update.call(toolbar, range);
 
             toolbar.controls.forEach(pair => {
@@ -679,19 +830,19 @@ This program is available under Apache License Version 2.0, available at https:/
           // as some of those are breaking when on a newline in the list
           // https://github.com/vaadin/incubator-rich-text-editor/issues/67
           const originalBindings = bindings.filter(b => !b.shiftKey || b.format && b.format['code-block']);
-          const moveFocusBinding = {key: TAB_KEY, shiftKey: true, handler: focusToolbar};
+          const moveFocusBinding = { key: TAB_KEY, shiftKey: true, handler: focusToolbar };
 
           keyboard.bindings[TAB_KEY] = [...originalBindings, moveFocusBinding];
 
           // alt-f10 focuses a toolbar button
-          keyboard.addBinding({key: 121, altKey: true, handler: focusToolbar});
+          keyboard.addBinding({ key: 121, altKey: true, handler: focusToolbar });
         }
 
         __emitChangeEvent() {
           this.__debounceSetValue && this.__debounceSetValue.flush();
 
           if (this.__lastCommittedChange !== this.value) {
-            this.dispatchEvent(new CustomEvent('change', {bubbles: true, cancelable: false}));
+            this.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: false }));
             this.__lastCommittedChange = this.value;
           }
         }
@@ -703,7 +854,7 @@ This program is available under Apache License Version 2.0, available at https:/
             const [link, offset] = this._editor.scroll.descendant(LinkBlot, range.index);
             if (link != null) {
               // existing link
-              this._linkRange = {index: range.index - offset, length: link.length()};
+              this._linkRange = { index: range.index - offset, length: link.length() };
               this._linkUrl = LinkBlot.formats(link.domNode);
             } else if (range.length === 0) {
               this._linkIndex = range.index;
@@ -724,7 +875,7 @@ This program is available under Apache License Version 2.0, available at https:/
         _insertLink(link, position) {
           if (link) {
             this._markToolbarClicked();
-            this._editor.insertText(position, link, {link});
+            this._editor.insertText(position, link, { link });
             this._editor.setSelection(position, link.length);
           }
           this._closeLinkDialog();
@@ -739,7 +890,7 @@ This program is available under Apache License Version 2.0, available at https:/
         _removeLink() {
           this._markToolbarClicked();
           if (this._linkRange != null) {
-            this._editor.formatText(this._linkRange, {link: false, color: false}, SOURCE.USER);
+            this._editor.formatText(this._linkRange, { link: false, color: false }, SOURCE.USER);
           }
           this._closeLinkDialog();
         }
@@ -881,8 +1032,8 @@ This program is available under Apache License Version 2.0, available at https:/
               this._editor.updateContents(new Quill.imports.delta()
                 .retain(range.index)
                 .delete(range.length)
-                .insert({image})
-              , SOURCE.USER);
+                .insert({ image })
+                , SOURCE.USER);
               this._markToolbarClicked();
               this._editor.setSelection(range.index + 1, SOURCE.SILENT);
               fileInput.value = '';

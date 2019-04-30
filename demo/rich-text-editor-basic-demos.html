@@ -33,6 +33,19 @@
       </template>
     </vaadin-demo-snippet>
 
+    <h3>Customizing toolbar</h3>
+    <vaadin-demo-snippet id="rich-text-editor-basic-demos-customizing-toolbar">
+      <template preserve-content>
+        <incubator-rich-text-editor></incubator-rich-text-editor>
+        <script>
+          window.addDemoReadyListener('#rich-text-editor-basic-demos-customizing-toolbar', function(document) {
+            var rte = document.querySelector("incubator-rich-text-editor");
+            rte.toolbarButtons = {undo: false, redo: false, h1: false, h2: false, h3: false, image: false, link: false};
+          });
+        </script>
+      </template>
+    </vaadin-demo-snippet>
+
   </template>
   <script>
     class RichTextEditorBasicDemos extends DemoReadyEventEmitter(RichTextEditorDemo(Polymer.Element)) {
