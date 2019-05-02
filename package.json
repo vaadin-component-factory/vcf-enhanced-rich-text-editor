@@ -1,6 +1,6 @@
 {
   "name": "@vaadin/incubator-rich-text-editor",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "incubator-rich-text-editor",
   "main": "incubator-rich-text-editor.html",
   "repository": "vaadin/incubator-rich-text-editor",
