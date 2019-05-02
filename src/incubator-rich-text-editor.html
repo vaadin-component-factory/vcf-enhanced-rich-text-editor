@@ -5,7 +5,6 @@ This program is available under Apache License Version 2.0, available at https:/
 -->
 
 <link rel="import" href="../../polymer/polymer-element.html">
-<link rel="import" href="../../polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../polymer/lib/utils/async.html">
 <link rel="import" href="../../polymer/lib/utils/debounce.html">
 <link rel="import" href="../../polymer/lib/utils/gestures.html">
@@ -64,149 +63,101 @@ This program is available under Apache License Version 2.0, available at https:/
       <!-- Create toolbar container -->
       <div part="toolbar">
 
-        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'history')]]" restamp>
-          <span part="toolbar-group toolbar-group-history">
-            <!-- Undo and Redo -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'undo')]]" restamp>
-              <button type="button" part="toolbar-button toolbar-button-undo" on-click="_undo"
-                title$="[[i18n.undo]]"></button>
-            </template>
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'redo')]]" restamp>
-              <button type="button" part="toolbar-button toolbar-button-redo" on-click="_redo"
-                title$="[[i18n.redo]]"></button>
-            </template>
-          </span>
-        </template>
+        <span part="toolbar-group toolbar-group-history"
+          style="display: [[_buttonGroupDisplay(toolbarButtons, 'history')]];">
+          <!-- Undo and Redo -->
+          <button type="button" part="toolbar-button toolbar-button-undo" on-click="_undo" title$="[[i18n.undo]]"
+            style="display: [[_buttonDisplay(toolbarButtons, 'undo')]];"></button>
+          <button type="button" part="toolbar-button toolbar-button-redo" on-click="_redo" title$="[[i18n.redo]]"
+            style="display: [[_buttonDisplay(toolbarButtons, 'redo')]];"></button>
+        </span>
 
-        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'emphasis')]]" restamp>
-          <span part="toolbar-group toolbar-group-emphasis">
-            <!-- Bold -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'bold')]]" restamp>
-              <button class="ql-bold" part="toolbar-button toolbar-button-bold" title$="[[i18n.bold]]"></button>
-            </template>
+        <span part="toolbar-group toolbar-group-emphasis"
+          style="display: [[_buttonGroupDisplay(toolbarButtons, 'emphasis')]];">
+          <!-- Bold -->
+          <button class="ql-bold" part="toolbar-button toolbar-button-bold" title$="[[i18n.bold]]"
+            style="display: [[_buttonDisplay(toolbarButtons, 'bold')]];"></button>
 
-            <!-- Italic -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'italic')]]" restamp>
-              <button class="ql-italic" part="toolbar-button toolbar-button-italic" title$="[[i18n.italic]]"></button>
-            </template>
+          <!-- Italic -->
+          <button class="ql-italic" part="toolbar-button toolbar-button-italic" title$="[[i18n.italic]]"
+            style="display: [[_buttonDisplay(toolbarButtons, 'italic')]];"></button>
 
-            <!-- Underline -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'underline')]]" restamp>
-              <button class="ql-underline" part="toolbar-button toolbar-button-underline"
-                title$="[[i18n.underline]]"></button>
-            </template>
+          <!-- Underline -->
+          <button class="ql-underline" part="toolbar-button toolbar-button-underline" title$="[[i18n.underline]]"
+            style="display: [[_buttonDisplay(toolbarButtons, 'underline')]];"></button>
 
-            <!-- Strike -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'strike')]]" restamp>
-              <button class="ql-strike" part="toolbar-button toolbar-button-strike" title$="[[i18n.strike]]"></button>
-            </template>
-          </span>
-        </template>
+          <!-- Strike -->
+          <button class="ql-strike" part="toolbar-button toolbar-button-strike" title$="[[i18n.strike]]"
+            style="display: [[_buttonDisplay(toolbarButtons, 'strike')]];"></button>
+        </span>
 
-        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'heading')]]" restamp>
-          <span part="toolbar-group toolbar-group-heading">
-            <!-- Header buttons -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'h1')]]" restamp>
-              <button type="button" class="ql-header" value="1" part="toolbar-button toolbar-button-h1"
-                title$="[[i18n.h1]]"></button>
-            </template>
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'h2')]]" restamp>
-              <button type="button" class="ql-header" value="2" part="toolbar-button toolbar-button-h2"
-                title$="[[i18n.h2]]"></button>
-            </template>
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'h3')]]" restamp>
-              <button type="button" class="ql-header" value="3" part="toolbar-button toolbar-button-h3"
-                title$="[[i18n.h3]]"></button>
-            </template>
-          </span>
-        </template>
+        <span part="toolbar-group toolbar-group-heading"
+          style="display: [[_buttonGroupDisplay(toolbarButtons, 'heading')]];">
+          <!-- Header buttons -->
+          <button type="button" class="ql-header" value="1" part="toolbar-button toolbar-button-h1" title$="[[i18n.h1]]"
+            style="display: [[_buttonDisplay(toolbarButtons, 'h1')]];"></button>
+          <button type="button" class="ql-header" value="2" part="toolbar-button toolbar-button-h2" title$="[[i18n.h2]]"
+            style="display: [[_buttonDisplay(toolbarButtons, 'h2')]];"></button>
+          <button type="button" class="ql-header" value="3" part="toolbar-button toolbar-button-h3" title$="[[i18n.h3]]"
+            style="display: [[_buttonDisplay(toolbarButtons, 'h3')]];"></button>
+        </span>
 
-        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'glyph-transformation')]]" restamp>
-          <span part="toolbar-group toolbar-group-glyph-transformation">
-            <!-- Subscript and superscript -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'subscript')]]" restamp>
-              <button class="ql-script" value="sub" part="toolbar-button toolbar-button-subscript"
-                title$="[[i18n.subscript]]"></button>
-            </template>
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'superscript')]]" restamp>
-              <button class="ql-script" value="super" part="toolbar-button toolbar-button-superscript"
-                title$="[[i18n.superscript]]"></button>
-            </template>
-          </span>
-        </template>
+        <span part="toolbar-group toolbar-group-glyph-transformation"
+          style="display: [[_buttonGroupDisplay(toolbarButtons, 'glyph-transformation')]];">
+          <!-- Subscript and superscript -->
+          <button class="ql-script" value="sub" part="toolbar-button toolbar-button-subscript"
+            title$="[[i18n.subscript]]" style="display: [[_buttonDisplay(toolbarButtons, 'subscript')]];"></button>
+          <button class="ql-script" value="super" part="toolbar-button toolbar-button-superscript"
+            title$="[[i18n.superscript]]" style="display: [[_buttonDisplay(toolbarButtons, 'superscript')]];"></button>
+        </span>
 
-        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'list')]]" restamp>
-          <span part="toolbar-group toolbar-group-list">
-            <!-- List buttons -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'listOrdered')]]" restamp>
-              <button type="button" class="ql-list" value="ordered" part="toolbar-button toolbar-button-list-ordered"
-                title$="[[i18n.listOrdered]]"></button>
-            </template>
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'listBullet')]]" restamp>
-              <button type="button" class="ql-list" value="bullet" part="toolbar-button toolbar-button-list-bullet"
-                title$="[[i18n.listBullet]]"></button>
-            </template>
-          </span>
-        </template>
+        <span part="toolbar-group toolbar-group-list" style="display: [[_buttonGroupDisplay(toolbarButtons, 'list')]];">
+          <!-- List buttons -->
+          <button type="button" class="ql-list" value="ordered" part="toolbar-button toolbar-button-list-ordered"
+            title$="[[i18n.listOrdered]]" style="display: [[_buttonDisplay(toolbarButtons, 'listOrdered')]];"></button>
+          <button type="button" class="ql-list" value="bullet" part="toolbar-button toolbar-button-list-bullet"
+            title$="[[i18n.listBullet]]" style="display: [[_buttonDisplay(toolbarButtons, 'listBullet')]];"></button>
+        </span>
 
-        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'alignment')]]" restamp>
-          <span part="toolbar-group toolbar-group-alignment">
-            <!-- Align buttons -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'alignLeft')]]" restamp>
-              <button type="button" class="ql-align" value="" part="toolbar-button toolbar-button-align-left"
-                title$="[[i18n.alignLeft]]"></button>
-            </template>
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'alignCenter')]]" restamp>
-              <button type="button" class="ql-align" value="center" part="toolbar-button toolbar-button-align-center"
-                title$="[[i18n.alignCenter]]"></button>
-            </template>
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'alignRight')]]" restamp>
-              <button type="button" class="ql-align" value="right" part="toolbar-button toolbar-button-align-right"
-                title$="[[i18n.alignRight]]"></button>
-            </template>
-          </span>
-        </template>
+        <span part="toolbar-group toolbar-group-alignment"
+          style="display: [[_buttonGroupDisplay(toolbarButtons, 'alignment')]];">
+          <!-- Align buttons -->
+          <button type="button" class="ql-align" value="" part="toolbar-button toolbar-button-align-left"
+            title$="[[i18n.alignLeft]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignLeft')]];"></button>
+          <button type="button" class="ql-align" value="center" part="toolbar-button toolbar-button-align-center"
+            title$="[[i18n.alignCenter]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignCenter')]];"></button>
+          <button type="button" class="ql-align" value="right" part="toolbar-button toolbar-button-align-right"
+            title$="[[i18n.alignRight]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignRight')]];"></button>
+        </span>
 
-        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'rich-text')]]" restamp>
-          <span part="toolbar-group toolbar-group-rich-text">
-            <!-- Image -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'image')]]" restamp>
-              <button type="button" part="toolbar-button toolbar-button-image" title$="[[i18n.image]]"
-                on-touchend="_onImageTouchEnd" on-click="_onImageClick"></button>
-            </template>
-            <!-- Link -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'link')]]" restamp>
-              <button type="button" part="toolbar-button toolbar-button-link" title$="[[i18n.link]]"
-                on-click="_onLinkClick"></button>
-            </template>
-          </span>
-        </template>
+        <span part="toolbar-group toolbar-group-rich-text"
+          style="display: [[_buttonGroupDisplay(toolbarButtons, 'rich-text')]];">
+          <!-- Image -->
+          <button type="button" part="toolbar-button toolbar-button-image" title$="[[i18n.image]]"
+            on-touchend="_onImageTouchEnd" on-click="_onImageClick"
+            style="display: [[_buttonDisplay(toolbarButtons, 'image')]];"></button>
+          <!-- Link -->
+          <button type="button" part="toolbar-button toolbar-button-link" title$="[[i18n.link]]" on-click="_onLinkClick"
+            style="display: [[_buttonDisplay(toolbarButtons, 'link')]];"></button>
+        </span>
 
-        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'block')]]" restamp>
-          <span part="toolbar-group toolbar-group-block">
-            <!-- Blockquote -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'blockquote')]]" restamp>
-              <button type="button" class="ql-blockquote" part="toolbar-button toolbar-button-blockquote"
-                title$="[[i18n.blockquote]]"></button>
-            </template>
+        <span part="toolbar-group toolbar-group-block"
+          style="display: [[_buttonGroupDisplay(toolbarButtons, 'block')]];">
+          <!-- Blockquote -->
+          <button type="button" class="ql-blockquote" part="toolbar-button toolbar-button-blockquote"
+            title$="[[i18n.blockquote]]" style="display: [[_buttonDisplay(toolbarButtons, 'blockquote')]];"></button>
 
-            <!-- Code block -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'codeBlock')]]" restamp>
-              <button type="button" class="ql-code-block" part="toolbar-button toolbar-button-code-block"
-                title$="[[i18n.codeBlock]]"></button>
-            </template>
-          </span>
-        </template>
+          <!-- Code block -->
+          <button type="button" class="ql-code-block" part="toolbar-button toolbar-button-code-block"
+            title$="[[i18n.codeBlock]]" style="display: [[_buttonDisplay(toolbarButtons, 'codeBlock')]];"></button>
+        </span>
 
-        <template is="dom-if" if="[[_isButtonGroupVisible(toolbarButtons, 'format')]]" restamp>
-          <span part="toolbar-group toolbar-group-format">
-            <!-- Clean -->
-            <template is="dom-if" if="[[_isButtonVisible(toolbarButtons, 'clean')]]" restamp>
-              <button type="button" class="ql-clean" part="toolbar-button toolbar-button-clean"
-                title$="[[i18n.clean]]"></button>
-            </template>
-          </span>
-        </template>
+        <span part="toolbar-group toolbar-group-format"
+          style="display: [[_buttonGroupDisplay(toolbarButtons, 'format')]];">
+          <!-- Clean -->
+          <button type="button" class="ql-clean" part="toolbar-button toolbar-button-clean" title$="[[i18n.clean]]"
+            style="display: [[_buttonDisplay(toolbarButtons, 'clean')]];"></button>
+        </span>
 
         <input id="fileInput" type="file" accept="image/png, image/gif, image/jpeg, image/bmp, image/x-icon"
           on-change="_uploadImage">
@@ -346,7 +297,7 @@ This program is available under Apache License Version 2.0, available at https:/
 
       const TOOLBAR_BUTTON_GROUPS = {
         "history": ["undo", "redo"],
-        "emphasis": ["bold", "italic", "unserline", "strike"],
+        "emphasis": ["bold", "italic", "underline", "strike"],
         "heading": ["h1", "h2", "h3"],
         "glyph-transformation": ["subscript", "superscript"],
         "list": ["listOrdered", "listBullet"],
@@ -579,13 +530,13 @@ This program is available under Apache License Version 2.0, available at https:/
           };
         }
 
-        _isButtonVisible(toolbarButtons, button) {
+        _buttonDisplay(toolbarButtons, button) {
           if (toolbarButtons[button] == false)
-            return false;
-          return true;
+            return "none";
+          return "";
         }
 
-        _isButtonGroupVisible(toolbarButtons, group) {
+        _buttonGroupDisplay(toolbarButtons, group) {
           var visible = false;
           TOOLBAR_BUTTON_GROUPS[group].forEach(button => {
             if (toolbarButtons[button] != false) {
@@ -594,7 +545,7 @@ This program is available under Apache License Version 2.0, available at https:/
             }
           });
 
-          return visible;
+          return visible ? "" : "none";
         }
 
         static get observers() {
@@ -802,7 +753,7 @@ This program is available under Apache License Version 2.0, available at https:/
 
           // add custom link button to toggle state attribute
           const linkButton = this.shadowRoot.querySelector('[part~="toolbar-button-link"]');
-          if(linkButton)
+          if (linkButton)
             toolbar.controls.push(['link', this.shadowRoot.querySelector('[part~="toolbar-button-link"]')]);
 
           toolbar.update = function (range) {

@@ -16,6 +16,7 @@ window.RichTextEditorDemo = superClass => {
               {"insert":{"readonly":"Some readonly text"}},
               {"insert":"<incubator-rich-text-editor> is a Web Component providing rich text editor functionality, part of the "},{"attributes":{"link":"https://vaadin.com/components"},"insert":"Vaadin components"},
               {"insert":".\\nIt handles the following formatting:\\n"},
+              {"insert":{"readonly":"More readonly text"}},
               {"attributes":{"bold":true},"insert":"Bold"},
               {"attributes":{"list":"bullet"},"insert":"\\n"},
               {"attributes":{"italic":true},"insert":"Italic"},
