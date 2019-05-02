@@ -801,7 +801,9 @@ This program is available under Apache License Version 2.0, available at https:/
           const update = toolbar.update;
 
           // add custom link button to toggle state attribute
-          toolbar.controls.push(['link', this.shadowRoot.querySelector('[part~="toolbar-button-link"]')]);
+          const linkButton = this.shadowRoot.querySelector('[part~="toolbar-button-link"]');
+          if(linkButton)
+            toolbar.controls.push(['link', this.shadowRoot.querySelector('[part~="toolbar-button-link"]')]);
 
           toolbar.update = function (range) {
             update.call(toolbar, range);
