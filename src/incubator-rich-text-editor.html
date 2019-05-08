@@ -227,55 +227,19 @@ This program is available under Apache License Version 2.0, available at https:/
 
     Quill.register(ReadOnlyBlot);
 
-    // let Parchment = Quill.import("parchment");
-
-    // class SpanBlot extends Inline {
-    //   static create(value) {
-    //     let node = super.create();
-    //     node.setAttribute("class", "ql-fixed-" + value);
-    //     return node;
-    //   }
-
-    //   static formats(node) {
-    //     let classList = node.getAttribute("class");
-
-    //     if (classList) {
-    //       classList = classList.split(" ");
-
-    //       for (let i in classList)
-    //         if (classList[i].startsWith("ql-fixed-"))
-    //           return parseInt(classList[i].substr("ql-fixed-".length));
-    //     }
-
-    //     return false;
-    //   }
-
-    //   format(name, value) {
-    //     if (name === "span" && value)
-    //       this.domNode.setAttribute("class", "ql-fixed-" + value);
-    //     else
-    //       super.format(name, value);
-    //   }
-
-    // }
-
-    // SpanBlot.blotName = "span";
-    // SpanBlot.tagName = "span";
-
-    // let config = {
-    //   scope: Parchment.Scope.INLINE,
-    //   whitelist: ['right', 'center', 'justify']
-    // };
-
-    // // let AlignClass = new Parchment.Attributor.Class('align', 'ql-alignbla', config);
-    // // let AlignStyle = new Parchment.Attributor.Style('align', 'text-align', config);
-
-    // // Register changes
-    // Quill.register({
-    //   // 'attributors/class/align': AlignClass,
-    //   // 'attributors/style/align': AlignStyle,
-    //   "formats/span": SpanBlot
-    // }, false);
+    // Non-breaking space
+    class Nbsp extends Inline {
+      static create(value) {
+        let node = super.create(value);
+        node.innerHTML = "&nbsp;";
+        return node;
+      }
+    }
+    Nbsp.blotName = 'nbsp';
+    Nbsp.tagName = 'span';
+    Quill.register({
+      'formats/nbsp': Nbsp
+    });
 
     (function () {
       'use strict';
@@ -569,6 +533,23 @@ This program is available under Apache License Version 2.0, available at https:/
               toolbar: toolbarConfig
             }
           });
+          let _editor = this._editor;
+
+          this._editor.on('text-change', function(delta, oldDelta, source) {
+            if (source === 'user' && delta.ops.some(o => !!o.delete)) {
+              const currentDelta = _editor.getContents().ops;
+              if (oldDelta.ops.some(v => !!v.insert && v.insert.readonly)) {
+                // There were sections in the previous value. Check for them in the new value.
+                const readonlySectionsCount = oldDelta.ops.filter(v => !!v.insert && v.insert.readonly).length;
+                const newReadonlySectionsCount = currentDelta.filter(v => !!v.insert && v.insert.readonly).length;
+
+                if (readonlySectionsCount != newReadonlySectionsCount) {
+                  _editor.setContents(oldDelta);
+                  _editor.setSelection(delta.ops[0].retain + 1, 0);
+                }
+              }
+            }
+          });
 
           this.__patchToolbar();
           this.__patchKeyboard();
@@ -789,6 +770,12 @@ This program is available under Apache License Version 2.0, available at https:/
 
           // alt-f10 focuses a toolbar button
           keyboard.addBinding({ key: 121, altKey: true, handler: focusToolbar });
+
+          // Shift+Space inserts a non-breaking space.
+          keyboard.addBinding({ key: ' ', shiftKey: true }, function() {
+            var index = this.quill.getSelection().index;
+            this.quill.insertEmbed(index, "nbsp", "");
+          });
         }
 
         __emitChangeEvent() {

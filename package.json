@@ -35,7 +35,7 @@
     "lint:js": "eslint *.js test",
     "lint:polymer": "polymer lint --rules polymer-2 --input ./src/*.html ./theme/**/*.html",
     "prestart": "polymer analyze incubator-* > analysis.json",
-    "start": "polymer serve --port 3000 --open",
+    "start": "polymer serve --port 3000 --open --hostname 0.0.0.0",
     "preversion": "magi update-version"
   },
   "devDependencies": {
