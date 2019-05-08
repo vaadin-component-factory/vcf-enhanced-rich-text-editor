@@ -569,6 +569,23 @@ This program is available under Apache License Version 2.0, available at https:/
               toolbar: toolbarConfig
             }
           });
+          let _editor = this._editor;
+
+          this._editor.on('text-change', function(delta, oldDelta, source) {
+            if (source === 'user' && delta.ops.some(o => !!o.delete)) {
+              const currentDelta = _editor.getContents().ops;
+              if (oldDelta.ops.some(v => !!v.insert && v.insert.readonly)) {
+                // There were sections in the previous value. Check for them in the new value.
+                const readonlySectionsCount = oldDelta.ops.filter(v => !!v.insert && v.insert.readonly).length;
+                const newReadonlySectionsCount = currentDelta.filter(v => !!v.insert && v.insert.readonly).length;
+
+                if (readonlySectionsCount != newReadonlySectionsCount) {
+                  _editor.setContents(oldDelta);
+                  _editor.setSelection(delta.ops[0].retain + 1, 0);
+                }
+              }
+            }
+          });
 
           this.__patchToolbar();
           this.__patchKeyboard();
