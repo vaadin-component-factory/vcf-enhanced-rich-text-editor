@@ -14,6 +14,8 @@ This program is available under Apache License Version 2.0, available at https:/
 <link rel="import" href="../../vaadin-text-field/src/vaadin-text-field.html">
 <link rel="import" href="../../vaadin-element-mixin/vaadin-element-mixin.html">
 <link rel="import" href="../../vaadin-license-checker/vaadin-license-checker.html">
+<link rel="import" href="../../vaadin-icons/vaadin-icons.html">
+<link rel="import" href="../../polymer/iron-icon.html">
 
 <link rel="import" href="../vendor/vaadin-quill.html">
 <link rel="import" href="incubator-rich-text-editor-styles.html">
@@ -163,21 +165,22 @@ This program is available under Apache License Version 2.0, available at https:/
           on-change="_uploadImage">
       </div>
 
-      <div
-        style="overflow: hidden; box-sizing: content-box; width: 100% !important; height: 15px !important; flex-shrink: 0; display: flex;">
         <div
-          style="overflow: hidden; box-sizing: content-box; border-color: rgb(158, 170, 182); border-style: solid; border-width: 0 1px 1px 0; width: 14px !important; height: 14px !important;">
+          style="overflow: hidden; box-sizing: content-box; width: 100% !important; height: 15px !important; flex-shrink: 0; display: flex;">
+          <div
+            style="overflow: hidden; box-sizing: content-box; border-color: rgb(158, 170, 182); border-style: solid; border-width: 0 1px 1px 0; width: 14px !important; height: 14px !important;">
+          </div>
+          <div
+            style="position:relative; overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-horizontal.png&quot;)]]') repeat-x; flex-grow: 1; height: 15px !important; padding: 0;"
+            on-click="_addTabStop" part="horizontalRuler">
+          </div>
         </div>
-        <div
-          style="overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-horizontal.png&quot;)]]') repeat-x; flex-grow: 1; height: 15px !important;">
+        <div style="display: flex; flex-grow: 1;">
+          <div
+            style="overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-vertical.png&quot;)]]') repeat-y; width: 15px !important; flex-shrink: 0;">
+          </div>
+          <div part="content"></div>
         </div>
-      </div>
-      <div style="display: flex; flex-grow: 1;">
-        <div
-          style="overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-vertical.png&quot;)]]') repeat-y; width: 15px !important; flex-shrink: 0;">
-        </div>
-        <div part="content"></div>
-      </div>
 
       <div class="announcer" aria-live="polite"></div>
 
@@ -481,8 +484,8 @@ This program is available under Apache License Version 2.0, available at https:/
               type: Array,
               value: [
                 {
-                  type: 'left', // right, center
-                  padding: 120 //px
+                  type: 'left', // right, center, decimal
+                  padding: 120 // px
                 }
               ]
             },
@@ -564,7 +567,8 @@ This program is available under Apache License Version 2.0, available at https:/
           const _editor = this._editor;
           const tabStops = this.tabStops;
 
-          this._editor.on('text-change', function(delta, oldDelta, source) {
+          this._editor.on('text-change', function (delta, oldDelta, source) {
+
             if (source === 'user' && delta.ops.some(o => !!o.delete)) {
               // Prevent user to delete a readonly Blot
               const currentDelta = _editor.getContents().ops;
@@ -815,7 +819,7 @@ This program is available under Apache License Version 2.0, available at https:/
           keyboard.addBinding({ key: 121, altKey: true, handler: focusToolbar });
 
           // Shift+Space inserts a non-breaking space.
-          keyboard.addBinding({ key: ' ', shiftKey: true }, function() {
+          keyboard.addBinding({ key: ' ', shiftKey: true }, function () {
             var index = this.quill.getSelection().index;
             this.quill.insertEmbed(index, "nbsp", "");
           });
@@ -1090,6 +1094,36 @@ This program is available under Apache License Version 2.0, available at https:/
             // value changed from outside
             this.__lastCommittedChange = this.value;
           }
+        }
+
+        _addTabStop(event) {
+          var icon = document.createElement('iron-icon');
+          icon.setAttribute('icon', 'vaadin:caret-left');
+          icon.tabStopType = 'left';
+          icon.style.width = '15px';
+          icon.style.height = '15px';
+          icon.style.position = 'absolute';
+          icon.style.top = "0px";
+          icon.style.left = (event.offsetX - 7) + "px";
+          var rte = this;
+          icon.onclick = function (event) {
+            var icon = event.target;
+            if (icon.getAttribute('icon') == 'vaadin:caret-left') {
+              icon.setAttribute('icon', 'vaadin:caret-right');
+              icon.tabStop.type = 'left';
+            } else if (icon.getAttribute('icon') == 'vaadin:caret-right') {
+              icon.setAttribute('icon', 'vaadin:dot-circle');
+              icon.tabStop.type = 'decimal';
+            } else {
+              var index = rte.tabStops.indexOf(icon.tabStop);
+              rte.tabStops.splice(index, 1);
+              icon.parentElement.removeChild(icon);
+              icon.remove();
+            }
+          };
+          event.target.appendChild(icon);
+          icon.tabStop = { type: 'left', padding: event.offsetX };
+          this.tabStops.push(icon.tabStop);
         }
 
         /**
