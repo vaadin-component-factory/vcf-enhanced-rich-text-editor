@@ -230,20 +230,19 @@ This program is available under Apache License Version 2.0, available at https:/
 
     Quill.register(ReadOnlyBlot);
 
-    Block.className = 'v-block';
-    ListItem.className = '';
-    ListContainer.className = '';
-
-    class TabStopBlot extends Block {
+    class TabStopBlot extends BlockEmbed {
       static create(data) {
-        const node = super.create();
-        console.log(data);
-        node.setAttribute('style', 'left: 20px');
-
+        const node = super.create(data);
+        node.style.left = '100px';
+        node.textContent = data;
+        //node.innerHTML = `<span style='left: 100px'>${data}</span>`;
         return node;
       }
     }
     TabStopBlot.blotName = 'tabstop';
+    TabStopBlot.tagName = 'span';
+    TabStopBlot.className = 'v-block';
+    TabStopBlot.allowedChildren = [Text];
     Quill.register(TabStopBlot);
 
     // Non-breaking space
@@ -800,13 +799,7 @@ This program is available under Apache License Version 2.0, available at https:/
           // Binding for tabstop functionality.
           const tabStopBinding = { key: TAB_KEY, handler: function(range, context) {
             if (tabStops.length > 0) {
-              this.quill.updateContents([
-                {
-                  insert: {
-                    tabstop: 'salam'
-                  }
-                }
-              ]);
+              this.quill.insertEmbed(range.index, 'tabstop', 'test');
               // If we have tabstops defined in the component, the default tab functionality should be overriden.
               return false;
             } else {
