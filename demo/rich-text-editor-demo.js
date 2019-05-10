@@ -6,7 +6,13 @@ window.RichTextEditorDemo = superClass => {
     }
     ready() {
       super.ready();
-      Array.from(this.shadowRoot.querySelectorAll('vaadin-demo-snippet')).forEach(demo => {
+      setTimeout(() => {
+        const rte = this.shadowRoot.querySelector('vaadin-demo-snippet').shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('incubator-rich-text-editor');
+        rte.value = `[
+          {"insert":{"tabstop":"Some readonly text"}}
+        ]`;
+      }, 400);
+      Array.from(this.shadowRoot.querySelectorAll('vaadin-demo-snippet')).splice(1).forEach(demo => {
         setTimeout(() => {
           const rte = demo.shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('incubator-rich-text-editor');
           if (!rte.hasAttribute('theme') && rte.className.indexOf('min-height') === -1) {

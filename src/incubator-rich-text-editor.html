@@ -203,8 +203,11 @@ This program is available under Apache License Version 2.0, available at https:/
   <script>
     const Quill = window.Quill;
     const BlockEmbed = Quill.import('blots/block/embed');
+    const Block = Quill.import('blots/block');
     const Inline = Quill.import('blots/inline');
     const Text = Quill.import('blots/text');
+    const ListItem = Quill.import('formats/list/item');
+    const ListContainer = Quill.import('formats/list');
 
     class ReadOnlyBlot extends BlockEmbed {
       static create(data) {
@@ -226,6 +229,22 @@ This program is available under Apache License Version 2.0, available at https:/
     ReadOnlyBlot.allowedChildren = [Inline, Text];
 
     Quill.register(ReadOnlyBlot);
+
+    Block.className = 'v-block';
+    ListItem.className = '';
+    ListContainer.className = '';
+
+    class TabStopBlot extends Block {
+      static create(data) {
+        const node = super.create();
+        console.log(data);
+        node.setAttribute('style', 'left: 20px');
+
+        return node;
+      }
+    }
+    TabStopBlot.blotName = 'tabstop';
+    Quill.register(TabStopBlot);
 
     // Non-breaking space
     class Nbsp extends Inline {
@@ -543,10 +562,12 @@ This program is available under Apache License Version 2.0, available at https:/
               toolbar: toolbarConfig
             }
           });
-          let _editor = this._editor;
+          const _editor = this._editor;
+          const tabStops = this.tabStops;
 
           this._editor.on('text-change', function(delta, oldDelta, source) {
             if (source === 'user' && delta.ops.some(o => !!o.delete)) {
+              // Prevent user to delete a readonly Blot
               const currentDelta = _editor.getContents().ops;
               if (oldDelta.ops.some(v => !!v.insert && v.insert.readonly)) {
                 // There were sections in the previous value. Check for them in the new value.
@@ -775,8 +796,27 @@ This program is available under Apache License Version 2.0, available at https:/
           // https://github.com/vaadin/incubator-rich-text-editor/issues/67
           const originalBindings = bindings.filter(b => !b.shiftKey || b.format && b.format['code-block']);
           const moveFocusBinding = { key: TAB_KEY, shiftKey: true, handler: focusToolbar };
+          const tabStops = this.tabStops;
+          // Binding for tabstop functionality.
+          const tabStopBinding = { key: TAB_KEY, handler: function(range, context) {
+            if (tabStops.length > 0) {
+              this.quill.updateContents([
+                {
+                  insert: {
+                    tabstop: 'salam'
+                  }
+                }
+              ]);
+              // If we have tabstops defined in the component, the default tab functionality should be overriden.
+              return false;
+            } else {
+              // In case we have no tabstops, go ahead with the default functionality.
+              return true;
+            }
+            }
+          };
 
-          keyboard.bindings[TAB_KEY] = [...originalBindings, moveFocusBinding];
+          keyboard.bindings[TAB_KEY] = [tabStopBinding, ...originalBindings, moveFocusBinding];
 
           // alt-f10 focuses a toolbar button
           keyboard.addBinding({ key: 121, altKey: true, handler: focusToolbar });
