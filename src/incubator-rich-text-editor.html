@@ -248,6 +248,157 @@ This program is available under Apache License Version 2.0, available at https:/
     TabStopBlot.allowedChildren = [Text];
     Quill.register(TabStopBlot);
 
+    class TabBlot extends Inline {
+      static create() {
+        let node = super.create();
+
+        node.innerHTML = "&#65279;";
+        node.style.width = `0px`;
+        node.setAttribute("contenteditable", false);
+        return node;
+      }
+    }
+    TabBlot.blotName = 'tab';
+    TabBlot.tagName = 'tab';
+    Quill.register(TabBlot);
+   
+
+    class PreTabBlot extends Inline {
+      static create() {
+        let node = super.create();
+
+        node.innerHTML = "&#65279;";
+        node.style.width = `1px`;
+        node.setAttribute("contenteditable", false);
+        return node;
+      }
+    }
+    PreTabBlot.blotName = 'pre-tab';
+    PreTabBlot.tagName = 'pre-tab';
+    Quill.register(PreTabBlot);
+    
+    class LinePartBlot extends Inline {
+      static create() {
+        let node = super.create();
+        return node;
+      }
+    }
+    LinePartBlot.blotName = 'line-part';
+    LinePartBlot.tagName = 'line-part';
+    Quill.register(LinePartBlot);
+    
+    var emptyRegEx = new RegExp('\uFEFF', 'g');
+    class TabsContBlot extends Block {
+      static create() {
+        let node = super.create();
+        node.style.display = 'block';
+        node.style.marginTop = '1em';
+        node.style.marginBottom = '1em';
+        
+        return node;
+      }
+
+      static getPrevTab(preTab) {
+        if (!preTab.previousElementSibling) {
+          return null;
+        }
+
+        if (preTab.previousElementSibling.nodeName == TabBlot.tagName.toUpperCase()) {
+          return preTab.previousElementSibling;
+        }
+        
+        if (!preTab.previousElementSibling.previousElementSibling) {
+          return null;
+        }
+        
+        if (preTab.previousElementSibling.innerText.trim() === "" &&
+             preTab.previousElementSibling.previousElementSibling.nodeName == TabBlot.tagName.toUpperCase()) {
+               
+          return preTab.previousElementSibling.previousElementSibling;
+        }
+
+        return null;
+      }
+
+      static convertPreTabs(node) {
+        let preTab = node.querySelector(PreTabBlot.tagName);
+        if (preTab) {
+          let tab = this.getPrevTab(preTab);
+          if (tab) {
+            if (!preTab.getAttribute("locked")) {
+              preTab.setAttribute("locked", true);
+
+              let level = parseInt(tab.getAttribute('level')) || 1;
+              tab.setAttribute('level', ++level);
+            }
+            preTab.remove();
+          } else {
+            let tab = document.createElement('tab');
+            tab.innerHTML = preTab.innerHTML;
+            tab.style.width = `1px`;
+            tab.setAttribute("contenteditable", false);
+            
+            preTab.parentElement.replaceChild(tab, preTab);
+          }
+        }
+      }
+
+      static formats(node) {
+        this.convertPreTabs(node);
+        let separators = node.querySelectorAll(TabBlot.tagName);
+
+        if (node.getAttribute('tabs-count') != separators.length) {
+          node.setAttribute('tabs-count', separators.length);
+          separators.forEach((separator) => {
+            let prev = separator.previousSibling;
+            if (prev != null && prev.nodeName != LinePartBlot.tagName.toUpperCase()) {
+              let leftEl = document.createElement('line-part');
+              if (prev.nodeName == '#text') {
+                leftEl.textContent = prev.textContent.replace(emptyRegEx, '');
+              } else {
+                let prevClone = prev.cloneNode(true);
+                prevClone.innerHTML = prevClone.innerHTML.replace(emptyRegEx, '');
+                leftEl.appendChild(prevClone);
+              }
+
+              separator.parentElement.replaceChild(leftEl, prev);
+            }    
+            
+            let next = separator.nextSibling;
+            if (next != null) {
+              if (prev.nodeName != LinePartBlot.tagName.toUpperCase()) {
+                let rightEl = document.createElement('line-part');
+
+                if (prev.nodeName == '#text') {
+                  rightEl.innerHTML = separator.textContent.replace(emptyRegEx, '') + next.textContent.replace(emptyRegEx, '');
+                } else {
+                  let nextClone = next.cloneNode(true);
+                  // TODO check if not ZERO WIDTH NO-BREAK SPACE
+                  nextClone.innerHTML = separator.textContent.replace(emptyRegEx, '') + nextClone.innerHTML.replace(emptyRegEx, '');
+                  rightEl.appendChild(nextClone);
+                }
+                separator.parentElement.replaceChild(rightEl, next);
+              }
+            } else {
+              let rightEl = document.createElement('line-part');
+              rightEl.innerHTML = "&#65279;";
+              if (separator.parentElement) {
+                separator.parentElement.appendChild(rightEl);
+              }
+            }
+            
+            separator.innerHTML = '&#65279;';
+          });
+        }
+
+        return TabsContBlot.tagName;
+      }
+    }
+    TabsContBlot.blotName = 'tabs-cont';
+    TabsContBlot.tagName = 'tabs-cont';
+    Quill.register(TabsContBlot);
+    
+    
     // Non-breaking space
     class Nbsp extends Inline {
       static create(value) {
@@ -261,6 +412,8 @@ This program is available under Apache License Version 2.0, available at https:/
     Quill.register({
       'formats/nbsp': Nbsp
     });
+    
+    Inline.order.push(LinePartBlot.blotName, TabBlot.blotName, PreTabBlot.blotName);
 
     (function () {
       'use strict';
@@ -304,6 +457,7 @@ This program is available under Apache License Version 2.0, available at https:/
       };
 
       const TAB_KEY = 9;
+      const tabs = [{position: 150, direction: 'left'}, {position: 300, direction: 'middle'}, {position: 450, direction: 'right'}];
 
       /**
        * `<incubator-rich-text-editor>` is a Web Component for rich text editing.
@@ -543,6 +697,59 @@ This program is available under Apache License Version 2.0, available at https:/
           return visible ? "" : "none";
         }
 
+        _cleanUpLineParts() {
+          let lineParts = document.querySelectorAll('#editor-container ' + LinePartBlot.tagName);
+          lineParts.forEach(line => {
+            if (!line.previousElementSibling || line.previousElementSibling.nodeName != TabBlot.tagName.toUpperCase()) {
+              line.style.paddingLeft = "0px";
+            }
+            if (line.nextElementSibling && line.nextElementSibling.nodeName != TabBlot.tagName.toUpperCase() && line.textContent.trim().length == 0) {
+              line.remove();
+            }
+          });
+        }
+
+        _simulateTabs() {
+          let allTabsConts = document.querySelectorAll('#editor-container ' + TabsContBlot.tagName);
+          allTabsConts.forEach(tabsCont => {
+            let tabElements = tabsCont.querySelectorAll(TabBlot.tagName);
+            let tabNumber = 0;
+            tabElements.forEach( (tabElement) => {
+              let el = tabElement.nextSibling;
+              if (el) {
+                if (el.nodeName == "#text") {
+                  let linePart = document.createElement('line-part');
+                  linePart.innerText = el.wholeText;
+                  el.replaceWith(linePart);
+                  el = linePart;
+                }
+                tabNumber += tabElement.getAttribute('level') ? parseInt(tabElement.getAttribute('level')) : 1;
+                let tabInfo = tabs[tabNumber - 1];
+                if (tabInfo) {
+                  let newPadding = tabInfo.position - (el.offsetLeft - tabsCont.offsetLeft);
+                  
+                  if (tabInfo.direction == 'right' || tabInfo.direction == 'middle') {
+                    let prevPadding = el.style.paddingLeft ? parseInt(el.style.paddingLeft.split('px')[0]) : 0;
+                    let elWidth = el.offsetWidth - prevPadding;
+                    
+                    if (tabInfo.direction == 'middle') {
+                      elWidth /= 2;
+                    }
+                    newPadding -= elWidth;
+                  }
+                  
+                  el.style.paddingLeft = newPadding + "px";
+                } else {
+                  let strTab = document.createElement('line-part');
+                  strTab.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;';
+                  // strTab.innerHTML = '&emsp;';
+                  tabElement.replaceWith(strTab);
+                }
+              }
+            });
+          });
+        }
+
         static get observers() {
           return [
             '_valueChanged(value, _editor)',
@@ -611,6 +818,11 @@ This program is available under Apache License Version 2.0, available at https:/
                 this.value = JSON.stringify(this._editor.getContents().ops);
               }
             );
+          });
+
+          this._editor.on('text-change', (delta, oldDelta, source) => {
+            this._cleanUpLineParts();
+            this._simulateTabs();
           });
 
           editorContent.addEventListener('focusout', e => {
@@ -802,14 +1014,25 @@ This program is available under Apache License Version 2.0, available at https:/
           const tabStops = this.tabStops;
           // Binding for tabstop functionality.
           const tabStopBinding = { key: TAB_KEY, handler: function(range, context) {
-            if (tabStops.length > 0) {
-              this.quill.insertEmbed(range.index, 'tabstop', 'test');
+            // if (tabStops.length > 0) {
+              // this.quill.insertEmbed(range.index, 'tabstop', 'test');
+              let selection = this.quill.getSelection();
+              console.log("tab is pressed", selection);
+              this.quill.format('bold', true);
+              // this.quill.format(PreTabBlot.blotName, true);
+              // this.quill.format(TabsContBlot.blotName, true);
+              // setTimeout(() => {
+              //   selection.length = 0;
+              //   this.quill.setSelection(selection, 'user');
+              //   console.log("setting selection", selection);
+              // }, 0);  
+
               // If we have tabstops defined in the component, the default tab functionality should be overriden.
               return false;
-            } else {
-              // In case we have no tabstops, go ahead with the default functionality.
-              return true;
-            }
+            // } else {
+            //   // In case we have no tabstops, go ahead with the default functionality.
+            //   return true;
+            // }
             }
           };
 
