@@ -6,7 +6,8 @@
       }
     </style>
 
-    <h3>Rich Text Editor</h3>
+    <h3 on-click="getValue">Rich Text Editor</h3>
+    
     <vaadin-demo-snippet id="rich-text-editor-basic-demos-sample-example">
       <template preserve-content>
         <incubator-rich-text-editor style="height: 300px;"></incubator-rich-text-editor>
@@ -49,6 +50,21 @@
   </template>
   <script>
     class RichTextEditorBasicDemos extends DemoReadyEventEmitter(RichTextEditorDemo(Polymer.Element)) {
+
+      ready() {
+        super.ready();
+        
+        // console.log('Ready to go', this.$.example2);
+        // console.log('Ready to go', this);
+        // console.log('Ready to go', this.$.example1.shadowRoot.querySelector('incubator-rich-text-editor'));
+      }
+      
+      getValue() {
+        console.log('click');
+        // console.log('get value', this);
+        // console.log('get value', this.$.example1.shadowRoot.querySelector('incubator-rich-text-editor'));
+      }
+
       static get is() {
         return 'rich-text-editor-basic-demos';
       }

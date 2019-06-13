@@ -208,7 +208,7 @@ This program is available under Apache License Version 2.0, available at https:/
     const BlockEmbed = Quill.import('blots/block/embed');
     const Block = Quill.import('blots/block');
     const Inline = Quill.import('blots/inline');
-    const Text = Quill.import('blots/text');
+    const TextBlot = Quill.import('blots/text');
     const ListItem = Quill.import('formats/list/item');
     const ListContainer = Quill.import('formats/list');
 
@@ -229,7 +229,7 @@ This program is available under Apache License Version 2.0, available at https:/
     ReadOnlyBlot.blotName = 'readonly';
     ReadOnlyBlot.tagName = 'span';
     ReadOnlyBlot.className = 'readonly-section';
-    ReadOnlyBlot.allowedChildren = [Inline, Text];
+    ReadOnlyBlot.allowedChildren = [Inline, TextBlot];
 
     Quill.register(ReadOnlyBlot);
 
@@ -253,7 +253,7 @@ This program is available under Apache License Version 2.0, available at https:/
         let node = super.create();
 
         node.innerHTML = "&#65279;";
-        node.style.width = `0px`;
+        node.style.width = `1px`;
         node.setAttribute("contenteditable", false);
         return node;
       }
@@ -291,9 +291,6 @@ This program is available under Apache License Version 2.0, available at https:/
     class TabsContBlot extends Block {
       static create() {
         let node = super.create();
-        node.style.display = 'block';
-        node.style.marginTop = '1em';
-        node.style.marginBottom = '1em';
         
         return node;
       }
@@ -366,10 +363,10 @@ This program is available under Apache License Version 2.0, available at https:/
             
             let next = separator.nextSibling;
             if (next != null) {
-              if (prev.nodeName != LinePartBlot.tagName.toUpperCase()) {
+              if (next.nodeName != LinePartBlot.tagName.toUpperCase()) {
                 let rightEl = document.createElement('line-part');
 
-                if (prev.nodeName == '#text') {
+                if (next.nodeName == '#text') {
                   rightEl.innerHTML = separator.textContent.replace(emptyRegEx, '') + next.textContent.replace(emptyRegEx, '');
                 } else {
                   let nextClone = next.cloneNode(true);
@@ -387,6 +384,7 @@ This program is available under Apache License Version 2.0, available at https:/
               }
             }
             
+            // TODO fix currsor shifting
             separator.innerHTML = '&#65279;';
           });
         }
@@ -457,8 +455,7 @@ This program is available under Apache License Version 2.0, available at https:/
       };
 
       const TAB_KEY = 9;
-      const tabs = [{position: 150, direction: 'left'}, {position: 300, direction: 'middle'}, {position: 450, direction: 'right'}];
-
+      const QL_EDITOR_PADDING_LEFT = 16;
       /**
        * `<incubator-rich-text-editor>` is a Web Component for rich text editing.
        * It provides a set of toolbar controls to apply formatting on the content,
@@ -637,10 +634,10 @@ This program is available under Apache License Version 2.0, available at https:/
             tabStops: {
               type: Array,
               value: [
-                {
-                  type: 'left', // right, center, decimal
-                  padding: 120 // px
-                }
+                // {
+                //   direction: 'left', // left, right, middle
+                //   position: 120 // px
+                // }
               ]
             },
 
@@ -698,7 +695,7 @@ This program is available under Apache License Version 2.0, available at https:/
         }
 
         _cleanUpLineParts() {
-          let lineParts = document.querySelectorAll('#editor-container ' + LinePartBlot.tagName);
+          let lineParts = this.shadowRoot.querySelectorAll(LinePartBlot.tagName);
           lineParts.forEach(line => {
             if (!line.previousElementSibling || line.previousElementSibling.nodeName != TabBlot.tagName.toUpperCase()) {
               line.style.paddingLeft = "0px";
@@ -710,7 +707,7 @@ This program is available under Apache License Version 2.0, available at https:/
         }
 
         _simulateTabs() {
-          let allTabsConts = document.querySelectorAll('#editor-container ' + TabsContBlot.tagName);
+          let allTabsConts = this.shadowRoot.querySelectorAll(TabsContBlot.tagName);
           allTabsConts.forEach(tabsCont => {
             let tabElements = tabsCont.querySelectorAll(TabBlot.tagName);
             let tabNumber = 0;
@@ -724,9 +721,9 @@ This program is available under Apache License Version 2.0, available at https:/
                   el = linePart;
                 }
                 tabNumber += tabElement.getAttribute('level') ? parseInt(tabElement.getAttribute('level')) : 1;
-                let tabInfo = tabs[tabNumber - 1];
+                let tabInfo = this.tabStops[tabNumber - 1];
                 if (tabInfo) {
-                  let newPadding = tabInfo.position - (el.offsetLeft - tabsCont.offsetLeft);
+                  let newPadding = tabInfo.position - QL_EDITOR_PADDING_LEFT - (el.offsetLeft - tabsCont.offsetLeft);
                   
                   if (tabInfo.direction == 'right' || tabInfo.direction == 'middle') {
                     let prevPadding = el.style.paddingLeft ? parseInt(el.style.paddingLeft.split('px')[0]) : 0;
@@ -741,8 +738,7 @@ This program is available under Apache License Version 2.0, available at https:/
                   el.style.paddingLeft = newPadding + "px";
                 } else {
                   let strTab = document.createElement('line-part');
-                  strTab.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;';
-                  // strTab.innerHTML = '&emsp;';
+                  strTab.innerHTML = String.fromCharCode(9);
                   tabElement.replaceWith(strTab);
                 }
               }
@@ -1014,25 +1010,22 @@ This program is available under Apache License Version 2.0, available at https:/
           const tabStops = this.tabStops;
           // Binding for tabstop functionality.
           const tabStopBinding = { key: TAB_KEY, handler: function(range, context) {
-            // if (tabStops.length > 0) {
-              // this.quill.insertEmbed(range.index, 'tabstop', 'test');
-              let selection = this.quill.getSelection();
-              console.log("tab is pressed", selection);
-              this.quill.format('bold', true);
-              // this.quill.format(PreTabBlot.blotName, true);
-              // this.quill.format(TabsContBlot.blotName, true);
-              // setTimeout(() => {
-              //   selection.length = 0;
-              //   this.quill.setSelection(selection, 'user');
-              //   console.log("setting selection", selection);
-              // }, 0);  
+              if (tabStops.length > 0) {
+                let selection = this.quill.getSelection();
+                this.quill.format(PreTabBlot.blotName, true);
+                this.quill.format(TabsContBlot.blotName, true);
+                setTimeout(() => {
+                  selection.length = 0;
+                  // selection.index += 2;
+                  this.quill.setSelection(selection, 'user');
+                }, 0);  
 
-              // If we have tabstops defined in the component, the default tab functionality should be overriden.
-              return false;
-            // } else {
-            //   // In case we have no tabstops, go ahead with the default functionality.
-            //   return true;
-            // }
+                // If we have tabstops defined in the component, the default tab functionality should be overriden.
+                return false;
+              } else {
+                // In case we have no tabstops, go ahead with the default functionality.
+                return true;
+              }
             }
           };
 
@@ -1307,6 +1300,8 @@ This program is available under Apache License Version 2.0, available at https:/
           // suppress text-change event to prevent infinite loop
           if (JSON.stringify(editor.getContents()) !== JSON.stringify(delta)) {
             editor.setContents(delta, SOURCE.SILENT);
+            // in case we have tabstops, they will be rendered in on text-change, so we need to trigger it
+            editor.emitter.emit('text-change');
           }
           this.__updateHtmlValue();
 
@@ -1321,32 +1316,42 @@ This program is available under Apache License Version 2.0, available at https:/
 
         _addTabStop(event) {
           var icon = document.createElement('iron-icon');
-          icon.setAttribute('icon', 'vaadin:caret-left');
-          icon.tabStopType = 'left';
+          icon.setAttribute('icon', 'vaadin:caret-right');
           icon.style.width = '15px';
           icon.style.height = '15px';
           icon.style.position = 'absolute';
           icon.style.top = "0px";
           icon.style.left = (event.offsetX - 7) + "px";
+          event.target.appendChild(icon);
+          icon.tabStop = { direction: 'left', position: event.offsetX };
+          this.tabStops.push(icon.tabStop);
+          this._editor.emitter.emit('text-change');
+
+          console.log('tab-stops', this.tabStops);
+          
           var rte = this;
-          icon.onclick = function (event) {
-            var icon = event.target;
-            if (icon.getAttribute('icon') == 'vaadin:caret-left') {
-              icon.setAttribute('icon', 'vaadin:caret-right');
-              icon.tabStop.type = 'left';
-            } else if (icon.getAttribute('icon') == 'vaadin:caret-right') {
+          icon.onclick = function (iconEvent) {
+            var icon = iconEvent.target;
+            var index = rte.tabStops.indexOf(icon.tabStop);
+            
+            if (icon.getAttribute('icon') == 'vaadin:caret-right') {
+              icon.setAttribute('icon', 'vaadin:caret-left');
+              icon.tabStop.direction = 'right';
+              rte.tabStops[index] = icon.tabStop;
+            } else if (icon.getAttribute('icon') == 'vaadin:caret-left') {
               icon.setAttribute('icon', 'vaadin:dot-circle');
-              icon.tabStop.type = 'decimal';
+              icon.tabStop.direction = 'middle';
+              rte.tabStops[index] = icon.tabStop;
             } else {
-              var index = rte.tabStops.indexOf(icon.tabStop);
               rte.tabStops.splice(index, 1);
               icon.parentElement.removeChild(icon);
               icon.remove();
             }
+
+            console.log('tab-stops', rte.tabStops);
+            iconEvent.stopPropagation();
+            rte._editor.emitter.emit('text-change');
           };
-          event.target.appendChild(icon);
-          icon.tabStop = { type: 'left', padding: event.offsetX };
-          this.tabStops.push(icon.tabStop);
         }
 
         /**

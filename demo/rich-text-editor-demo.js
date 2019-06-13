@@ -12,6 +12,18 @@ window.RichTextEditorDemo = superClass => {
       //     {"insert":{"tabstop":"Some readonly text"}}
       //   ]`;
       // }, 400);
+      setTimeout(() => {
+        const rte0 = this.shadowRoot.querySelectorAll('vaadin-demo-snippet')[0].shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('incubator-rich-text-editor');
+        if (!rte0.hasAttribute('theme') && rte0.className.indexOf('min-height') === -1) {
+          rte0.value = `[
+            {"attributes":{"bold":true,"line-part":true},"insert":"hello "},
+            {"attributes":{"tab":true},"insert":"﻿"},
+            {"attributes":{"bold":true,"line-part":true},"insert":"world"},
+            {"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"}
+          ]`;
+        }
+      }, 300);
+
       Array.from(this.shadowRoot.querySelectorAll('vaadin-demo-snippet')).splice(1).forEach(demo => {
         setTimeout(() => {
           const rte = demo.shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('incubator-rich-text-editor');
