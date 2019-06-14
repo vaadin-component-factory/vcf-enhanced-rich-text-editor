@@ -15,6 +15,7 @@ window.RichTextEditorDemo = superClass => {
       setTimeout(() => {
         const rte0 = this.shadowRoot.querySelectorAll('vaadin-demo-snippet')[0].shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('incubator-rich-text-editor');
         if (!rte0.hasAttribute('theme') && rte0.className.indexOf('min-height') === -1) {
+          rte0.tabStops = [{direction: 'left', position: 150}, {direction: 'middle', position: 350}, {direction: 'right', position: 500}];
           rte0.value = `[
             {"attributes":{"bold":true,"line-part":true},"insert":"hello "},
             {"attributes":{"tab":true},"insert":"﻿"},

@@ -749,7 +749,8 @@ This program is available under Apache License Version 2.0, available at https:/
         static get observers() {
           return [
             '_valueChanged(value, _editor)',
-            '_disabledChanged(disabled, readonly, _editor)'
+            '_disabledChanged(disabled, readonly, _editor)',
+            '_tabStopsChanged(tabStops, _editor)'
           ];
         }
 
@@ -837,6 +838,10 @@ This program is available under Apache License Version 2.0, available at https:/
           });
 
           this._editor.on('selection-change', this.__announceFormatting.bind(this));
+
+          console.log('value', this.value);
+          console.log('tabStops', this.tabStops);
+
         }
 
         _prepareToolbar() {
@@ -1007,17 +1012,17 @@ This program is available under Apache License Version 2.0, available at https:/
           // https://github.com/vaadin/incubator-rich-text-editor/issues/67
           const originalBindings = bindings.filter(b => !b.shiftKey || b.format && b.format['code-block']);
           const moveFocusBinding = { key: TAB_KEY, shiftKey: true, handler: focusToolbar };
-          const tabStops = this.tabStops;
+          const self = this;
           // Binding for tabstop functionality.
           const tabStopBinding = { key: TAB_KEY, handler: function(range, context) {
-              if (tabStops.length > 0) {
-                let selection = this.quill.getSelection();
-                this.quill.format(PreTabBlot.blotName, true);
-                this.quill.format(TabsContBlot.blotName, true);
+              if (self.tabStops.length > 0) {
+                let selection = self._editor.getSelection();
+                self._editor.format(PreTabBlot.blotName, true);
+                self._editor.format(TabsContBlot.blotName, true);
                 setTimeout(() => {
                   selection.length = 0;
-                  // selection.index += 2;
-                  this.quill.setSelection(selection, 'user');
+                  selection.index += 2;
+                  self._editor.setSelection(selection, 'user');
                 }, 0);  
 
                 // If we have tabstops defined in the component, the default tab functionality should be overriden.
@@ -1267,6 +1272,12 @@ This program is available under Apache License Version 2.0, available at https:/
           this.__oldDisabled = disabled;
         }
 
+        _tabStopsChanged(tabStops, _editor) {
+          tabStops.forEach(stop => {
+            this._addTabStopIcon(stop);
+          });
+        }
+
         _valueChanged(value, editor) {
           if (editor === undefined) {
             return;
@@ -1314,44 +1325,57 @@ This program is available under Apache License Version 2.0, available at https:/
           }
         }
 
-        _addTabStop(event) {
+        _addTabStopIcon(tabStop) {
           var icon = document.createElement('iron-icon');
-          icon.setAttribute('icon', 'vaadin:caret-right');
+          let iconIcon;
+          if (tabStop.direction == 'left') {
+            iconIcon = 'vaadin:caret-right';
+          } else if (tabStop.direction == 'right') {
+            iconIcon = 'vaadin:caret-left';
+          } else {
+            iconIcon = 'vaadin:dot-circle';
+          }
+
+          icon.setAttribute('icon', iconIcon);
           icon.style.width = '15px';
           icon.style.height = '15px';
           icon.style.position = 'absolute';
           icon.style.top = "0px";
-          icon.style.left = (event.offsetX - 7) + "px";
-          event.target.appendChild(icon);
-          icon.tabStop = { direction: 'left', position: event.offsetX };
-          this.tabStops.push(icon.tabStop);
-          this._editor.emitter.emit('text-change');
+          icon.style.left = (tabStop.position - 7) + "px";
+          let horizontalRuler = this.shadowRoot.querySelector('[part="horizontalRuler"]');
+          horizontalRuler.appendChild(icon);
+          icon.tabStop = tabStop;
 
-          console.log('tab-stops', this.tabStops);
-          
-          var rte = this;
+          var self = this;
           icon.onclick = function (iconEvent) {
             var icon = iconEvent.target;
-            var index = rte.tabStops.indexOf(icon.tabStop);
+            var index = self.tabStops.indexOf(icon.tabStop);
             
             if (icon.getAttribute('icon') == 'vaadin:caret-right') {
               icon.setAttribute('icon', 'vaadin:caret-left');
               icon.tabStop.direction = 'right';
-              rte.tabStops[index] = icon.tabStop;
+              self.tabStops[index] = icon.tabStop;
             } else if (icon.getAttribute('icon') == 'vaadin:caret-left') {
               icon.setAttribute('icon', 'vaadin:dot-circle');
               icon.tabStop.direction = 'middle';
-              rte.tabStops[index] = icon.tabStop;
+              self.tabStops[index] = icon.tabStop;
             } else {
-              rte.tabStops.splice(index, 1);
+              self.tabStops.splice(index, 1);
               icon.parentElement.removeChild(icon);
               icon.remove();
             }
 
-            console.log('tab-stops', rte.tabStops);
             iconEvent.stopPropagation();
-            rte._editor.emitter.emit('text-change');
+            self._editor.emitter.emit('text-change');
           };
+        }
+
+        _addTabStop(event) {
+          let tabStop = { direction: 'left', position: event.offsetX };
+          this.tabStops.push(tabStop);
+          this._addTabStopIcon(tabStop);
+          this._editor.emitter.emit('text-change');
+          console.log('tab-stops', this.tabStops);
         }
 
         /**
