@@ -12,7 +12,7 @@
     "polymer"
   ],
   "author": "Vaadin Ltd",
-  "license": "Apache-2.0",
+  "license": "CVAL 3",
   "bugs": {
     "url": "https://github.com/vaadin/vcf-enhanced-rich-text-editor/issues"
   },

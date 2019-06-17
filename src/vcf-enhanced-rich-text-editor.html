@@ -249,13 +249,19 @@ This program is available under Apache License Version 2.0, available at https:/
     Quill.register(TabStopBlot);
 
     class TabBlot extends Inline {
-      static create() {
+      static create(level) {
         let node = super.create();
 
         node.innerHTML = "&#65279;";
         node.style.width = `1px`;
         node.setAttribute("contenteditable", false);
+        
+        node.setAttribute("level", level)
         return node;
+      }
+
+      static formats(node) {
+        return node.getAttribute('level');
       }
     }
     TabBlot.blotName = 'tab';
@@ -330,10 +336,11 @@ This program is available under Apache License Version 2.0, available at https:/
             }
             preTab.remove();
           } else {
-            let tab = document.createElement('tab');
+            let tab = document.createElement(TabBlot.tagName);
             tab.innerHTML = preTab.innerHTML;
             tab.style.width = `1px`;
             tab.setAttribute("contenteditable", false);
+            tab.setAttribute("level", 1);
             
             preTab.parentElement.replaceChild(tab, preTab);
           }
