@@ -2,29 +2,29 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>incubator-rich-text-editor tests</title>
+  <title>vcf-enhanced-rich-text-editor tests</title>
   <script src="../../web-component-tester/browser.js"></script>
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="../../test-fixture/test-fixture.html">
-  <link rel="import" href="../incubator-rich-text-editor.html">
+  <link rel="import" href="../vcf-enhanced-rich-text-editor.html">
 </head>
 
 <body>
   <test-fixture id="height">
     <template>
-      <incubator-rich-text-editor style='height:500px;'></incubator-rich-text-editor>
+      <vcf-enhanced-rich-text-editor style='height:500px;'></vcf-enhanced-rich-text-editor>
     </template>
   </test-fixture>
 
   <test-fixture id="min-height">
     <template>
-      <incubator-rich-text-editor style='min-height:500px;'></incubator-rich-text-editor>
+      <vcf-enhanced-rich-text-editor style='min-height:500px;'></vcf-enhanced-rich-text-editor>
     </template>
   </test-fixture>
 
   <test-fixture id="max-height">
     <template>
-      <incubator-rich-text-editor style='max-height:500px;'></incubator-rich-text-editor>
+      <vcf-enhanced-rich-text-editor style='max-height:500px;'></vcf-enhanced-rich-text-editor>
     </template>
   </test-fixture>
 
@@ -73,7 +73,7 @@
 
           beforeEach(() => {
             rte = fixture(definedValue);
-            editorContainer = rte.shadowRoot.querySelector('.incubator-rich-text-editor-container');
+            editorContainer = rte.shadowRoot.querySelector('.vcf-enhanced-rich-text-editor-container');
             editorContentContainer = rte.shadowRoot.querySelector('.ql-container');
             editorContent = rte.shadowRoot.querySelector('.ql-editor');
             // 18 new lines ~ 828px (46px * 18);

@@ -1,17 +1,17 @@
 {
-  "name": "incubator-rich-text-editor",
+  "name": "vcf-enhanced-rich-text-editor",
   "homepage": "https://vaadin.com/components",
   "authors": [
     "Vaadin Ltd"
   ],
-  "description": "incubator-rich-text-editor",
+  "description": "vcf-enhanced-rich-text-editor",
   "main": [
-    "incubator-rich-text-editor.html",
-    "theme/material/incubator-rich-text-editor.html"
+    "vcf-enhanced-rich-text-editor.html",
+    "theme/material/vcf-enhanced-rich-text-editor.html"
   ],
   "keywords": [
     "Vaadin",
-    "incubator-rich-text-editor",
+    "vcf-enhanced-rich-text-editor",
     "editor",
     "rich text",
     "web-components",

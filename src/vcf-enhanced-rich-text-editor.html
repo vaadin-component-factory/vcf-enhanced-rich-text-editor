@@ -18,12 +18,12 @@ This program is available under Apache License Version 2.0, available at https:/
 <link rel="import" href="../../polymer/iron-icon.html">
 
 <link rel="import" href="../vendor/vaadin-quill.html">
-<link rel="import" href="incubator-rich-text-editor-styles.html">
-<link rel="import" href="incubator-rich-text-editor-toolbar-styles.html">
+<link rel="import" href="vcf-enhanced-rich-text-editor-styles.html">
+<link rel="import" href="vcf-enhanced-rich-text-editor-toolbar-styles.html">
 
-<dom-module id="incubator-rich-text-editor">
+<dom-module id="vcf-enhanced-rich-text-editor">
   <template>
-    <style include="incubator-rich-text-editor-styles">
+    <style include="vcf-enhanced-rich-text-editor-styles">
       :host {
         display: flex;
         flex-direction: column;
@@ -44,7 +44,7 @@ This program is available under Apache License Version 2.0, available at https:/
         display: none;
       }
 
-      .incubator-rich-text-editor-container {
+      .vcf-enhanced-rich-text-editor-container {
         display: flex;
         flex-direction: column;
         min-height: inherit;
@@ -60,7 +60,7 @@ This program is available under Apache License Version 2.0, available at https:/
       }
     </style>
 
-    <div class="incubator-rich-text-editor-container">
+    <div class="vcf-enhanced-rich-text-editor-container">
 
       <!-- Create toolbar container -->
       <div part="toolbar">
@@ -457,12 +457,12 @@ This program is available under Apache License Version 2.0, available at https:/
       const TAB_KEY = 9;
       const QL_EDITOR_PADDING_LEFT = 16;
       /**
-       * `<incubator-rich-text-editor>` is a Web Component for rich text editing.
+       * `<vcf-enhanced-rich-text-editor>` is a Web Component for rich text editing.
        * It provides a set of toolbar controls to apply formatting on the content,
        * which is stored and can be accessed as HTML5 or JSON string.
        *
        * ```
-       * <incubator-rich-text-editor></incubator-rich-text-editor>
+       * <vcf-enhanced-rich-text-editor></vcf-enhanced-rich-text-editor>
        * ```
        *
        * Vaadin Rich Text Editor focuses on the structure, not the styling of content.
@@ -525,9 +525,9 @@ This program is available under Apache License Version 2.0, available at https:/
        * @mixes Vaadin.ThemableMixin
        * @demo demo/index.html
        */
-      class RichTextEditorElement extends Vaadin.ElementMixin(Vaadin.ThemableMixin(Polymer.Element)) {
+      class EnhancedRichTextEditorElement extends Vaadin.ElementMixin(Vaadin.ThemableMixin(Polymer.Element)) {
         static get is() {
-          return 'incubator-rich-text-editor';
+          return 'vcf-enhanced-rich-text-editor';
         }
 
         static get version() {
@@ -1009,7 +1009,7 @@ This program is available under Apache License Version 2.0, available at https:/
 
           // exclude Quill shift-tab bindings, except for code block,
           // as some of those are breaking when on a newline in the list
-          // https://github.com/vaadin/incubator-rich-text-editor/issues/67
+          // https://github.com/vaadin/vcf-enhanced-rich-text-editor/issues/67
           const originalBindings = bindings.filter(b => !b.shiftKey || b.format && b.format['code-block']);
           const moveFocusBinding = { key: TAB_KEY, shiftKey: true, handler: focusToolbar };
           const self = this;
@@ -1385,17 +1385,17 @@ This program is available under Apache License Version 2.0, available at https:/
          */
       }
 
-      customElements.define(RichTextEditorElement.is, RichTextEditorElement);
+      customElements.define(EnhancedRichTextEditorElement.is, EnhancedRichTextEditorElement);
 
       /**
        * @namespace Vaadin
        */
-      window.Vaadin.RichTextEditorElement = RichTextEditorElement;
+      window.Vaadin.EnhancedRichTextEditorElement = EnhancedRichTextEditorElement;
 
       const devModeCallback = window.Vaadin.developmentModeCallback;
       const licenseChecker = devModeCallback && devModeCallback['vaadin-license-checker'];
       if (typeof licenseChecker === 'function') {
-        licenseChecker(RichTextEditorElement);
+        licenseChecker(EnhancedRichTextEditorElement);
       }
     })();
   </script>

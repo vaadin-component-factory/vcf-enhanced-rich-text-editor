@@ -10,14 +10,14 @@
     
     <vaadin-demo-snippet id="rich-text-editor-basic-demos-sample-example">
       <template preserve-content>
-        <incubator-rich-text-editor style="height: 300px;"></incubator-rich-text-editor>
+        <vcf-enhanced-rich-text-editor style="height: 300px;"></vcf-enhanced-rich-text-editor>
       </template>
     </vaadin-demo-snippet>
 
     <h3>Disabled</h3>
     <vaadin-demo-snippet id="rich-text-editor-basic-demos-disabled">
       <template preserve-content>
-        <incubator-rich-text-editor style="height: 300px;" disabled></incubator-rich-text-editor>
+        <vcf-enhanced-rich-text-editor style="height: 300px;" disabled></vcf-enhanced-rich-text-editor>
       </template>
     </vaadin-demo-snippet>
 
@@ -25,22 +25,22 @@
     <vaadin-demo-snippet id="rich-text-editor-basic-demos-min-height">
       <template preserve-content>
         <style>
-          incubator-rich-text-editor.height-constraints {
+          vcf-enhanced-rich-text-editor.height-constraints {
             min-height: 400px;
             max-height: 600px;
           }
         </style>
-        <incubator-rich-text-editor class="height-constraints"></incubator-rich-text-editor>
+        <vcf-enhanced-rich-text-editor class="height-constraints"></vcf-enhanced-rich-text-editor>
       </template>
     </vaadin-demo-snippet>
 
     <h3>Customizing toolbar</h3>
     <vaadin-demo-snippet id="rich-text-editor-basic-demos-customizing-toolbar">
       <template preserve-content>
-        <incubator-rich-text-editor></incubator-rich-text-editor>
+        <vcf-enhanced-rich-text-editor></vcf-enhanced-rich-text-editor>
         <script>
           window.addDemoReadyListener('#rich-text-editor-basic-demos-customizing-toolbar', function(document) {
-            var rte = document.querySelector("incubator-rich-text-editor");
+            var rte = document.querySelector("vcf-enhanced-rich-text-editor");
             rte.toolbarButtons = {undo: false, redo: false, h1: false, h2: false, h3: false, image: false, link: false};
           });
         </script>
@@ -49,26 +49,26 @@
 
   </template>
   <script>
-    class RichTextEditorBasicDemos extends DemoReadyEventEmitter(RichTextEditorDemo(Polymer.Element)) {
+    class EnhancedRichTextEditorBasicDemos extends DemoReadyEventEmitter(RichTextEditorDemo(Polymer.Element)) {
 
       ready() {
         super.ready();
         
         // console.log('Ready to go', this.$.example2);
         // console.log('Ready to go', this);
-        // console.log('Ready to go', this.$.example1.shadowRoot.querySelector('incubator-rich-text-editor'));
+        // console.log('Ready to go', this.$.example1.shadowRoot.querySelector('vcf-enhanced-rich-text-editor'));
       }
       
       getValue() {
         console.log('click');
         // console.log('get value', this);
-        // console.log('get value', this.$.example1.shadowRoot.querySelector('incubator-rich-text-editor'));
+        // console.log('get value', this.$.example1.shadowRoot.querySelector('vcf-enhanced-rich-text-editor'));
       }
 
       static get is() {
         return 'rich-text-editor-basic-demos';
       }
     }
-    customElements.define(RichTextEditorBasicDemos.is, RichTextEditorBasicDemos);
+    customElements.define(EnhancedRichTextEditorBasicDemos.is, EnhancedRichTextEditorBasicDemos);
   </script>
 </dom-module>

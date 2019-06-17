@@ -1,4 +1,4 @@
-gemini.suite('incubator-rich-text-editor', function(rootSuite) {
+gemini.suite('vcf-enhanced-rich-text-editor', function(rootSuite) {
   function wait(actions, find) {
     return actions
       .waitForJSCondition(function(window) {
@@ -23,7 +23,7 @@ gemini.suite('incubator-rich-text-editor', function(rootSuite) {
         suite
           .setUrl(`/${state}.html?theme=${theme}`)
           .setCaptureElements(`#${state}`)
-          .capture(`incubator-rich-text-editor`);
+          .capture(`vcf-enhanced-rich-text-editor`);
       });
     });
   });

@@ -8,7 +8,7 @@ const fs = require('fs');
 gulp.task('icons', function(done) {
   var glyphs;
   const fontName = 'vaadin-rte-icons';
-  const fileName = 'incubator-rich-text-editor-icons';
+  const fileName = 'vcf-enhanced-rich-text-editor-icons';
 
   gulp.src('icons/*.svg')
     .pipe(iconfont({

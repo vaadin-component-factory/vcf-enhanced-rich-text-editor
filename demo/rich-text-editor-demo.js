@@ -7,13 +7,13 @@ window.RichTextEditorDemo = superClass => {
     ready() {
       super.ready();
       // setTimeout(() => {
-      //   const rte = this.shadowRoot.querySelector('vaadin-demo-snippet').shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('incubator-rich-text-editor');
+      //   const rte = this.shadowRoot.querySelector('vaadin-demo-snippet').shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('vcf-enhanced-rich-text-editor');
       //   rte.value = `[
       //     {"insert":{"tabstop":"Some readonly text"}}
       //   ]`;
       // }, 400);
       setTimeout(() => {
-        const rte0 = this.shadowRoot.querySelectorAll('vaadin-demo-snippet')[0].shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('incubator-rich-text-editor');
+        const rte0 = this.shadowRoot.querySelectorAll('vaadin-demo-snippet')[0].shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('vcf-enhanced-rich-text-editor');
         if (!rte0.hasAttribute('theme') && rte0.className.indexOf('min-height') === -1) {
           rte0.tabStops = [{direction: 'left', position: 150}, {direction: 'middle', position: 350}, {direction: 'right', position: 500}];
           rte0.value = `[
@@ -27,13 +27,13 @@ window.RichTextEditorDemo = superClass => {
 
       Array.from(this.shadowRoot.querySelectorAll('vaadin-demo-snippet')).splice(1).forEach(demo => {
         setTimeout(() => {
-          const rte = demo.shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('incubator-rich-text-editor');
+          const rte = demo.shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('vcf-enhanced-rich-text-editor');
           if (!rte.hasAttribute('theme') && rte.className.indexOf('min-height') === -1) {
             rte.value = `[
               {"insert":"High quality rich text editor for the web"},
               {"attributes":{"header":2},"insert":"\\n"},
               {"insert":{"readonly":"Some readonly text"}},
-              {"insert":"<incubator-rich-text-editor> is a Web Component providing rich text editor functionality, part of the "},{"attributes":{"link":"https://vaadin.com/components"},"insert":"Vaadin components"},
+              {"insert":"<vcf-enhanced-rich-text-editor> is a Web Component providing rich text editor functionality, part of the "},{"attributes":{"link":"https://vaadin.com/components"},"insert":"Vaadin components"},
               {"insert":".\\nIt handles the following formatting:\\n"},
               {"insert":{"readonly":"More readonly text"}},
               {"attributes":{"bold":true},"insert":"Bold"},
@@ -64,7 +64,7 @@ window.RichTextEditorDemo = superClass => {
               {"insert":"Code blocks"},
               {"attributes":{"header":3},"insert":"\\n"},{"insert":"<body>"},
               {"attributes":{"code-block":true},"insert":"\\n"},
-              {"insert":"  <incubator-rich-text-editor></incubator-rich-text-editor>"},
+              {"insert":"  <vcf-enhanced-rich-text-editor></vcf-enhanced-rich-text-editor>"},
               {"attributes":{"code-block":true},"insert":"\\n"},
               {"insert":"</body>"},
               {"attributes":{"code-block":true},"insert":"\\n"},

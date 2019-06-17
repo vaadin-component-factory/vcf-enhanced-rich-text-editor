@@ -6,9 +6,9 @@
   <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
   <script>
     const theme = window.location.search.replace(/.*theme=(\w+).*/, '$1') || 'lumo';
-    document.write('<link rel="import" href="../../theme/' + theme + '/incubator-rich-text-editor.html">');
+    document.write('<link rel="import" href="../../theme/' + theme + '/vcf-enhanced-rich-text-editor.html">');
     window.addEventListener('WebComponentsReady', function() {
-      customElements.whenDefined('incubator-rich-text-editor').then(function() {
+      customElements.whenDefined('vcf-enhanced-rich-text-editor').then(function() {
         window.webComponentsAreReady = true; // Checked in gemini before capture callback
       });
     });
@@ -18,7 +18,7 @@
 <body>
 
   <span id="default">
-    <incubator-rich-text-editor></incubator-rich-text-editor>
+    <vcf-enhanced-rich-text-editor></vcf-enhanced-rich-text-editor>
   </span>
 
 </body>

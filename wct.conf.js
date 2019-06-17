@@ -19,7 +19,7 @@ module.exports = {
       dir: './coverage',
       reporters: ['text-summary', 'lcov'],
       include: [
-        '**/incubator-rich-text-editor/src/*.html'
+        '**/vcf-enhanced-rich-text-editor/src/*.html'
       ],
       exclude: [],
       thresholds: {

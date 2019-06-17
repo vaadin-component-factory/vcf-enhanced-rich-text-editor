@@ -1,12 +1,12 @@
 {
-  "name": "@vaadin/incubator-rich-text-editor",
+  "name": "@vaadin/vcf-enhanced-rich-text-editor",
   "version": "0.1.3",
-  "description": "incubator-rich-text-editor",
-  "main": "incubator-rich-text-editor.html",
-  "repository": "vaadin/incubator-rich-text-editor",
+  "description": "vcf-enhanced-rich-text-editor",
+  "main": "vcf-enhanced-rich-text-editor.html",
+  "repository": "vaadin/vcf-enhanced-rich-text-editor",
   "keywords": [
     "Vaadin",
-    "incubator-rich-text-editor",
+    "vcf-enhanced-rich-text-editor",
     "web-components",
     "web-component",
     "polymer"
@@ -14,7 +14,7 @@
   "author": "Vaadin Ltd",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/vaadin/incubator-rich-text-editor/issues"
+    "url": "https://github.com/vaadin/vcf-enhanced-rich-text-editor/issues"
   },
   "homepage": "https://vaadin.com/components",
   "files": [
@@ -34,7 +34,7 @@
     "lint:html": "eslint *.html src demo test --ext .html",
     "lint:js": "eslint *.js test",
     "lint:polymer": "polymer lint --rules polymer-2 --input ./src/*.html ./theme/**/*.html",
-    "prestart": "polymer analyze incubator-* > analysis.json",
+    "prestart": "polymer analyze vcf-* > analysis.json",
     "start": "polymer serve --port 3000 --open --hostname 0.0.0.0",
     "preversion": "magi update-version"
   },
