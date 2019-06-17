@@ -6,8 +6,14 @@
       }
     </style>
 
-    <h3 on-click="getValue">Rich Text Editor</h3>
-    
+    <h3>Rich Text Editor</h3>
+    <vaadin-demo-snippet id="rich-text-editor-basic-demos-sample-example">
+      <template preserve-content>
+        <vcf-enhanced-rich-text-editor style="height: 300px;"></vcf-enhanced-rich-text-editor>
+      </template>
+    </vaadin-demo-snippet>
+
+    <h3>Tab-stops </h3>
     <vaadin-demo-snippet id="rich-text-editor-basic-demos-sample-example">
       <template preserve-content>
         <vcf-enhanced-rich-text-editor style="height: 300px;"></vcf-enhanced-rich-text-editor>
@@ -50,20 +56,6 @@
   </template>
   <script>
     class EnhancedRichTextEditorBasicDemos extends DemoReadyEventEmitter(RichTextEditorDemo(Polymer.Element)) {
-
-      ready() {
-        super.ready();
-        
-        // console.log('Ready to go', this.$.example2);
-        // console.log('Ready to go', this);
-        // console.log('Ready to go', this.$.example1.shadowRoot.querySelector('vcf-enhanced-rich-text-editor'));
-      }
-      
-      getValue() {
-        console.log('click');
-        // console.log('get value', this);
-        // console.log('get value', this.$.example1.shadowRoot.querySelector('vcf-enhanced-rich-text-editor'));
-      }
 
       static get is() {
         return 'rich-text-editor-basic-demos';

@@ -6,26 +6,16 @@ window.RichTextEditorDemo = superClass => {
     }
     ready() {
       super.ready();
-      // setTimeout(() => {
-      //   const rte = this.shadowRoot.querySelector('vaadin-demo-snippet').shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('vcf-enhanced-rich-text-editor');
-      //   rte.value = `[
-      //     {"insert":{"tabstop":"Some readonly text"}}
-      //   ]`;
-      // }, 400);
+      
       setTimeout(() => {
-        const rte0 = this.shadowRoot.querySelectorAll('vaadin-demo-snippet')[0].shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('vcf-enhanced-rich-text-editor');
+        const rte0 = this.shadowRoot.querySelectorAll('vaadin-demo-snippet')[1].shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('vcf-enhanced-rich-text-editor');
         if (!rte0.hasAttribute('theme') && rte0.className.indexOf('min-height') === -1) {
           rte0.tabStops = [{direction: 'left', position: 150}, {direction: 'middle', position: 350}, {direction: 'right', position: 500}];
-          rte0.value = `[
-            {"attributes":{"bold":true,"line-part":true},"insert":"hello "},
-            {"attributes":{"tab":true},"insert":"﻿"},
-            {"attributes":{"bold":true,"line-part":true},"insert":"world"},
-            {"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"}
-          ]`;
+          rte0.value = `[{"attributes":{"line-part":true},"insert":"This line is just a normal text. Tab-stops are not affecting it."},{"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n\\n"},{"attributes":{"bold":true,"line-part":true},"insert":" "},{"attributes":{"tab":true},"insert":"﻿"},{"attributes":{"bold":true,"line-part":true},"insert":"﻿Product"},{"attributes":{"tab":true},"insert":"﻿"},{"attributes":{"bold":true,"line-part":true},"insert":"﻿Price"},{"attributes":{"bold":true,"tab":true},"insert":"﻿"},{"attributes":{"bold":true,"line-part":true},"insert":"﻿Quantity"},{"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"},{"attributes":{"tab":true},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"﻿Apples"},{"attributes":{"tab":true},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"﻿2.00"},{"attributes":{"tab":true},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"﻿5"},{"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"},{"attributes":{"tab":true},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"﻿Salmon"},{"attributes":{"tab":true},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"﻿25.00"},{"attributes":{"tab":true},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"﻿2"},{"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"},{"attributes":{"tab":true},"insert":"﻿"},{"insert":"\\n"}]`;
         }
       }, 300);
 
-      Array.from(this.shadowRoot.querySelectorAll('vaadin-demo-snippet')).splice(1).forEach(demo => {
+      Array.from(this.shadowRoot.querySelectorAll('vaadin-demo-snippet')).splice(2).forEach(demo => {
         setTimeout(() => {
           const rte = demo.shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer').shadowRoot.querySelector('vcf-enhanced-rich-text-editor');
           if (!rte.hasAttribute('theme') && rte.className.indexOf('min-height') === -1) {
