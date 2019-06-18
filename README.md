@@ -1,42 +1,46 @@
-[![npm version](https://badgen.net/npm/v/@vaadin/vcf-enhanced-rich-text-editor)](https://www.npmjs.com/package/@vaadin/vcf-enhanced-rich-text-editor)
-[![Bower version](https://badgen.net/github/release/vaadin/vcf-enhanced-rich-text-editor)](https://github.com/vaadin/vcf-enhanced-rich-text-editor/releases)
-[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/vaadin/vcf-enhanced-rich-text-editor)
-[![Build Status](https://travis-ci.org/vaadin/vcf-enhanced-rich-text-editor.svg?branch=master)](https://travis-ci.org/vaadin/vcf-enhanced-rich-text-editor)
-[![Coverage Status](https://coveralls.io/repos/github/vaadin/vcf-enhanced-rich-text-editor/badge.svg?branch=master)](https://coveralls.io/github/vaadin/vcf-enhanced-rich-text-editor?branch=master)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/vaadin/web-components?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-
- [![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/vaadinvcf-enhanced-rich-text-editor)
-[![Stars on vaadin.com/directory](https://img.shields.io/vaadin-directory/star/vcf-enhanced-rich-text-editor-directory-urlidentifier.svg)](https://vaadin.com/directory/component/vaadinvcf-enhanced-rich-text-editor)
-
-
 # &lt;vcf-enhanced-rich-text-editor&gt;
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/vaadin/web-components?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/vaadin-component-factoryvcf-enhanced-rich-text-editor)
 
-[Live Demo ↗](https://cdn.vaadin.com/vcf-enhanced-rich-text-editor/1.0.0-alpha6/demo/)
-|
-[API documentation ↗](https://cdn.vaadin.com/vcf-enhanced-rich-text-editor/1.0.0-alpha6)
+&lt;vcf-enhanced-rich-text-editor&gt; is a Web Component providing rich text editor functionality.
+This component is fork of [vaadin-rich-text-editor](https://vaadin.com/components/rich-text-editor), with enhanced functionality. 
+On top of basic functionality of vaadin-rich-text-editor, you can use:
+  * Tab-stops
+  * Non-breaking space
+  * Toolbar customization
+  * Readonly text 
 
+  [Live Demo ↗](TODO)
 
-[&lt;vcf-enhanced-rich-text-editor&gt;](https://vaadin.com/components/vcf-enhanced-rich-text-editor) is a Web Component providing rich text editor functionality, part of the [Vaadin components](https://vaadin.com/components).
+## Usage
 
-<!--
-```
-<custom-element-demo>
-  <template>
-    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="vcf-enhanced-rich-text-editor.html">
-    <next-code-block></next-code-block>
-  </template>
-</custom-element-demo>
-```
--->
 ```html
 <vcf-enhanced-rich-text-editor>
   ...
 </vcf-enhanced-rich-text-editor>
 ```
 
-[<img src="https://raw.githubusercontent.com/vaadin/vcf-enhanced-rich-text-editor/master/screenshot.png" width="200" alt="Screenshot of vcf-enhanced-rich-text-editor">](https://vaadin.com/components/vcf-enhanced-rich-text-editor)
 
+### Tabstops
+Tabstops can be set in UI by clicking on horizontal rullen, on top of the editor. There are 3 tabstop types: left, right and middle. When you click on ruller left tabstop will appear, then if you click on left tabstop it will change to right tabstop, and if you click on right tabstop it will change to middle tabstop.
+It is also possible to set tabstops programaticaly by using `tabStops` property of editor. For example:
+```js
+editor.tabStops = [{direction: 'left', position: 150}, {direction: 'middle', position: 350}, {direction: 'right', position: 500}];
+```
+
+After tabstops are set, you can use them in editor. when you are focused in editor, press `tab` button and cursore will move to next tabstop. If there are no more tabstops, then tab symbol will be inserted in to text. 
+
+
+### Customizing toolbar
+```js
+<vcf-enhanced-rich-text-editor></vcf-enhanced-rich-text-editor>
+<script>
+  window.addEventListener('WebComponentsReady', function() {
+    var rte = document.querySelector("vcf-enhanced-rich-text-editor");
+    rte.toolbarButtons = {undo: false, redo: false, h1: false, h2: false, h3: false, image: false, link: false};
+  });
+</script>
+```
 
 ## Installation
 
@@ -158,6 +162,10 @@ Cross-browser Testing Platform and Open Source <3 Provided by [Sauce Labs](https
 
   To contribute to the component, please read [the guideline](https://github.com/vaadin/vaadin-core/blob/master/CONTRIBUTING.md) first.
 
+
+# Vaadin Prime
+
+This component is available in Vaadin Prime subscription. It is still open source, but you need to have a valid CVAL license in order to use it. Read more at: https://vaadin.com/pricing
 
 ## License
 
