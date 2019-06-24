@@ -638,6 +638,7 @@ This program is available under Apache License Version 2.0, available at https:/
 
             tabStops: {
               type: Array,
+              notify: true,
               value: [
                 // {
                 //   direction: 'left', // left, right, middle
@@ -843,6 +844,8 @@ This program is available under Apache License Version 2.0, available at https:/
           });
 
           this._editor.on('selection-change', this.__announceFormatting.bind(this));
+
+          this._editor.emitter.emit('text-change');
         }
 
         _prepareToolbar() {
@@ -1275,9 +1278,17 @@ This program is available under Apache License Version 2.0, available at https:/
         }
 
         _tabStopsChanged(tabStops, _editor) {
+          let horizontalRuler = this.shadowRoot.querySelector('[part="horizontalRuler"]');
+          if (horizontalRuler) {
+            horizontalRuler.innerHTML = '';
+          }
+
           tabStops.forEach(stop => {
             this._addTabStopIcon(stop);
           });
+          if (_editor) {
+            _editor.emitter.emit('text-change');
+          }
         }
 
         _valueChanged(value, editor) {
@@ -1367,6 +1378,8 @@ This program is available under Apache License Version 2.0, available at https:/
               icon.remove();
             }
 
+            self.tabStops = Object.assign([], self.tabStops);
+
             iconEvent.stopPropagation();
             self._editor.emitter.emit('text-change');
           };
@@ -1375,9 +1388,8 @@ This program is available under Apache License Version 2.0, available at https:/
         _addTabStop(event) {
           let tabStop = { direction: 'left', position: event.offsetX };
           this.tabStops.push(tabStop);
-          this._addTabStopIcon(tabStop);
+          this.tabStops = Object.assign([], this.tabStops);
           this._editor.emitter.emit('text-change');
-          console.log('tab-stops', this.tabStops);
         }
 
         /**
