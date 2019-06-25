@@ -10,7 +10,7 @@ On top of basic functionality of vaadin-rich-text-editor, you can use:
   * Toolbar customization
   * Readonly text 
 
-  [Live Demo ↗](TODO)
+  [Live Demo ↗](https://incubator.app.fi/enhanced-rich-text-editor-demo/enhanced-rich-text-editor)
 
 ## Usage
 
