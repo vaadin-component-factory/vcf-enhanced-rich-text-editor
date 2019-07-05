@@ -1389,6 +1389,7 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
         _addTabStop(event) {
           let tabStop = { direction: 'left', position: event.offsetX };
           this.tabStops.push(tabStop);
+          this.tabStops.sort((a, b) => a['position'] - b['position']);
           this.tabStops = Object.assign([], this.tabStops);
           this._editor.emitter.emit('text-change');
         }
