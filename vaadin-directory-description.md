@@ -1,5 +1,5 @@
 [![npm version](https://badgen.net/npm/v/@vaadin/vcf-enhanced-rich-text-editor)](https://www.npmjs.com/package/@vaadin/vcf-enhanced-rich-text-editor)
-[![Bower version](https://badgen.net/github/release/vaadin/vcf-enhanced-rich-text-editor)](https://github.com/vaadin/vcf-enhanced-rich-text-editor/releases)
+[![Bower version](https://badgen.net/github/release/vaadin/vcf-enhanced-rich-text-editor)](https://github.com/vaadin-component-factory/vcf-enhanced-rich-text-editor/releases)
 [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/vaadin/vcf-enhanced-rich-text-editor)
 [![Build Status](https://travis-ci.org/vaadin/vcf-enhanced-rich-text-editor.svg?branch=master)](https://travis-ci.org/vaadin/vcf-enhanced-rich-text-editor)
 [![Coverage Status](https://coveralls.io/repos/github/vaadin/vcf-enhanced-rich-text-editor/badge.svg?branch=master)](https://coveralls.io/github/vaadin/vcf-enhanced-rich-text-editor?branch=master)

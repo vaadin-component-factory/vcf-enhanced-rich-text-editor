@@ -158,28 +158,35 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
           <!-- Clean -->
           <button type="button" class="ql-clean" part="toolbar-button toolbar-button-clean" title$="[[i18n.clean]]"
             style="display: [[_buttonDisplay(toolbarButtons, 'clean')]];"></button>
+
+          <!-- Read-only -->
+          <button type="button" class="rte-readonly" part="toolbar-button toolbar-button-readonly"
+            title$="[[i18n.readonly]]" style="display: [[_buttonDisplay(toolbarButtons, 'readonly')]];"
+            on-click="_onReadonlyClick">
+            <iron-icon icon="vaadin:lock"></iron-icon>
+          </button>
         </span>
 
         <input id="fileInput" type="file" accept="image/png, image/gif, image/jpeg, image/bmp, image/x-icon"
           on-change="_uploadImage">
       </div>
 
+      <div
+        style="overflow: hidden; box-sizing: content-box; width: 100% !important; height: 15px !important; flex-shrink: 0; display: flex;">
         <div
-          style="overflow: hidden; box-sizing: content-box; width: 100% !important; height: 15px !important; flex-shrink: 0; display: flex;">
-          <div
-            style="overflow: hidden; box-sizing: content-box; border-color: rgb(158, 170, 182); border-style: solid; border-width: 0 1px 1px 0; width: 14px !important; height: 14px !important;">
-          </div>
-          <div
-            style="position:relative; overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-horizontal.png&quot;)]]') repeat-x; flex-grow: 1; height: 15px !important; padding: 0;"
-            on-click="_addTabStop" part="horizontalRuler">
-          </div>
+          style="overflow: hidden; box-sizing: content-box; border-color: rgb(158, 170, 182); border-style: solid; border-width: 0 1px 1px 0; width: 14px !important; height: 14px !important;">
         </div>
-        <div style="display: flex; flex-grow: 1;">
-          <div
-            style="overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-vertical.png&quot;)]]') repeat-y; width: 15px !important; flex-shrink: 0;">
-          </div>
-          <div part="content"></div>
+        <div
+          style="position:relative; overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-horizontal.png&quot;)]]') repeat-x; flex-grow: 1; height: 15px !important; padding: 0;"
+          on-click="_addTabStop" part="horizontalRuler">
         </div>
+      </div>
+      <div style="display: flex; flex-grow: 1;">
+        <div
+          style="overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-vertical.png&quot;)]]') repeat-y; width: 15px !important; flex-shrink: 0;">
+        </div>
+        <div part="content"></div>
+      </div>
 
       <div class="announcer" aria-live="polite"></div>
 
@@ -206,29 +213,43 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
     const Quill = window.Quill;
     const BlockEmbed = Quill.import('blots/block/embed');
     const Block = Quill.import('blots/block');
+    const Container = Quill.import('blots/container');
     const Inline = Quill.import('blots/inline');
     const TextBlot = Quill.import('blots/text');
     const ListItem = Quill.import('formats/list/item');
     const ListContainer = Quill.import('formats/list');
+    const Scroll = Quill.import('blots/scroll');
 
-    class ReadOnlyBlot extends BlockEmbed {
-      static create(data) {
-        const node = super.create();
-        node.setAttribute('contenteditable', 'false');
-        node.setAttribute('data-text', data);
-        node.setAttribute('unselectable', 'on');
-        node.textContent = data;
+    class ReadOnlyBlot extends Block  {
+      static create(value) {
+        const node = super.create(value);
+        if (value) {
+          node.setAttribute('contenteditable', 'false');
+        } else {
+          node.setAttribute('contenteditable', 'true');
+        }
+
+        node.setAttribute('readonly', value);
         return node;
       }
 
-      static value(node) {
-        return node.getAttribute('data-text');
+      format(name, value) {
+        if (value) {
+          this.domNode.setAttribute('contenteditable', 'false');
+        } else {
+          this.domNode.setAttribute('contenteditable', 'true');
+        }
+        this.domNode.setAttribute('readonly', value);
+      }
+
+      static formats(node) {
+        return node.getAttribute('readonly');
       }
     }
     ReadOnlyBlot.blotName = 'readonly';
-    ReadOnlyBlot.tagName = 'span';
+    ReadOnlyBlot.tagName = 'p';
     ReadOnlyBlot.className = 'readonly-section';
-    ReadOnlyBlot.allowedChildren = [Inline, TextBlot];
+    ReadOnlyBlot.allowedChildren = [Block, BlockEmbed, Inline, TextBlot, ListItem, ListContainer]; //[Inline, TextBlot];
 
     Quill.register(ReadOnlyBlot);
 
@@ -254,7 +275,7 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
         node.innerHTML = "&#65279;";
         node.style.width = `1px`;
         node.setAttribute("contenteditable", false);
-        
+
         node.setAttribute("level", level)
         return node;
       }
@@ -266,7 +287,7 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
     TabBlot.blotName = 'tab';
     TabBlot.tagName = 'tab';
     Quill.register(TabBlot);
-   
+
 
     class PreTabBlot extends Inline {
       static create() {
@@ -281,7 +302,7 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
     PreTabBlot.blotName = 'pre-tab';
     PreTabBlot.tagName = 'pre-tab';
     Quill.register(PreTabBlot);
-    
+
     class LinePartBlot extends Inline {
       static create() {
         let node = super.create();
@@ -291,12 +312,12 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
     LinePartBlot.blotName = 'line-part';
     LinePartBlot.tagName = 'line-part';
     Quill.register(LinePartBlot);
-    
+
     var emptyRegEx = new RegExp('\uFEFF', 'g');
     class TabsContBlot extends Block {
       static create() {
         let node = super.create();
-        
+
         return node;
       }
 
@@ -308,14 +329,14 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
         if (preTab.previousElementSibling.nodeName == TabBlot.tagName.toUpperCase()) {
           return preTab.previousElementSibling;
         }
-        
+
         if (!preTab.previousElementSibling.previousElementSibling) {
           return null;
         }
-        
+
         if (preTab.previousElementSibling.innerText.trim() === "" &&
-             preTab.previousElementSibling.previousElementSibling.nodeName == TabBlot.tagName.toUpperCase()) {
-               
+          preTab.previousElementSibling.previousElementSibling.nodeName == TabBlot.tagName.toUpperCase()) {
+
           return preTab.previousElementSibling.previousElementSibling;
         }
 
@@ -340,7 +361,7 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
             tab.style.width = `1px`;
             tab.setAttribute("contenteditable", false);
             tab.setAttribute("level", 1);
-            
+
             preTab.parentElement.replaceChild(tab, preTab);
           }
         }
@@ -365,8 +386,8 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
               }
 
               separator.parentElement.replaceChild(leftEl, prev);
-            }    
-            
+            }
+
             let next = separator.nextSibling;
             if (next != null) {
               if (next.nodeName != LinePartBlot.tagName.toUpperCase()) {
@@ -389,7 +410,7 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
                 separator.parentElement.appendChild(rightEl);
               }
             }
-            
+
             // TODO fix currsor shifting
             separator.innerHTML = '&#65279;';
           });
@@ -401,8 +422,8 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
     TabsContBlot.blotName = 'tabs-cont';
     TabsContBlot.tagName = 'tabs-cont';
     Quill.register(TabsContBlot);
-    
-    
+
+
     // Non-breaking space
     class Nbsp extends Inline {
       static create(value) {
@@ -416,8 +437,8 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
     Quill.register({
       'formats/nbsp': Nbsp
     });
-    
-    Inline.order.push(LinePartBlot.blotName, TabBlot.blotName, PreTabBlot.blotName);
+
+    Inline.order.push(LinePartBlot.blotName, TabBlot.blotName, PreTabBlot.blotName, ReadOnlyBlot.blotName);
 
     (function () {
       'use strict';
@@ -718,7 +739,7 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
           allTabsConts.forEach(tabsCont => {
             let tabElements = tabsCont.querySelectorAll(TabBlot.tagName);
             let tabNumber = 0;
-            tabElements.forEach( (tabElement) => {
+            tabElements.forEach((tabElement) => {
               let el = tabElement.nextSibling;
               if (el) {
                 if (el.nodeName == "#text") {
@@ -731,17 +752,17 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
                 let tabInfo = this.tabStops[tabNumber - 1];
                 if (tabInfo) {
                   let newPadding = tabInfo.position - QL_EDITOR_PADDING_LEFT - (el.offsetLeft - tabsCont.offsetLeft);
-                  
+
                   if (tabInfo.direction == 'right' || tabInfo.direction == 'middle') {
                     let prevPadding = el.style.paddingLeft ? parseInt(el.style.paddingLeft.split('px')[0]) : 0;
                     let elWidth = el.offsetWidth - prevPadding;
-                    
+
                     if (tabInfo.direction == 'middle') {
                       elWidth /= 2;
                     }
                     newPadding -= elWidth;
                   }
-                  
+
                   el.style.paddingLeft = newPadding + "px";
                 } else {
                   let strTab = document.createElement('line-part');
@@ -1019,7 +1040,8 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
           const moveFocusBinding = { key: TAB_KEY, shiftKey: true, handler: focusToolbar };
           const self = this;
           // Binding for tabstop functionality.
-          const tabStopBinding = { key: TAB_KEY, handler: function(range, context) {
+          const tabStopBinding = {
+            key: TAB_KEY, handler: function (range, context) {
               if (self.tabStops.length > 0) {
                 let selection = self._editor.getSelection();
                 self._editor.format(PreTabBlot.blotName, true);
@@ -1029,7 +1051,7 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
                   selection.index += 2;
                   self._editor.focus();
                   self._editor.setSelection(selection, 'user');
-                }, 0);  
+                }, 0);
 
                 // If we have tabstops defined in the component, the default tab functionality should be overriden.
                 return false;
@@ -1058,6 +1080,19 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
           if (this.__lastCommittedChange !== this.value) {
             this.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: false }));
             this.__lastCommittedChange = this.value;
+          }
+        }
+
+        _onReadonlyClick() {
+          const range = this._editor.getSelection();
+          if (range) {
+            const [readOnlySection, offset] = this._editor.scroll.descendant(ReadOnlyBlot, range.index);
+            if (readOnlySection != null) {
+              // existing readonly section
+              this._editor.formatText(range.index, range.length + 1, 'readonly', false, 'user');
+            } else {
+              this._editor.formatText(range.index, range.length + 1, 'readonly', true, 'user');
+            }
           }
         }
 
@@ -1364,7 +1399,7 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
           icon.onclick = function (iconEvent) {
             var icon = iconEvent.target;
             var index = self.tabStops.indexOf(icon.tabStop);
-            
+
             if (icon.getAttribute('icon') == 'vaadin:caret-right') {
               icon.setAttribute('icon', 'vaadin:caret-left');
               icon.tabStop.direction = 'right';
