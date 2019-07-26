@@ -51,6 +51,13 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
         flex: auto;
       }
 
+      .readonly-section {
+        color: #676767;
+        /* background: #f9f9f9; */
+        background: #f1f1f1;
+        border-radius: 0.1em;
+      }
+
       /* FIXME (Yuriy): workaround for auto-grow feature in flex layout for IE11 */
       @media all and (-ms-high-contrast: none) {
         .ql-editor {
@@ -155,16 +162,17 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
 
         <span part="toolbar-group toolbar-group-format"
           style="display: [[_buttonGroupDisplay(toolbarButtons, 'format')]];">
-          <!-- Clean -->
-          <button type="button" class="ql-clean" part="toolbar-button toolbar-button-clean" title$="[[i18n.clean]]"
-            style="display: [[_buttonDisplay(toolbarButtons, 'clean')]];"></button>
-
+          
           <!-- Read-only -->
           <button type="button" class="rte-readonly" part="toolbar-button toolbar-button-readonly"
-            title$="[[i18n.readonly]]" style="display: [[_buttonDisplay(toolbarButtons, 'readonly')]];"
-            on-click="_onReadonlyClick">
-            <iron-icon icon="vaadin:lock"></iron-icon>
-          </button>
+          title$="[[i18n.readonly]]" style="display: [[_buttonDisplay(toolbarButtons, 'readonly')]];"
+          on-click="_onReadonlyClick">
+          <iron-icon icon="vaadin:lock"></iron-icon>
+        </button>
+
+        <!-- Clean -->
+        <button type="button" class="ql-clean" part="toolbar-button toolbar-button-clean" title$="[[i18n.clean]]"
+          style="display: [[_buttonDisplay(toolbarButtons, 'clean')]];"></button>
         </span>
 
         <input id="fileInput" type="file" accept="image/png, image/gif, image/jpeg, image/bmp, image/x-icon"
@@ -220,34 +228,25 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
     const ListContainer = Quill.import('formats/list');
     const Scroll = Quill.import('blots/scroll');
 
-    class ReadOnlyBlot extends Block  {
+    class ReadOnlyBlot extends Inline  {
       static create(value) {
         const node = super.create(value);
+
         if (value) {
           node.setAttribute('contenteditable', 'false');
         } else {
-          node.setAttribute('contenteditable', 'true');
+          node.removeAttribute('contenteditable');
         }
 
-        node.setAttribute('readonly', value);
         return node;
       }
 
-      format(name, value) {
-        if (value) {
-          this.domNode.setAttribute('contenteditable', 'false');
-        } else {
-          this.domNode.setAttribute('contenteditable', 'true');
-        }
-        this.domNode.setAttribute('readonly', value);
-      }
-
       static formats(node) {
-        return node.getAttribute('readonly');
+        return true;
       }
     }
     ReadOnlyBlot.blotName = 'readonly';
-    ReadOnlyBlot.tagName = 'p';
+    ReadOnlyBlot.tagName = 'span';
     ReadOnlyBlot.className = 'readonly-section';
     ReadOnlyBlot.allowedChildren = [Block, BlockEmbed, Inline, TextBlot, ListItem, ListContainer]; //[Inline, TextBlot];
 
@@ -258,7 +257,7 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
         const node = super.create(data);
         node.style.left = '100px';
         node.textContent = data;
-        //node.innerHTML = `<span style='left: 100px'>${data}</span>`;
+        
         return node;
       }
     }
@@ -438,7 +437,7 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
       'formats/nbsp': Nbsp
     });
 
-    Inline.order.push(LinePartBlot.blotName, TabBlot.blotName, PreTabBlot.blotName, ReadOnlyBlot.blotName);
+    Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName, PreTabBlot.blotName);
 
     (function () {
       'use strict';
@@ -640,6 +639,7 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
                   link: 'link',
                   blockquote: 'blockquote',
                   codeBlock: 'code block',
+                  readonly: 'readonly',
                   clean: 'clean',
                   linkDialogTitle: 'Link address',
                   ok: 'OK',
@@ -1007,8 +1007,14 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
 
           // add custom link button to toggle state attribute
           const linkButton = this.shadowRoot.querySelector('[part~="toolbar-button-link"]');
-          if (linkButton)
-            toolbar.controls.push(['link', this.shadowRoot.querySelector('[part~="toolbar-button-link"]')]);
+          if (linkButton) {
+            toolbar.controls.push(['link', linkButton]);
+          }
+
+          const readonlyButton = this.shadowRoot.querySelector('[part~="toolbar-button-readonly"]');
+          if (readonlyButton) {
+            toolbar.controls.push(['readonly', readonlyButton]);
+          }
 
           toolbar.update = function (range) {
             update.call(toolbar, range);
@@ -1087,12 +1093,14 @@ See <a href="https://vaadin.com/license/cval-3">the website</a> for the complete
           const range = this._editor.getSelection();
           if (range) {
             const [readOnlySection, offset] = this._editor.scroll.descendant(ReadOnlyBlot, range.index);
-            if (readOnlySection != null) {
-              // existing readonly section
-              this._editor.formatText(range.index, range.length + 1, 'readonly', false, 'user');
-            } else {
-              this._editor.formatText(range.index, range.length + 1, 'readonly', true, 'user');
-            }
+            // if (readOnlySection != null) {
+            //   // existing readonly section
+            //   this._editor.formatText(range.index, range.length + 1, 'readonly', false, 'user');
+            // } else {
+            //   this._editor.formatText(range.index, range.length + 1, 'readonly', true, 'user');
+            // }
+
+            this._editor.formatText(range.index, range.length + 1, 'readonly', readOnlySection == null, 'user');
           }
         }
 

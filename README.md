@@ -42,6 +42,17 @@ After tabstops are set, you can use them in editor. when you are focused in edit
 </script>
 ```
 
+### Readonly area
+To make part of text read only, select text and click `lock` icon in toolbar. Now text is not editable. 
+To make text editable egain, select it and clicl `lock` button again.
+
+Limitations of readonly functionality:
+* Readonly is not working in `code` block
+* Readonly is a inline element(like span), so it is still possible to put cursore after the area and add some text
+* Readonly area can be deleted, if user put cursor after it and press backspace
+* Readonly area can be styled using toolbar buttons
+* Selecting multiple lines and making them readonly will create multiple Readonly areas
+
 ## Installation
 
 The Vaadin components are distributed as Bower and npm packages.
