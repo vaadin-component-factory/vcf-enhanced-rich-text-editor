@@ -1,16 +1,18 @@
 # &lt;vcf-enhanced-rich-text-editor&gt;
+
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/vaadin/web-components?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/vaadin-component-factoryvcf-enhanced-rich-text-editor)
 
 &lt;vcf-enhanced-rich-text-editor&gt; is a Web Component providing rich text editor functionality.
-This component is fork of [vaadin-rich-text-editor](https://vaadin.com/components/rich-text-editor), with enhanced functionality. 
+This component is fork of [vaadin-rich-text-editor](https://vaadin.com/components/rich-text-editor), with enhanced functionality.
 On top of basic functionality of vaadin-rich-text-editor, you can use:
-  * Tab-stops
-  * Non-breaking space
-  * Toolbar customization
-  * Readonly text 
 
-  [Live Demo ↗](https://incubator.app.fi/enhanced-rich-text-editor-demo/enhanced-rich-text-editor)
+- Tab-stops
+- Non-breaking space
+- Toolbar customization
+- Readonly text
+
+[Live Demo ↗](https://incubator.app.fi/enhanced-rich-text-editor-demo/enhanced-rich-text-editor)
 
 ## Usage
 
@@ -20,18 +22,23 @@ On top of basic functionality of vaadin-rich-text-editor, you can use:
 </vcf-enhanced-rich-text-editor>
 ```
 
-
 ### Tabstops
+
 Tabstops can be set in UI by clicking on horizontal rullen, on top of the editor. There are 3 tabstop types: left, right and middle. When you click on ruller left tabstop will appear, then if you click on left tabstop it will change to right tabstop, and if you click on right tabstop it will change to middle tabstop.
 It is also possible to set tabstops programaticaly by using `tabStops` property of editor. For example:
+
 ```js
-editor.tabStops = [{direction: 'left', position: 150}, {direction: 'middle', position: 350}, {direction: 'right', position: 500}];
+editor.tabStops = [
+  {direction: 'left', position: 150},
+  {direction: 'middle', position: 350},
+  {direction: 'right', position: 500}
+];
 ```
 
-After tabstops are set, you can use them in editor. when you are focused in editor, press `tab` button and cursore will move to next tabstop. If there are no more tabstops, then tab symbol will be inserted in to text. 
-
+After tabstops are set, you can use them in editor. when you are focused in editor, press `tab` button and cursore will move to next tabstop. If there are no more tabstops, then tab symbol will be inserted in to text.
 
 ### Customizing toolbar
+
 ```js
 <vcf-enhanced-rich-text-editor></vcf-enhanced-rich-text-editor>
 <script>
@@ -43,15 +50,17 @@ After tabstops are set, you can use them in editor. when you are focused in edit
 ```
 
 ### Readonly area
-To make part of text read only, select text and click `lock` icon in toolbar. Now text is not editable. 
+
+To make part of text read only, select text and click `lock` icon in toolbar. Now text is not editable.
 To make text editable egain, select it and clicl `lock` button again.
 
 Limitations of readonly functionality:
-* Readonly is not working in `code` block
-* Readonly is a inline element(like span), so it is still possible to put cursore after the area and add some text
-* Readonly area can be deleted, if user put cursor after it and press backspace
-* Readonly area can be styled using toolbar buttons
-* Selecting multiple lines and making them readonly will create multiple Readonly areas
+
+- Readonly is not working in `code` block
+- Readonly is a inline element(like span), so it is still possible to put cursore after the area and add some text
+- Readonly area can be deleted, if user put cursor after it and press backspace
+- Readonly area can be styled using toolbar buttons
+- Selecting multiple lines and making them readonly will create multiple Readonly areas
 
 ## Installation
 
@@ -73,22 +82,21 @@ bower i vaadin/vcf-enhanced-rich-text-editor --save
 Once installed, import it in your application:
 
 ```html
-<link rel="import" href="bower_components/vcf-enhanced-rich-text-editor/vcf-enhanced-rich-text-editor.html">
+<link rel="import" href="bower_components/vcf-enhanced-rich-text-editor/vcf-enhanced-rich-text-editor.html" />
 ```
 
-### Polymer 3 and ES Modules compatible version
-
+### Polymer 3 and ES Modules compatible version ([source](https://github.com/vaadin-component-factory/vcf-enhanced-rich-text-editor/tree/polymer-3))
 
 Install `vcf-enhanced-rich-text-editor`:
 
 ```sh
-npm i @vaadin/vcf-enhanced-rich-text-editor --save
+npm i @vaadin-component-factory/vcf-enhanced-rich-text-editor --save
 ```
 
 Once installed, import it in your application:
 
 ```js
-import '@vaadin/vcf-enhanced-rich-text-editor/vcf-enhanced-rich-text-editor.js';
+import '@vaadin-component-factory/vcf-enhanced-rich-text-editor/vcf-enhanced-rich-text-editor.js';
 ```
 
 ### Bundling with webpack
@@ -102,6 +110,7 @@ npm install expose-loader --save-dev
 ```
 
 2. Add these lines to the webpack config:
+
 ```
 module: {
   rules: [
@@ -135,7 +144,6 @@ To use the Material theme, import the correspondent file from the `theme/materia
 
   `vcf-enhanced-rich-text-editor.html`
 
-
 ## Running demos and tests in a browser
 
 1. Fork the `vcf-enhanced-rich-text-editor` repository and clone it locally.
@@ -150,29 +158,24 @@ To use the Material theme, import the correspondent file from the `theme/materia
 
 1. You can also open demo or in-browser tests by adding **demo** or **test** to the URL, for example:
 
-  - http://127.0.0.1:3000/components/vcf-enhanced-rich-text-editor/demo
-  - http://127.0.0.1:3000/components/vcf-enhanced-rich-text-editor/test
-
+- http://127.0.0.1:3000/components/vcf-enhanced-rich-text-editor/demo
+- http://127.0.0.1:3000/components/vcf-enhanced-rich-text-editor/test
 
 ## Running tests from the command line
 
 1. When in the `vcf-enhanced-rich-text-editor` directory, run `polymer test`
 
-
 ## Following the coding style
 
 We are using [ESLint](http://eslint.org/) for linting JavaScript code. You can check if your code is following our standards by running `npm run lint`, which will automatically lint all `.js` files as well as JavaScript snippets inside `.html` files.
-
 
 ## Big Thanks
 
 Cross-browser Testing Platform and Open Source <3 Provided by [Sauce Labs](https://saucelabs.com).
 
-
 ## Contributing
 
-  To contribute to the component, please read [the guideline](https://github.com/vaadin/vaadin-core/blob/master/CONTRIBUTING.md) first.
-
+To contribute to the component, please read [the guideline](https://github.com/vaadin/vaadin-core/blob/master/CONTRIBUTING.md) first.
 
 # Vaadin Prime
 
