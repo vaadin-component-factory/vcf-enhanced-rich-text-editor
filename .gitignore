@@ -1,7 +1,6 @@
-bower_components
-node_modules
+/node_modules/
+/bower_components/
+/dist/
+/build/
 package-lock.json
-yarn.lock
-coverage
 analysis.json
-test.html
