@@ -20,6 +20,10 @@ const assets = [
   {
     from: resolve('./demo/favicon.ico'),
     to: OUTPUT_PATH
+  },
+  {
+    from: resolve('./images/*'),
+    to: OUTPUT_PATH
   }
 ];
 
@@ -32,6 +36,11 @@ const polyfills = [
   {
     from: resolve(`${webcomponentsjs}/bundles/*.{js,map}`),
     to: join(OUTPUT_PATH, 'vendor', 'bundles'),
+    flatten: true
+  },
+  {
+    from: resolve(`./vendor/*.{js,map}`),
+    to: join(OUTPUT_PATH, 'vendor'),
     flatten: true
   }
 ];
@@ -74,12 +83,7 @@ const commonConfig = merge([
         safari10NoModuleFix: 'inline-data-base64',
         targets: {
           es6: {
-            browsers: [
-              'last 2 Chrome major versions',
-              'last 2 ChromeAndroid major versions',
-              'last 2 Edge major versions',
-              'last 2 Firefox major versions'
-            ],
+            browsers: ['last 2 Chrome major versions', 'last 2 ChromeAndroid major versions', 'last 2 Edge major versions', 'last 2 Firefox major versions'],
             tagAssetsWithKey: false,
             esModule: true
           },
@@ -127,7 +131,7 @@ const productionConfig = merge([
           replacement: ''
         }
       ]),
-      new HtmlWebpackTagsPlugin({ tags: ['vendor/webcomponents-bundle.js'], append: false }),
+      new HtmlWebpackTagsPlugin({ tags: ['vendor/webcomponents-bundle.js', 'vendor/vaadin-quill.min.js'], append: false }),
       new CompressionPlugin({ test: /\.js(\.map)?$/i }),
       new BrotliPlugin({
         asset: '[path].br[query]',

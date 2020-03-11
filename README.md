@@ -1,10 +1,9 @@
 # &lt;vcf-enhanced-rich-text-editor&gt;
 
+Web Component providing rich text editor functionality.
 
+This component is fork of [vaadin-rich-text-editor](https://github.com/vaadin/vaadin-rich-text-editor), with enhanced functionality.
 
-
-
-<!--
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/vaadin/web-components?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![npm version](https://badgen.net/npm/v/@vaadin-component-factory/vcf-enhanced-rich-text-editor)](https://www.npmjs.com/package/@vaadin-component-factory/vcf-enhanced-rich-text-editor)
 [![Published on Vaadin Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/vaadin-component-factoryvcf-enhanced-rich-text-editor)
@@ -12,7 +11,6 @@
 [Live demo ↗](https://vcf-enhanced-rich-text-editor.netlify.com)
 |
 [API documentation ↗](https://vcf-enhanced-rich-text-editor.netlify.com/api/#/elements/Vaadin.VcfEnhancedRichTextEditor)
--->
 
 ## Installation
 
