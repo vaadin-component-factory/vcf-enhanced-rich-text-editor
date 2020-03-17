@@ -18,7 +18,7 @@ import '@vaadin/vaadin-confirm-dialog';
 import '@vaadin/vaadin-text-field';
 import '@vaadin/vaadin-license-checker/vaadin-license-checker';
 import '@vaadin/vaadin-icons';
-import '../vendor/vaadin-quill';
+import './vendor/vaadin-quill';
 import './vcf-enhanced-rich-text-editor-styles';
 import './vcf-enhanced-rich-text-editor-toolbar-styles';
 
@@ -465,11 +465,11 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
 
           <div style="overflow: hidden; box-sizing: content-box; width: 100% !important; height: 15px !important; flex-shrink: 0; display: flex;">
             <div style="overflow: hidden; box-sizing: content-box; border-color: rgb(158, 170, 182); border-style: solid; border-width: 0 1px 1px 0; width: 14px !important; height: 14px !important;"></div>
-            <div style="position:relative; overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-horizontal.png&quot;)]]') repeat-x; flex-grow: 1; height: 15px !important; padding: 0;" on-click="_addTabStop" part="horizontalRuler"></div>
+            <div style="position:relative; overflow: hidden; box-sizing: content-box; background: url('[[_rulerHori]]') repeat-x; flex-grow: 1; height: 15px !important; padding: 0;" on-click="_addTabStop" part="horizontalRuler"></div>
           </div>
 
           <div style="display: flex; flex-grow: 1;">
-            <div style="overflow: hidden; box-sizing: content-box; background: url('[[resolveUrl(&quot;../images/ruler-vertical.png&quot;)]]') repeat-y; width: 15px !important; flex-shrink: 0;"></div>
+            <div style="overflow: hidden; box-sizing: content-box; background: url('[[_rulerVert]]') repeat-y; width: 15px !important; flex-shrink: 0;"></div>
             <div part="content"></div>
           </div>
 
@@ -639,6 +639,20 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
         _linkUrl: {
           type: String,
           value: ''
+        },
+
+        _rulerHori: {
+          type: String,
+          value:
+            // eslint-disable-next-line max-len
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAAAPBAMAAABeoLrPAAAAA3NCSVQICAjb4U/gAAAAHlBMVEXS0tLR0dHQ0NCerLmfq7eeqrafqbOdqbWcqLT///9ePaWcAAAACnRSTlP///////////8AsswszwAAAAlwSFlzAAALEgAACxIB0t1+/AAAACB0RVh0U29mdHdhcmUATWFjcm9tZWRpYSBGaXJld29ya3MgTVi7kSokAAAAFnRFWHRDcmVhdGlvbiBUaW1lADA1LzEwLzEyhpCxGgAAAKtJREFUeJztksENgCAMRXt1BEZgICdwBvco3NxWqwYDFGMrajT2QOD/0v8kwvCugqcBhPXzXluf4XViA+uNKmfIeX09Q5Eh5y0+o9xQZFT8H24xINgXLwmMdtl4fVjcruYO9nEans6YeA2NMSQaEtedYzQMx0RLbkTzbHmeImPibWhrY8cy2to3IyRalM7P89ldVQZk39ksPZhpXJ9hUHfeDanlVAZ0ffumGgEWlrgeDxx/xAAAAABJRU5ErkJggg=='
+        },
+
+        _rulerVert: {
+          type: String,
+          value:
+            // eslint-disable-next-line max-len
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAyBAMAAABxHJwKAAAAA3NCSVQICAjb4U/gAAAAG1BMVEXS0tLR0dHQ0NCfq7eeqradq7idqbWcqLT///+TeDeAAAAACXRSTlP//////////wBTT3gSAAAACXBIWXMAAAsSAAALEgHS3X78AAAAIHRFWHRTb2Z0d2FyZQBNYWNyb21lZGlhIEZpcmV3b3JrcyBNWLuRKiQAAAAWdEVYdENyZWF0aW9uIFRpbWUAMDUvMTAvMTKGkLEaAAAATklEQVR4nGPogIAABijDAMZwQGM0CqKLYGNAtDcK4lOcgGGyAS4pDF1NgoIJuJ2KLtKIUIxpcgKGmzHV4AkNTClc2pFDo4Bq4awoCAYOAKbZvafXusxYAAAAAElFTkSuQmCC'
         }
       };
     }
