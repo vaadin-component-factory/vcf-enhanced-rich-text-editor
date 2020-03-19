@@ -496,7 +496,7 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
     }
 
     static get version() {
-      return '1.2.2';
+      return '1.2.3';
     }
 
     static get properties() {
