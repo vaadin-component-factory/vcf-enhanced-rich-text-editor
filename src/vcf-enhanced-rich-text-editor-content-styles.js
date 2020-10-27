@@ -95,6 +95,14 @@ documentContainer.innerHTML = `
         img {
           max-width: 100%;
         }
+        
+        .ql-placeholder {
+          padding: 0 var(--lumo-space-xs);
+          display: inline-block;
+          background-color: var(--lumo-primary-color-10pct);
+          color: var(--lumo-primary-color);
+          border-radius: var(--lumo-border-radius);
+        }
       </style>
     </template>
   </dom-module>
