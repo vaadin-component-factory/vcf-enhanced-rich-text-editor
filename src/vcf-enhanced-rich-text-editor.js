@@ -16,233 +16,25 @@ import { ElementMixin } from '@vaadin/vaadin-element-mixin';
 import '@vaadin/vaadin-button';
 import '@vaadin/vaadin-confirm-dialog';
 import '@vaadin/vaadin-text-field';
+import '@vaadin/vaadin-combo-box';
 import '@vaadin/vaadin-license-checker/vaadin-license-checker';
 import '@vaadin/vaadin-icons';
 import './vendor/vaadin-quill';
 import './vcf-enhanced-rich-text-editor-styles';
 import './vcf-enhanced-rich-text-editor-toolbar-styles';
+import { ReadOnlyBlot, LinePartBlot, TabBlot, PreTabBlot, TabsContBlot, PlaceholderBlot } from './vcf-enhanced-rich-text-editor-blots';
 
 const Quill = window.Quill;
-const BlockEmbed = Quill.import('blots/block/embed');
-const Block = Quill.import('blots/block');
 const Inline = Quill.import('blots/inline');
-const TextBlot = Quill.import('blots/text');
-const ListItem = Quill.import('formats/list/item');
-const ListContainer = Quill.import('formats/list');
 
-class ReadOnlyBlot extends Inline {
-  static create(value) {
-    const node = super.create(value);
-
-    if (value) {
-      node.setAttribute('contenteditable', 'false');
-    } else {
-      node.removeAttribute('contenteditable');
-    }
-
-    return node;
-  }
-
-  static formats() {
-    return true;
-  }
-}
-ReadOnlyBlot.blotName = 'readonly';
-ReadOnlyBlot.tagName = 'span';
-ReadOnlyBlot.className = 'readonly-section';
-ReadOnlyBlot.allowedChildren = [Block, BlockEmbed, Inline, TextBlot, ListItem, ListContainer]; // [Inline, TextBlot];
-
-Quill.register(ReadOnlyBlot);
-
-class TabStopBlot extends BlockEmbed {
-  static create(data) {
-    const node = super.create(data);
-    node.style.left = '100px';
-    node.textContent = data;
-
-    return node;
-  }
-}
-TabStopBlot.blotName = 'tabstop';
-TabStopBlot.tagName = 'span';
-TabStopBlot.className = 'v-block';
-TabStopBlot.allowedChildren = [Text];
-Quill.register(TabStopBlot);
-
-class TabBlot extends Inline {
-  static create(level) {
-    const node = super.create();
-
-    node.innerHTML = '&#65279;';
-    node.style.width = `1px`;
-    node.setAttribute('contenteditable', false);
-
-    node.setAttribute('level', level);
-    return node;
-  }
-
-  static formats(node) {
-    return node.getAttribute('level');
-  }
-}
-TabBlot.blotName = 'tab';
-TabBlot.tagName = 'tab';
-Quill.register(TabBlot);
-
-class PreTabBlot extends Inline {
-  static create() {
-    const node = super.create();
-
-    node.innerHTML = '&#65279;';
-    node.style.width = `1px`;
-    node.setAttribute('contenteditable', false);
-    return node;
-  }
-}
-PreTabBlot.blotName = 'pre-tab';
-PreTabBlot.tagName = 'pre-tab';
-Quill.register(PreTabBlot);
-
-class LinePartBlot extends Inline {
-  static create() {
-    const node = super.create();
-    return node;
-  }
-}
-LinePartBlot.blotName = 'line-part';
-LinePartBlot.tagName = 'line-part';
-Quill.register(LinePartBlot);
-
-var emptyRegEx = new RegExp('\uFEFF', 'g');
-class TabsContBlot extends Block {
-  static create() {
-    const node = super.create();
-
-    return node;
-  }
-
-  static getPrevTab(preTab) {
-    if (!preTab.previousElementSibling) {
-      return null;
-    }
-
-    if (preTab.previousElementSibling.nodeName == TabBlot.tagName.toUpperCase()) {
-      return preTab.previousElementSibling;
-    }
-
-    if (!preTab.previousElementSibling.previousElementSibling) {
-      return null;
-    }
-
-    if (preTab.previousElementSibling.innerText.trim() === '' && preTab.previousElementSibling.previousElementSibling.nodeName == TabBlot.tagName.toUpperCase()) {
-      return preTab.previousElementSibling.previousElementSibling;
-    }
-
-    return null;
-  }
-
-  static convertPreTabs(node) {
-    const preTab = node.querySelector(PreTabBlot.tagName);
-    if (preTab) {
-      const tab = this.getPrevTab(preTab);
-      if (tab) {
-        if (!preTab.getAttribute('locked')) {
-          preTab.setAttribute('locked', true);
-
-          let level = parseInt(tab.getAttribute('level')) || 1;
-          tab.setAttribute('level', ++level);
-        }
-        preTab.remove();
-      } else {
-        const tab = document.createElement(TabBlot.tagName);
-        tab.innerHTML = preTab.innerHTML;
-        tab.style.width = `1px`;
-        tab.setAttribute('contenteditable', false);
-        tab.setAttribute('level', 1);
-
-        preTab.parentElement.replaceChild(tab, preTab);
-      }
-    }
-  }
-
-  static formats(node) {
-    this.convertPreTabs(node);
-    const separators = node.querySelectorAll(TabBlot.tagName);
-
-    if (node.getAttribute('tabs-count') != separators.length) {
-      node.setAttribute('tabs-count', separators.length);
-      separators.forEach(separator => {
-        const prev = separator.previousSibling;
-        if (prev != null && prev.nodeName != LinePartBlot.tagName.toUpperCase()) {
-          const leftEl = document.createElement('line-part');
-          if (prev.nodeName == '#text') {
-            leftEl.textContent = prev.textContent.replace(emptyRegEx, '');
-          } else {
-            const prevClone = prev.cloneNode(true);
-            prevClone.innerHTML = prevClone.innerHTML.replace(emptyRegEx, '');
-            leftEl.appendChild(prevClone);
-          }
-
-          separator.parentElement.replaceChild(leftEl, prev);
-        }
-
-        const next = separator.nextSibling;
-        if (next != null) {
-          if (next.nodeName != LinePartBlot.tagName.toUpperCase()) {
-            const rightEl = document.createElement('line-part');
-
-            if (next.nodeName == '#text') {
-              rightEl.innerHTML = separator.textContent.replace(emptyRegEx, '') + next.textContent.replace(emptyRegEx, '');
-            } else {
-              const nextClone = next.cloneNode(true);
-              // TODO check if not ZERO WIDTH NO-BREAK SPACE
-              nextClone.innerHTML = separator.textContent.replace(emptyRegEx, '') + nextClone.innerHTML.replace(emptyRegEx, '');
-              rightEl.appendChild(nextClone);
-            }
-            separator.parentElement.replaceChild(rightEl, next);
-          }
-        } else {
-          const rightEl = document.createElement('line-part');
-          rightEl.innerHTML = '&#65279;';
-          if (separator.parentElement) {
-            separator.parentElement.appendChild(rightEl);
-          }
-        }
-
-        // TODO fix currsor shifting
-        separator.innerHTML = '&#65279;';
-      });
-    }
-
-    return TabsContBlot.tagName;
-  }
-}
-TabsContBlot.blotName = 'tabs-cont';
-TabsContBlot.tagName = 'tabs-cont';
-Quill.register(TabsContBlot);
-
-// Non-breaking space
-class Nbsp extends Inline {
-  static create(value) {
-    const node = super.create(value);
-    node.innerHTML = '&nbsp;';
-    return node;
-  }
-}
-Nbsp.blotName = 'nbsp';
-Nbsp.tagName = 'span';
-Quill.register({
-  'formats/nbsp': Nbsp
-});
-
-Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName, PreTabBlot.blotName);
+Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName, PreTabBlot.blotName);
 
 (function() {
   'use strict';
 
   const Quill = window.Quill;
 
-  const HANDLERS = ['bold', 'italic', 'underline', 'strike', 'header', 'script', 'list', 'align', 'blockquote', 'code-block'];
+  const HANDLERS = ['bold', 'italic', 'underline', 'strike', 'header', 'script', 'list', 'align', 'blockquote', 'code-block', 'placeholder'];
 
   const TOOLBAR_BUTTON_GROUPS = {
     history: ['undo', 'redo'],
@@ -252,7 +44,7 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
     list: ['listOrdered', 'listBullet'],
     alignment: ['alignLeft', 'alignCenter', 'alignRight'],
     'rich-text': ['image', 'link'],
-    block: ['blockquote', 'codeBlock'],
+    block: ['blockquote', 'codeBlock', 'placeholder', 'placeholderAppearance'],
     format: ['readonly', 'clean']
   };
 
@@ -350,7 +142,8 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
             overflow: hidden;
           }
 
-          :host([hidden]) {
+          :host([hidden]),
+          button[hidden] {
             display: none !important;
           }
 
@@ -371,7 +164,7 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
             flex: auto;
           }
 
-          .readonly-section {
+          .ql-readonly {
             color: #676767;
             /* background: #f9f9f9; */
             background: #f1f1f1;
@@ -448,6 +241,16 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
 
               <!-- Code block -->
               <button type="button" class="ql-code-block" part="toolbar-button toolbar-button-code-block" title$="[[i18n.codeBlock]]" style="display: [[_buttonDisplay(toolbarButtons, 'codeBlock')]];"></button>
+
+              <!-- Placeholder -->
+              <button id="placeholderBtn" type="button" class="ql-placeholder" part="toolbar-button toolbar-button-placeholder" title$="[[i18n.placeholder]]" style="display: [[_buttonDisplay(toolbarButtons, 'placeholder')]];" hidden>
+                [[placeholderTags.start]]
+              </button>
+
+              <!-- Placeholder display -->
+              <button id="placeholderAppearanceBtn" type="button" part="toolbar-button toolbar-button-placeholder-display" title$="[[i18n.placeholderAppeance]]" style="display: [[_buttonDisplay(toolbarButtons, 'placeholderAppearance')]];" hidden>
+                [[placeholderAppearance]]
+              </button>
             </span>
 
             <span part="toolbar-group toolbar-group-format" style="display: [[_buttonGroupDisplay(toolbarButtons, 'format')]];">
@@ -485,6 +288,19 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
             [[i18n.remove]]
           </vaadin-button>
           <vaadin-button id="cancelLink" slot="cancel-button" on-click="_onLinkEditCancel">
+            [[i18n.cancel]]
+          </vaadin-button>
+        </vaadin-confirm-dialog>
+
+        <vaadin-confirm-dialog id="placeholderDialog" opened="{{_placeholderEditing}}" header="[[i18n.placeholderDialogTitle]]">
+          <vaadin-combo-box label="[[i18n.placeholderComboBoxLabel]]" id="placeholderComboBox" value="{{_placeholder}}" item-label-path="text" item-value-path="text" style="width: 100%;" on-value-changed="{{_placeholderChanged}}"></vaadin-combo-box>
+          <vaadin-button slot="confirm-button" theme="primary" on-click="_onPlaceholderEditConfirm">
+            [[i18n.ok]]
+          </vaadin-button>
+          <vaadin-button id="placeholderRemoveButton" slot="reject-button" theme="error" on-click="_onPlaceholderEditRemove" hidden$="[[!_placeholderRange]]">
+            [[i18n.remove]]
+          </vaadin-button>
+          <vaadin-button slot="cancel-button" on-click="_onPlaceholderEditCancel">
             [[i18n.cancel]]
           </vaadin-button>
         </vaadin-confirm-dialog>
@@ -579,6 +395,12 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
               blockquote: 'blockquote',
               codeBlock: 'code block',
               readonly: 'readonly',
+              placeholder: 'placeholder',
+              placeholderAppeance: 'toggle placeholder appearance',
+              placeholderComboBoxLabel: 'Select a placeholder',
+              placeholderAppearanceLabel1: 'Plain',
+              placeholderAppearanceLabel2: 'Value',
+              placeholderDialogTitle: 'Placeholders',
               clean: 'clean',
               linkDialogTitle: 'Link address',
               ok: 'OK',
@@ -600,12 +422,57 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
         tabStops: {
           type: Array,
           notify: true,
-          value: [
-            // {
-            //   direction: 'left', // left, right, middle
-            //   position: 120 // px
-            // }
-          ]
+          value: () => []
+        },
+
+        /**
+         * An array of strings or a `Placeholder` objects. Here is the syntax for a `Placeholder` object:
+         * ```
+         * {
+         *   text: 'placeholder',
+         *   format: { bold: true, italic: false }, // main placeholder format
+         *   altFormat:  { underline: true, bold: false } // alternate placeholder appearance format
+         * }
+         * ```
+         * The `format` and `altFormat` properties accept [Inline](https://quilljs.com/docs/formats/#inline) formats.
+         */
+        placeholders: {
+          type: Array,
+          notify: true,
+          observer: '_placeholdersChanged'
+        },
+
+        /**
+         * Object containing `start` and `end` properties used for the start and end tags of a placeholder.
+         */
+        placeholderTags: {
+          type: Object,
+          value: () => ({
+            start: '@',
+            end: ''
+          })
+        },
+
+        /**
+         * Label for current placeholder appearance.
+         */
+        placeholderAppearance: String,
+
+        /**
+         * Returns whether alternate appearance is active.
+         */
+        placeholderAltAppearance: {
+          type: Boolean,
+          observer: '_placeholderAltAppearanceChanged'
+        },
+
+        /**
+         * Regular expression used for placeholder alternate appearance.
+         */
+        placeholderAltAppearanceRegex: {
+          type: String,
+          value: '(?<=\\=).*$',
+          observer: '_placeholderAltAppearanceRegexChanged'
         },
 
         _editor: {
@@ -615,9 +482,9 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
         /**
          * Stores old value
          */
-        __oldValue: String,
+        _oldValue: String,
 
-        __lastCommittedChange: {
+        _lastCommittedChange: {
           type: String,
           value: ''
         },
@@ -653,12 +520,32 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
           value:
             // eslint-disable-next-line max-len
             'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAyBAMAAABxHJwKAAAAA3NCSVQICAjb4U/gAAAAG1BMVEXS0tLR0dHQ0NCfq7eeqradq7idqbWcqLT///+TeDeAAAAACXRSTlP//////////wBTT3gSAAAACXBIWXMAAAsSAAALEgHS3X78AAAAIHRFWHRTb2Z0d2FyZQBNYWNyb21lZGlhIEZpcmV3b3JrcyBNWLuRKiQAAAAWdEVYdENyZWF0aW9uIFRpbWUAMDUvMTAvMTKGkLEaAAAATklEQVR4nGPogIAABijDAMZwQGM0CqKLYGNAtDcK4lOcgGGyAS4pDF1NgoIJuJ2KLtKIUIxpcgKGmzHV4AkNTClc2pFDo4Bq4awoCAYOAKbZvafXusxYAAAAAElFTkSuQmCC'
+        },
+
+        _placeholderEditing: {
+          type: Boolean,
+          observer: '_placeholderEditingChanged'
+        },
+
+        _placeholderRange: {
+          type: Object,
+          value: null
+        },
+
+        _placeholderIndex: {
+          type: Number,
+          value: null
+        },
+
+        _placeholder: {
+          type: String,
+          value: ''
         }
       };
     }
 
     _buttonDisplay(toolbarButtons, button) {
-      if (toolbarButtons[button] == false) return 'none';
+      if (toolbarButtons[button] === false) return 'none';
       return '';
     }
 
@@ -763,12 +650,12 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
         }
       });
 
-      this.__patchToolbar();
-      this.__patchKeyboard();
+      this._patchToolbar();
+      this._patchKeyboard();
 
       /* istanbul ignore if */
       if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1 && useShadow) {
-        this.__patchFirefoxFocus();
+        this._patchFirefoxFocus();
       }
 
       this.$.linkDialog.$.dialog.$.overlay.addEventListener('vaadin-overlay-open', () => {
@@ -782,8 +669,9 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
 
       this._editor.on('text-change', () => {
         const timeout = 200;
-        this.__debounceSetValue = Debouncer.debounce(this.__debounceSetValue, timeOut.after(timeout), () => {
-          this.value = JSON.stringify(this._editor.getContents().ops);
+        this._debounceSetValue = Debouncer.debounce(this._debounceSetValue, timeOut.after(timeout), () => {
+          if (!this._silentTextChange) this.value = JSON.stringify(this._editor.getContents().ops);
+          this._silentTextChange = false;
         });
       });
 
@@ -796,7 +684,7 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
         if (this._toolbarState === STATE.FOCUSED) {
           this._cleanToolbarState();
         } else {
-          this.__emitChangeEvent();
+          this._emitChangeEvent();
         }
       });
 
@@ -807,9 +695,24 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
         }
       });
 
-      this._editor.on('selection-change', this.__announceFormatting.bind(this));
+      this._editor.on('selection-change', this._announceFormatting.bind(this));
 
       this._editor.emitter.emit('text-change');
+
+      this._editor.on('selection-change', opt => {
+        if (opt !== null) {
+          const timeout = 200;
+          this.__debounceSetPlaceholder = Debouncer.debounce(this.__debounceSetPlaceholder, timeOut.after(timeout), () => {
+            if (this._getSelectedPlaceholder()) {
+              this.$.placeholderBtn.classList.add('ql-active');
+              this.$.placeholderBtn.setAttribute('on', true);
+            } else {
+              this.$.placeholderBtn.classList.remove('ql-active');
+              this.$.placeholderBtn.removeAttribute('on');
+            }
+          });
+        }
+      });
     }
 
     _prepareToolbar() {
@@ -828,11 +731,19 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
 
       HANDLERS.forEach(handler => {
         toolbar.handlers[handler] = value => {
-          this._markToolbarClicked();
-          this._editor.format(handler, value, SOURCE.USER);
+          if (handler === 'placeholder') {
+            this._onPlaceholderClick();
+          } else {
+            this._markToolbarClicked();
+            this._editor.format(handler, value, SOURCE.USER);
+          }
         };
       });
 
+      this.placeholderAppearance = this.i18n.placeholderAppearanceLabel1;
+      this.$.placeholderAppearanceBtn.classList.add('ql-active');
+      this.$.placeholderAppearanceBtn.setAttribute('on', true);
+      this.$.placeholderAppearanceBtn.addEventListener('click', () => (this.placeholderAltAppearance = !this.placeholderAltAppearance));
       return toolbar;
     }
 
@@ -884,7 +795,7 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
       this._toolbarState = STATE.DEFAULT;
     }
 
-    __createFakeFocusTarget() {
+    _createFakeFocusTarget() {
       const isRTL = document.documentElement.getAttribute('dir') == 'rtl';
       const elem = document.createElement('textarea');
       // Reset box model
@@ -900,7 +811,7 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
       return elem;
     }
 
-    __patchFirefoxFocus() {
+    _patchFirefoxFocus() {
       // in Firefox 63 with native Shadow DOM, when moving focus out of
       // contenteditable and back again within same shadow root, cursor
       // disappears. See https://jsfiddle.net/webpadawan/g6vku9L3/
@@ -909,10 +820,10 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
 
       const focusFake = () => {
         isFake = true;
-        this.__fakeTarget = this.__createFakeFocusTarget();
-        document.body.appendChild(this.__fakeTarget);
+        this._fakeTarget = this._createFakeFocusTarget();
+        document.body.appendChild(this._fakeTarget);
         // let the focus step out of shadow root!
-        this.__fakeTarget.focus();
+        this._fakeTarget.focus();
         return new Promise(resolve => setTimeout(resolve));
       };
 
@@ -921,8 +832,8 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
         if (offsetNode) {
           this._editor.selection.setNativeRange(offsetNode, offset);
         }
-        document.body.removeChild(this.__fakeTarget);
-        delete this.__fakeTarget;
+        document.body.removeChild(this._fakeTarget);
+        delete this._fakeTarget;
         isFake = false;
       };
 
@@ -943,7 +854,7 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
       });
     }
 
-    __patchToolbar() {
+    _patchToolbar() {
       const toolbar = this._editor.getModule('toolbar');
       const update = toolbar.update;
 
@@ -972,7 +883,7 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
       };
     }
 
-    __patchKeyboard() {
+    _patchKeyboard() {
       const focusToolbar = () => {
         this._markToolbarFocused();
         this._toolbar.querySelector('button:not([tabindex])').focus();
@@ -1023,12 +934,12 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
       });
     }
 
-    __emitChangeEvent() {
-      this.__debounceSetValue && this.__debounceSetValue.flush();
+    _emitChangeEvent() {
+      this._debounceSetValue && this._debounceSetValue.flush();
 
-      if (this.__lastCommittedChange !== this.value) {
+      if (this._lastCommittedChange !== this.value) {
         this.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: false }));
-        this.__lastCommittedChange = this.value;
+        this._lastCommittedChange = this.value;
       }
     }
 
@@ -1036,14 +947,7 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
       const range = this._editor.getSelection();
       if (range) {
         const [readOnlySection] = this._editor.scroll.descendant(ReadOnlyBlot, range.index);
-        // if (readOnlySection != null) {
-        //   // existing readonly section
-        //   this._editor.formatText(range.index, range.length + 1, 'readonly', false, 'user');
-        // } else {
-        //   this._editor.formatText(range.index, range.length + 1, 'readonly', true, 'user');
-        // }
-
-        this._editor.formatText(range.index, range.length + 1, 'readonly', readOnlySection == null, 'user');
+        this._editor.formatText(range.index, range.length, 'readonly', readOnlySection == null, 'user');
       }
     }
 
@@ -1130,7 +1034,7 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
       }
     }
 
-    __updateHtmlValue() {
+    _updateHtmlValue() {
       const className = 'ql-editor';
       const editor = this.shadowRoot.querySelector(`.${className}`);
       let content = editor.innerHTML;
@@ -1151,13 +1055,13 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
       this._setHtmlValue(content);
     }
 
-    __announceFormatting() {
+    _announceFormatting() {
       const timeout = 200;
 
       const announcer = this.shadowRoot.querySelector('.announcer');
       announcer.textContent = '';
 
-      this.__debounceAnnounceFormatting = Debouncer.debounce(this.__debounceAnnounceFormatting, timeOut.after(timeout), () => {
+      this._debounceAnnounceFormatting = Debouncer.debounce(this._debounceAnnounceFormatting, timeOut.after(timeout), () => {
         const formatting = Array.from(this.shadowRoot.querySelectorAll('[part="toolbar"] .ql-active'))
           .map(button => button.getAttribute('title'))
           .join(', ');
@@ -1173,7 +1077,7 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
 
     _clear() {
       this._editor.deleteText(0, this._editor.getLength(), SOURCE.SILENT);
-      this.__updateHtmlValue();
+      this._updateHtmlValue();
     }
 
     _undo(e) {
@@ -1203,11 +1107,11 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
       // FIXME(platosha): workaround for Polymer Gestures mouseCanceller
       // cancelling the following synthetic click. See also:
       // https://github.com/Polymer/polymer/issues/5289
-      this.__resetMouseCanceller();
+      this._resetMouseCanceller();
       this._onImageClick();
     }
 
-    __resetMouseCanceller() {
+    _resetMouseCanceller() {
       resetMouseCanceller();
     }
 
@@ -1254,12 +1158,12 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
       } else {
         editor.enable();
 
-        if (this.__oldDisabled) {
+        if (this._oldDisabled) {
           this._toggleToolbarDisabled(false);
         }
       }
 
-      this.__oldDisabled = disabled;
+      this._oldDisabled = disabled;
     }
 
     _tabStopsChanged(tabStops, _editor) {
@@ -1295,13 +1199,13 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
       try {
         parsedValue = JSON.parse(value);
         if (Array.isArray(parsedValue)) {
-          this.__oldValue = value;
+          this._oldValue = value;
         } else {
           throw new Error('expected JSON string with array of objects, got: ' + value);
         }
       } catch (err) {
         // Use old value in case new one is not suitable
-        this.value = this.__oldValue;
+        this.value = this._oldValue;
         console.error('Invalid value set to rich-text-editor:', err);
         return;
       }
@@ -1312,14 +1216,14 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
         // in case we have tabstops, they will be rendered in on text-change, so we need to trigger it
         editor.emitter.emit('text-change');
       }
-      this.__updateHtmlValue();
+      this._updateHtmlValue();
 
       if (this._toolbarState === STATE.CLICKED) {
         this._cleanToolbarState();
-        this.__emitChangeEvent();
+        this._emitChangeEvent();
       } else if (!this._editor.hasFocus()) {
         // value changed from outside
-        this.__lastCommittedChange = this.value;
+        this._lastCommittedChange = this.value;
       }
     }
 
@@ -1376,6 +1280,134 @@ Inline.order.push(ReadOnlyBlot.blotName, LinePartBlot.blotName, TabBlot.blotName
       this.tabStops.sort((a, b) => a['position'] - b['position']);
       this.tabStops = Object.assign([], this.tabStops);
       this._editor.emitter.emit('text-change');
+    }
+
+    _placeholderEditingChanged(value) {
+      this.shadowRoot.querySelector('#placeholderDialog').opened = value;
+    }
+
+    _onPlaceholderChanged(e) {
+      this._placeholder = e.detail.value;
+    }
+
+    _onPlaceholderClick() {
+      const range = this._editor.getSelection();
+
+      if (range) {
+        const placeholder = this._getSelectedPlaceholder();
+        if (placeholder && placeholder.text) {
+          const value = placeholder.text.replace(this.placeholderTags.start, '').replace(this.placeholderTags.end, '');
+          this.$.placeholderRemoveButton.style.display = 'block';
+          this._placeholderRange = { index: range.index, length: 1 };
+          this._placeholder = value;
+        } else if (range.length === 0) {
+          this.$.placeholderRemoveButton.style.display = 'none';
+          this._placeholderIndex = range.index;
+        }
+
+        this._placeholderEditing = true;
+      }
+    }
+
+    _getSelectedPlaceholder() {
+      const op = this._editor.getContents(this._editor.getSelection().index - 1, 1).ops[0];
+      return op && op.insert.placeholder;
+    }
+
+    _insertPlaceholder(placeholder, position) {
+      if (placeholder) {
+        this._markToolbarClicked();
+        this._insertPlaceholderText(position, placeholder);
+      }
+      this._closePlaceholderDialog();
+    }
+
+    _updatePlaceholder(placeholder) {
+      this._markToolbarClicked();
+      if (this._placeholderRange) {
+        const index = this._placeholderRange.index - 1;
+        this._editor.deleteText(index, this._placeholderRange.length);
+        this._insertPlaceholderText(index, placeholder);
+        this._editor.setSelection(index, 0);
+      }
+      this._closePlaceholderDialog();
+    }
+
+    _insertPlaceholderText(index, placeholder) {
+      const placeholderOptions = this._getPlaceholderOptions(placeholder);
+      if (this.placeholderAltAppearance) placeholderOptions.altAppearance = true;
+      this._editor.insertEmbed(index, 'placeholder', placeholderOptions);
+    }
+
+    _getPlaceholderOptions(placeholder, tags = true) {
+      let placeholderOptions = this.placeholders.filter(i => i.text === placeholder)[0] || placeholder;
+      if (typeof placeholderOptions === 'string') placeholderOptions = { text: placeholder };
+      else if (placeholderOptions.text) placeholderOptions = Object.assign({}, placeholderOptions);
+      else console.error('Invalid placeholder format');
+      if (tags) placeholderOptions.text = this._wrapPlaceholderTags(placeholderOptions.text);
+      return placeholderOptions;
+    }
+
+    _wrapPlaceholderTags(placeholderText) {
+      return this.placeholderTags.start + placeholderText + this.placeholderTags.end;
+    }
+
+    _removePlaceholder() {
+      this._markToolbarClicked();
+      if (this._placeholderRange) {
+        const index = this._placeholderRange.index - 1;
+        this._editor.deleteText(index, this._placeholderRange.length);
+        this._editor.setSelection(index, 0);
+      }
+      this._closePlaceholderDialog();
+    }
+
+    _closePlaceholderDialog() {
+      this._placeholderEditing = false;
+      this._placeholder = '';
+      this._placeholderIndex = null;
+      this._placeholderRange = null;
+    }
+
+    _onPlaceholderEditConfirm() {
+      if (this._placeholderIndex !== null) this._insertPlaceholder(this._placeholder, this._placeholderIndex);
+      else if (this._placeholderRange) this._updatePlaceholder(this._placeholder, this._placeholderRange);
+    }
+
+    _onPlaceholderEditCancel() {
+      this._closePlaceholderDialog();
+      this._editor.focus();
+    }
+
+    _onPlaceholderEditRemove() {
+      this._removePlaceholder();
+      this._closePlaceholderDialog();
+    }
+
+    _placeholderAltAppearanceChanged(altAppearance) {
+      if (altAppearance) this.set('placeholderAppearance', this.i18n.placeholderAppearanceLabel2);
+      else this.set('placeholderAppearance', this.i18n.placeholderAppearanceLabel1);
+      if (this.value) {
+        this.value = JSON.stringify(
+          JSON.parse(this.value).map(op => {
+            if (typeof op.insert === 'object' && op.insert.placeholder) {
+              op.insert.placeholder.altAppearance = altAppearance;
+            }
+            return op;
+          })
+        );
+        this._silentTextChange = true;
+      }
+    }
+
+    _placeholderAltAppearanceRegexChanged(altAppearanceRegex) {
+      PlaceholderBlot.altAppearanceRegex = altAppearanceRegex;
+    }
+
+    _placeholdersChanged(placeholders) {
+      this.$.placeholderBtn.hidden = !placeholders.length;
+      this.$.placeholderAppearanceBtn.hidden = !placeholders.length;
+      if (placeholders.length) this.$.placeholderComboBox.items = placeholders.map(placeholder => this._getPlaceholderOptions(placeholder, false));
     }
 
     /**

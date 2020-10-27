@@ -126,6 +126,12 @@ documentContainer.innerHTML = `
           content: "</>";
           font-size: 0.875em;
         }
+        
+        [part~="toolbar-button"][part~="toolbar-button-placeholder-display"] {
+          width: var(--lumo-size-l);
+          padding: 0 var(--lumo-space-xs);
+          font-size: 0.875em;
+        }
       </style>
     </template>
   </dom-module>

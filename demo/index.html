@@ -11,13 +11,16 @@
         .centered {
           max-width: 1000px;
         }
+
         main {
           opacity: 1;
           transition: opacity 0.5s;
         }
+
         main.hidden {
           opacity: 0;
         }
+
       </style>
     </custom-style>
     <script>
@@ -27,10 +30,22 @@
   <body>
     <main class="vertical-section-container centered hidden">
       <h4><a href="api/#/elements/Vaadin.VcfEnhancedRichTextEditor">API documentation ↗</a></h4>
-      <h3>Rich Text Editor</h3>
+      <h3>Placeholders</h3>
       <demo-snippet>
         <template>
           <vcf-enhanced-rich-text-editor style="height: 300px;"></vcf-enhanced-rich-text-editor>
+          <script>
+            window.addEventListener('WebComponentsReady', () => {
+              const rte = document.querySelector('vcf-enhanced-rich-text-editor');
+              rte.value = '[{"insert":"The company "},{"insert":{"placeholder":{"text":"@N-1=Vaadin","altFormat":{"bold":true}}}},{"insert":", located in "},{"insert":{"placeholder":{"text":"@A-1=Turku, 20540","altFormat":{"link":"https://goo.gl/maps/EX8RTEMUWeEAdkNN8"}}}},{"insert":", was founded in "},{"insert":{"placeholder":{"text":"@D-1=01-01-2000"}}},{"insert":"."}]';
+              rte.placeholderAltAppearance = true;
+              rte.placeholders = [
+                {text: 'N-1=Vaadin', altFormat: {bold: true}},
+                {text: 'A-1=Turku, 20540', altFormat: {link: 'https://goo.gl/maps/EX8RTEMUWeEAdkNN8'}},
+                'D-1=01-01-2000'
+              ];
+            });
+          </script>
         </template>
       </demo-snippet>
       <h3>Tab Stops</h3>
@@ -53,6 +68,7 @@
               min-height: 400px;
               max-height: 600px;
             }
+
           </style>
           <vcf-enhanced-rich-text-editor class="height-constraints"></vcf-enhanced-rich-text-editor>
         </template>
@@ -64,7 +80,7 @@
           <script>
             window.addEventListener('WebComponentsReady', () => {
               var rte = document.querySelector('#custom-toolbar');
-              rte.toolbarButtons = { undo: false, redo: false, h1: false, h2: false, h3: false, image: false, link: false };
+              rte.toolbarButtons = {undo: false, redo: false, h1: false, h2: false, h3: false, image: false, link: false};
             });
           </script>
         </template>
