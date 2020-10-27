@@ -450,7 +450,8 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           value: () => ({
             start: '@',
             end: ''
-          })
+          }),
+          observer: '_placeholderTagsChanged'
         },
 
         /**
@@ -469,10 +470,9 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         /**
          * Regular expression used for placeholder alternate appearance.
          */
-        placeholderAltAppearanceRegex: {
+        placeholderAltAppearancePattern: {
           type: String,
-          value: '(?<=\\=).*$',
-          observer: '_placeholderAltAppearanceRegexChanged'
+          observer: '_placeholderAltAppearancePatternChanged'
         },
 
         _editor: {
@@ -701,7 +701,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
       this._editor.on('selection-change', opt => {
         if (opt !== null) {
-          const timeout = 200;
+          const timeout = 50;
           this.__debounceSetPlaceholder = Debouncer.debounce(this.__debounceSetPlaceholder, timeOut.after(timeout), () => {
             if (this._getSelectedPlaceholder()) {
               this.$.placeholderBtn.classList.add('ql-active');
@@ -1200,6 +1200,15 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         parsedValue = JSON.parse(value);
         if (Array.isArray(parsedValue)) {
           this._oldValue = value;
+          // Set altAppearance
+          let AltAppearance = false;
+          for (const op of parsedValue) {
+            if (op.insert.placeholder) {
+              AltAppearance = op.insert.placeholder.altAppearance || false;
+              break;
+            }
+          }
+          this.placeholderAltAppearance = AltAppearance;
         } else {
           throw new Error('expected JSON string with array of objects, got: ' + value);
         }
@@ -1339,17 +1348,12 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       this._editor.insertEmbed(index, 'placeholder', placeholderOptions);
     }
 
-    _getPlaceholderOptions(placeholder, tags = true) {
+    _getPlaceholderOptions(placeholder) {
       let placeholderOptions = this.placeholders.filter(i => i.text === placeholder)[0] || placeholder;
       if (typeof placeholderOptions === 'string') placeholderOptions = { text: placeholder };
       else if (placeholderOptions.text) placeholderOptions = Object.assign({}, placeholderOptions);
       else console.error('Invalid placeholder format');
-      if (tags) placeholderOptions.text = this._wrapPlaceholderTags(placeholderOptions.text);
       return placeholderOptions;
-    }
-
-    _wrapPlaceholderTags(placeholderText) {
-      return this.placeholderTags.start + placeholderText + this.placeholderTags.end;
     }
 
     _removePlaceholder() {
@@ -1400,14 +1404,24 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       }
     }
 
-    _placeholderAltAppearanceRegexChanged(altAppearanceRegex) {
+    _placeholderTagsChanged(tags) {
+      PlaceholderBlot.tags = tags;
+      this._resetPlaceholderAppearance();
+    }
+
+    _resetPlaceholderAppearance() {
+      [1, 2].forEach(() => (this.placeholderAltAppearance = !this.placeholderAltAppearance));
+    }
+
+    _placeholderAltAppearancePatternChanged(altAppearanceRegex) {
       PlaceholderBlot.altAppearanceRegex = altAppearanceRegex;
+      this.$.placeholderAppearanceBtn.hidden = !(this.placeholders.length && altAppearanceRegex);
     }
 
     _placeholdersChanged(placeholders) {
       this.$.placeholderBtn.hidden = !placeholders.length;
-      this.$.placeholderAppearanceBtn.hidden = !placeholders.length;
-      if (placeholders.length) this.$.placeholderComboBox.items = placeholders.map(placeholder => this._getPlaceholderOptions(placeholder, false));
+      this.$.placeholderAppearanceBtn.hidden = !(placeholders.length && this.placeholderAltAppearancePattern);
+      if (placeholders.length) this.$.placeholderComboBox.items = placeholders.map(placeholder => this._getPlaceholderOptions(placeholder));
     }
 
     /**

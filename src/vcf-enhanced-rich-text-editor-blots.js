@@ -256,49 +256,57 @@ Quill.register({ 'formats/nbsp': Nbsp });
  * @extends {Embed}
  */
 class PlaceholderBlot extends Embed {
+  constructor(node, value) {
+    super(node, value);
+    this.applyFormat();
+  }
+
+  applyFormat() {
+    const node = this.domNode;
+    const placeholder = PlaceholderBlot.loadValue(node);
+    if (placeholder.altFormat) {
+      const altTextNode = node.querySelector('[alt]');
+      PlaceholderBlot.deltaToInline(altTextNode, placeholder.altFormat);
+    }
+    if (placeholder.format) {
+      const contentNode = node.querySelector('[contenteditable="false"]');
+      PlaceholderBlot.deltaToInline(contentNode, placeholder.format);
+    }
+  }
+
   static create(value) {
     const node = super.create();
-    node.placeholder = value;
+    node.setAttribute('contenteditable', false);
+    PlaceholderBlot.storeValue(node, value);
     PlaceholderBlot.setText(node);
     return node;
   }
 
-  format() {
-    PlaceholderBlot.setText(this.domNode);
-  }
-
-  formats() {
-    const formats = super.formats;
-    formats.placeholder = true;
-    return formats;
-  }
-
   static value(node) {
-    PlaceholderBlot.applyFormat(node);
-    return node.placeholder || true;
+    const placeholder = PlaceholderBlot.loadValue(node);
+    return placeholder || true;
+  }
+
+  static storeValue(node, placeholder) {
+    node.dataset.placeholder = JSON.stringify(placeholder);
+  }
+
+  static loadValue(node) {
+    return JSON.parse(node.dataset.placeholder);
   }
 
   static setText(node) {
+    const placeholder = PlaceholderBlot.loadValue(node);
     let altText = '';
-    let text = node.placeholder.text;
+    let text = placeholder.text;
     if (PlaceholderBlot.altAppearanceRegex) {
-      altText = new RegExp(PlaceholderBlot.altAppearanceRegex).exec(node.placeholder.text) || '';
+      altText = new RegExp(PlaceholderBlot.altAppearanceRegex).exec(text) || '';
       const altTextNodeStr = `<span alt>${altText}</span>`;
-      if (altText && node.placeholder.altAppearance) text = altTextNodeStr;
-      else text = node.placeholder.text.replace(altText, altTextNodeStr);
+      if (altText && placeholder.altAppearance) text = altTextNodeStr;
+      else text = text.replace(altText, altTextNodeStr);
     }
+    if (PlaceholderBlot.tags && !placeholder.altAppearance) text = PlaceholderBlot._wrapTags(text);
     node.innerHTML = text;
-  }
-
-  static applyFormat(node) {
-    if (node.placeholder.altFormat) {
-      const altTextNode = node.querySelector('[alt]');
-      PlaceholderBlot.deltaToInline(altTextNode, node.placeholder.altFormat);
-    }
-    if (node.placeholder.format) {
-      const contentNode = node.querySelector('[contenteditable="false"]');
-      PlaceholderBlot.deltaToInline(contentNode, node.placeholder.format);
-    }
   }
 
   static deltaToInline(node, attr) {
@@ -326,6 +334,11 @@ class PlaceholderBlot extends Embed {
         }
       });
     }
+  }
+
+  static _wrapTags(text) {
+    const { start, end } = PlaceholderBlot.tags;
+    return start + text + end;
   }
 
   static _wrapContent(tag, node, attrs = []) {
