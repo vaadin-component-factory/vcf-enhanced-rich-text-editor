@@ -69,11 +69,6 @@ const commonConfig = merge([
               {
                 modules: {
                   '@polymer/polymer/lib/utils/html-tag.js': ['html']
-                },
-                htmlMinifier: {
-                  collapseWhitespace: true,
-                  minifyCSS: true,
-                  removeComments: true
                 }
               }
             ]
