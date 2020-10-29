@@ -740,10 +740,12 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         };
       });
 
-      this.placeholderAppearance = this.i18n.placeholderAppearanceLabel1;
       this.$.placeholderAppearanceBtn.classList.add('ql-active');
       this.$.placeholderAppearanceBtn.setAttribute('on', true);
-      this.$.placeholderAppearanceBtn.addEventListener('click', () => (this.placeholderAltAppearance = !this.placeholderAltAppearance));
+      this.$.placeholderAppearanceBtn.addEventListener('click', () => {
+        this._markToolbarClicked();
+        this.placeholderAltAppearance = !this.placeholderAltAppearance;
+      });
       return toolbar;
     }
 
