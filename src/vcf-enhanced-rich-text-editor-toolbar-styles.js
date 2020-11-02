@@ -128,7 +128,8 @@ documentContainer.innerHTML = `
         }
         
         [part~="toolbar-button"][part~="toolbar-button-placeholder-display"] {
-          width: var(--lumo-size-l);
+          width: auto;
+          min-width: var(--lumo-size-l);
           padding: 0 var(--lumo-space-xs);
           font-size: 0.875em;
         }

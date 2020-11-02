@@ -248,7 +248,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
               </button>
 
               <!-- Placeholder display -->
-              <button id="placeholderAppearanceBtn" type="button" part="toolbar-button toolbar-button-placeholder-display" title$="[[i18n.placeholderAppeance]]" style="display: [[_buttonDisplay(toolbarButtons, 'placeholderAppearance')]];" hidden>
+              <button id="placeholderAppearanceBtn" type="button" part="toolbar-button toolbar-button-placeholder-display" title$="[[i18n.placeholderAppearance]]" style="display: [[_buttonDisplay(toolbarButtons, 'placeholderAppearance')]];" hidden>
                 [[placeholderAppearance]]
               </button>
             </span>
@@ -396,7 +396,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
               codeBlock: 'code block',
               readonly: 'readonly',
               placeholder: 'placeholder',
-              placeholderAppeance: 'toggle placeholder appearance',
+              placeholderAppearance: 'toggle placeholder appearance',
               placeholderComboBoxLabel: 'Select a placeholder',
               placeholderAppearanceLabel1: 'Plain',
               placeholderAppearanceLabel2: 'Value',
@@ -703,9 +703,12 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         if (opt !== null) {
           const timeout = 50;
           this.__debounceSetPlaceholder = Debouncer.debounce(this.__debounceSetPlaceholder, timeOut.after(timeout), () => {
-            if (this._getSelectedPlaceholder()) {
+            const placeholder = this._getSelectedPlaceholder();
+            if (placeholder) {
               this.$.placeholderBtn.classList.add('ql-active');
               this.$.placeholderBtn.setAttribute('on', true);
+              const detail = { placeholder };
+              this.dispatchEvent(new CustomEvent('placeholder-select', { bubbles: true, cancelable: false, detail }));
             } else {
               this.$.placeholderBtn.classList.remove('ql-active');
               this.$.placeholderBtn.removeAttribute('on');
@@ -1347,7 +1350,13 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     _insertPlaceholderText(index, placeholder) {
       const placeholderOptions = this._getPlaceholderOptions(placeholder);
       if (this.placeholderAltAppearance) placeholderOptions.altAppearance = true;
-      this._editor.insertEmbed(index, 'placeholder', placeholderOptions);
+      const detail = { placeholder: placeholderOptions };
+      const event = new CustomEvent(`placeholder-before-insert`, { bubbles: true, cancelable: true, detail });
+      const cancelled = !this.dispatchEvent(event);
+      if (!cancelled) {
+        this._editor.insertEmbed(index, 'placeholder', placeholderOptions);
+        this.dispatchEvent(new CustomEvent('placeholder-insert', { bubbles: true, cancelable: false, detail }));
+      }
     }
 
     _getPlaceholderOptions(placeholder) {
@@ -1359,13 +1368,20 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     _removePlaceholder() {
-      this._markToolbarClicked();
-      if (this._placeholderRange) {
-        const index = this._placeholderRange.index - 1;
-        this._editor.deleteText(index, this._placeholderRange.length);
-        this._editor.setSelection(index, 0);
+      const placeholder = this._getSelectedPlaceholder();
+      if (placeholder && this._placeholderRange) {
+        const detail = { placeholder };
+        const event = new CustomEvent(`placeholder-before-delete`, { bubbles: true, cancelable: true, detail });
+        const cancelled = !this.dispatchEvent(event);
+        if (!cancelled) {
+          this._markToolbarClicked();
+          const index = this._placeholderRange.index - 1;
+          this._editor.deleteText(index, this._placeholderRange.length);
+          this._editor.setSelection(index, 0);
+          this._closePlaceholderDialog();
+          this.dispatchEvent(new CustomEvent(`placeholder-delete`, { bubbles: true, cancelable: false, detail }));
+        }
       }
-      this._closePlaceholderDialog();
     }
 
     _closePlaceholderDialog() {
@@ -1403,6 +1419,8 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           })
         );
         this._silentTextChange = true;
+        const detail = { altAppearance: this.placeholderAltAppearance, appearanceLabel: this.placeholderAppearance };
+        this.dispatchEvent(new CustomEvent('placeholder-appearance-change', { bubbles: true, cancelable: false, detail }));
       }
     }
 
@@ -1430,6 +1448,60 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
      * Fired when the user commits a value change.
      *
      * @event change
+     */
+
+    /**
+     * Fired when the user commits a value change.
+     *
+     * @event placeholder-appearance-change
+     * ```
+     * e.detail = { altAppearance: boolean, appearanceLabel: string }
+     * ```
+     */
+
+    /**
+     * Fired when the user selects a placeholder.
+     *
+     * @event placeholder-select
+     * ```
+     * e.detail = { placeholder: object }
+     * ```
+     */
+
+    /**
+     * Fired before a placeholder is inserted.
+     *
+     * @event placeholder-before-insert
+     * ```
+     * e.detail = { placeholder: object }
+     * ```
+     */
+
+    /**
+     * Fired after a placeholder is inserted.
+     *
+     * @event placeholder-insert
+     * ```
+     * e.detail = { placeholder: object }
+     * ```
+     */
+
+    /**
+     * Fired before a placeholder is deleted.
+     *
+     * @event placeholder-before-delete
+     * ```
+     * e.detail = { placeholder: object }
+     * ```
+     */
+
+    /**
+     * Fired after a placeholder is deleted.
+     *
+     * @event placeholder-delete
+     * ```
+     * e.detail = { placeholder: object }
+     * ```
      */
 
     /**
