@@ -59,6 +59,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     CLICKED: 2
   };
 
+  const DELETE_KEY = 8;
   const TAB_KEY = 9;
   const QL_EDITOR_PADDING_LEFT = 16;
 
@@ -292,7 +293,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           </vaadin-button>
         </vaadin-confirm-dialog>
 
-        <vaadin-confirm-dialog id="placeholderDialog" opened="{{_placeholderEditing}}" header="[[i18n.placeholderDialogTitle]]">
+        <vaadin-confirm-dialog id="placeholderDialog" header="[[i18n.placeholderDialogTitle]]">
           <vaadin-combo-box label="[[i18n.placeholderComboBoxLabel]]" id="placeholderComboBox" value="{{_placeholder}}" item-label-path="text" item-value-path="text" style="width: 100%;" on-value-changed="{{_placeholderChanged}}"></vaadin-combo-box>
           <vaadin-button slot="confirm-button" theme="primary" on-click="_onPlaceholderEditConfirm">
             [[i18n.ok]]
@@ -709,9 +710,12 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
               this.$.placeholderBtn.setAttribute('on', true);
               const detail = { placeholder };
               this.dispatchEvent(new CustomEvent('placeholder-select', { bubbles: true, cancelable: false, detail }));
+              this._placeholderRange = this._editor.getSelection();
+              this._placeholderRange.length = 1;
             } else {
               this.$.placeholderBtn.classList.remove('ql-active');
               this.$.placeholderBtn.removeAttribute('on');
+              this._placeholderRange = null;
             }
           });
         }
@@ -928,6 +932,19 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       };
 
       keyboard.bindings[TAB_KEY] = [tabStopBinding, ...originalBindings, moveFocusBinding];
+
+      // Delete key bindings
+      const deleteKeyBindings = keyboard.bindings[DELETE_KEY];
+      keyboard.bindings[DELETE_KEY] = [
+        {
+          key: DELETE_KEY,
+          handler: () => {
+            if (this._getSelectedPlaceholder()) this._removePlaceholder();
+            else return true;
+          }
+        },
+        ...deleteKeyBindings
+      ];
 
       // alt-f10 focuses a toolbar button
       keyboard.addBinding({ key: 121, altKey: true, handler: focusToolbar });
@@ -1297,7 +1314,14 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     _placeholderEditingChanged(value) {
-      this.shadowRoot.querySelector('#placeholderDialog').opened = value;
+      if (value) {
+        const detail = { placeholder: this._placeholder };
+        const event = new CustomEvent(`placeholder-before-insert`, { bubbles: true, cancelable: true, detail });
+        const cancelled = !this.dispatchEvent(event);
+        if (!cancelled) this.$.placeholderDialog.opened = true;
+      } else {
+        this.$.placeholderDialog.opened = value;
+      }
     }
 
     _onPlaceholderChanged(e) {
@@ -1349,20 +1373,16 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
     _insertPlaceholderText(index, placeholder) {
       const placeholderOptions = this._getPlaceholderOptions(placeholder);
-      if (this.placeholderAltAppearance) placeholderOptions.altAppearance = true;
       const detail = { placeholder: placeholderOptions };
-      const event = new CustomEvent(`placeholder-before-insert`, { bubbles: true, cancelable: true, detail });
-      const cancelled = !this.dispatchEvent(event);
-      if (!cancelled) {
-        this._editor.insertEmbed(index, 'placeholder', placeholderOptions);
-        this.dispatchEvent(new CustomEvent('placeholder-insert', { bubbles: true, cancelable: false, detail }));
-      }
+      if (this.placeholderAltAppearance) placeholderOptions.altAppearance = true;
+      this._editor.insertEmbed(index, 'placeholder', placeholderOptions);
+      this.dispatchEvent(new CustomEvent('placeholder-insert', { bubbles: true, cancelable: false, detail }));
     }
 
     _getPlaceholderOptions(placeholder) {
       let placeholderOptions = this.placeholders.filter(i => i.text === placeholder)[0] || placeholder;
       if (typeof placeholderOptions === 'string') placeholderOptions = { text: placeholder };
-      else if (placeholderOptions.text) placeholderOptions = Object.assign({}, placeholderOptions);
+      else if (placeholderOptions.text) placeholderOptions = { ...placeholderOptions };
       else console.error('Invalid placeholder format');
       return placeholderOptions;
     }

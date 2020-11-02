@@ -284,15 +284,15 @@ class PlaceholderBlot extends Embed {
 
   static value(node) {
     const placeholder = PlaceholderBlot.loadValue(node);
-    return placeholder || true;
+    return placeholder;
+  }
+
+  static loadValue(node) {
+    return JSON.parse(node.dataset.placeholder) || true;
   }
 
   static storeValue(node, placeholder) {
     node.dataset.placeholder = JSON.stringify(placeholder);
-  }
-
-  static loadValue(node) {
-    return JSON.parse(node.dataset.placeholder);
   }
 
   static setText(node) {
