@@ -1389,18 +1389,24 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
     _removePlaceholder() {
       const placeholder = this._getSelectedPlaceholder();
-      if (placeholder && this._placeholderRange) {
+      if (placeholder) {
         const detail = { placeholder };
         const event = new CustomEvent(`placeholder-before-delete`, { bubbles: true, cancelable: true, detail });
         const cancelled = !this.dispatchEvent(event);
-        if (!cancelled) {
-          this._markToolbarClicked();
-          const index = this._placeholderRange.index - 1;
-          this._editor.deleteText(index, this._placeholderRange.length);
-          this._editor.setSelection(index, 0);
-          this._closePlaceholderDialog();
-          this.dispatchEvent(new CustomEvent(`placeholder-delete`, { bubbles: true, cancelable: false, detail }));
-        }
+        if (!cancelled) this._confirmRemovePlaceholder();
+      }
+    }
+
+    _confirmRemovePlaceholder() {
+      const placeholder = this._getSelectedPlaceholder();
+      if (placeholder && this._placeholderRange) {
+        const detail = { placeholder };
+        const index = this._placeholderRange.index - 1;
+        this._markToolbarClicked();
+        this._editor.deleteText(index, this._placeholderRange.length);
+        this._editor.setSelection(index, 0);
+        this._closePlaceholderDialog();
+        this.dispatchEvent(new CustomEvent(`placeholder-delete`, { bubbles: true, cancelable: false, detail }));
       }
     }
 
