@@ -313,7 +313,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     static get version() {
-      return '1.3.7';
+      return '1.3.8';
     }
 
     static get properties() {
@@ -1374,7 +1374,12 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       }
     }
 
-    _confirmInsertPlaceholder(placeholder, index = 0) {
+    _setInsertPlaceholder(placeholder, index) {
+      if (placeholder) this._placeholder = placeholder;
+      if (index) this._insertPlaceholderIndex = index;
+    }
+
+    _confirmInsertPlaceholder(placeholder = this._placeholder, index = this._insertPlaceholderIndex) {
       const placeholderOptions = this._getPlaceholderOptions(placeholder);
       const detail = { placeholder: placeholderOptions };
       if (this.placeholderAltAppearance) placeholderOptions.altAppearance = true;
