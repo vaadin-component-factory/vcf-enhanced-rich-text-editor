@@ -313,7 +313,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     static get version() {
-      return '1.3.8';
+      return '1.3.9';
     }
 
     static get properties() {
@@ -1350,28 +1350,24 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     _insertPlaceholder(placeholder, index = 0) {
+      this._markToolbarClicked();
       const detail = { placeholder };
       const event = new CustomEvent(`placeholder-before-insert`, { bubbles: true, cancelable: true, detail });
       const cancelled = !this.dispatchEvent(event);
-      if (!cancelled) {
-        this._markToolbarClicked();
-        if (placeholder) this._confirmInsertPlaceholder(placeholder, index);
-        this._closePlaceholderDialog();
-      }
+      if (!cancelled && placeholder) this._confirmInsertPlaceholder(placeholder, index);
+      this._closePlaceholderDialog();
     }
 
     _updatePlaceholder(placeholder) {
+      this._markToolbarClicked();
       const detail = { placeholder };
       const event = new CustomEvent(`placeholder-before-update`, { bubbles: true, cancelable: true, detail });
       const cancelled = !this.dispatchEvent(event);
-      if (!cancelled) {
-        this._markToolbarClicked();
-        if (placeholder && this._placeholderRange) {
-          this._confirmRemovePlaceholder(placeholder);
-          this._confirmInsertPlaceholder(placeholder, this._placeholderRange.index);
-        }
-        this._closePlaceholderDialog();
+      if (!cancelled && placeholder && this._placeholderRange) {
+        this._confirmRemovePlaceholder(placeholder);
+        this._confirmInsertPlaceholder(placeholder, this._placeholderRange.index);
       }
+      this._closePlaceholderDialog();
     }
 
     _setInsertPlaceholder(placeholder, index) {
