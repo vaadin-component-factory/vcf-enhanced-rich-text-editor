@@ -704,14 +704,14 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         if (opt !== null) {
           const timeout = 50;
           this.__debounceSetPlaceholder = Debouncer.debounce(this.__debounceSetPlaceholder, timeOut.after(timeout), () => {
-            const placeholder = this._getSelectedPlaceholder();
+            const placeholder = this.selectedPlaceholder;
             if (placeholder) {
               this.$.placeholderBtn.classList.add('ql-active');
               this.$.placeholderBtn.setAttribute('on', true);
               const detail = { placeholder };
+              const range = this._getSelection();
+              this._placeholderRange = { index: range.index - 1, length: 1 };
               this.dispatchEvent(new CustomEvent('placeholder-select', { bubbles: true, cancelable: false, detail }));
-              this._placeholderRange = this._editor.getSelection();
-              this._placeholderRange.length = 1;
             } else {
               this.$.placeholderBtn.classList.remove('ql-active');
               this.$.placeholderBtn.removeAttribute('on');
@@ -912,7 +912,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         key: TAB_KEY,
         handler: function() {
           if (self.tabStops.length > 0) {
-            const selection = self._editor.getSelection();
+            const selection = self._getSelection();
             self._editor.format(PreTabBlot.blotName, true);
             self._editor.format(TabsContBlot.blotName, true);
             setTimeout(() => {
@@ -939,7 +939,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         {
           key: DELETE_KEY,
           handler: () => {
-            if (this._getSelectedPlaceholder()) this._removePlaceholder();
+            if (this.selectedPlaceholder) this._removePlaceholder();
             else return true;
           }
         },
@@ -966,7 +966,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     _onReadonlyClick() {
-      const range = this._editor.getSelection();
+      const range = this._getSelection();
       if (range) {
         const [readOnlySection] = this._editor.scroll.descendant(ReadOnlyBlot, range.index);
         this._editor.formatText(range.index, range.length, 'readonly', readOnlySection == null, 'user');
@@ -974,7 +974,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     _onLinkClick() {
-      const range = this._editor.getSelection();
+      const range = this._getSelection();
       if (range) {
         const LinkBlot = Quill.imports['formats/link'];
         const [link, offset] = this._editor.scroll.descendant(LinkBlot, range.index);
@@ -1150,7 +1150,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         const reader = new FileReader();
         reader.onload = e => {
           const image = e.target.result;
-          const range = this._editor.getSelection(true);
+          const range = this._getSelection(true);
           this._editor.updateContents(
             new Quill.imports.delta()
               .retain(range.index)
@@ -1314,14 +1314,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     _placeholderEditingChanged(value) {
-      if (value) {
-        const detail = { placeholder: this._placeholder };
-        const event = new CustomEvent(`placeholder-before-insert`, { bubbles: true, cancelable: true, detail });
-        const cancelled = !this.dispatchEvent(event);
-        if (!cancelled) this.$.placeholderDialog.opened = true;
-      } else {
-        this.$.placeholderDialog.opened = value;
-      }
+      this.$.placeholderDialog.opened = value;
     }
 
     _onPlaceholderChanged(e) {
@@ -1329,54 +1322,68 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     _onPlaceholderClick() {
-      const range = this._editor.getSelection();
+      const range = this._getSelection();
 
       if (range) {
-        const placeholder = this._getSelectedPlaceholder();
+        const placeholder = this.selectedPlaceholder;
         if (placeholder && placeholder.text) {
           const value = placeholder.text.replace(this.placeholderTags.start, '').replace(this.placeholderTags.end, '');
           this.$.placeholderRemoveButton.style.display = 'block';
-          this._placeholderRange = { index: range.index, length: 1 };
+          this._placeholderRange = { index: range.index - 1, length: 1 };
           this._placeholder = value;
         } else if (range.length === 0) {
           this.$.placeholderRemoveButton.style.display = 'none';
-          this._placeholderIndex = range.index;
+          this._insertPlaceholderIndex = range.index;
         }
 
-        this._placeholderEditing = true;
+        const detail = { position: range.index };
+        const event = new CustomEvent('placeholder-button-click', { bubbles: true, cancelable: true, detail });
+        const cancelled = !this.dispatchEvent(event);
+        if (!cancelled) this._placeholderEditing = true;
       }
     }
 
-    _getSelectedPlaceholder() {
-      const op = this._editor.getContents(this._editor.getSelection().index - 1, 1).ops[0];
-      return op && op.insert.placeholder;
+    get selectedPlaceholder() {
+      const op = this._editor.getContents(this._getSelection().index - 1, 1).ops[0];
+      return (op && op.insert.placeholder) || null;
     }
 
-    _insertPlaceholder(placeholder, position) {
-      if (placeholder) {
+    _insertPlaceholder(placeholder, index = 0) {
+      const detail = { placeholder };
+      const event = new CustomEvent(`placeholder-before-insert`, { bubbles: true, cancelable: true, detail });
+      const cancelled = !this.dispatchEvent(event);
+      if (!cancelled) {
         this._markToolbarClicked();
-        this._insertPlaceholderText(position, placeholder);
+        if (placeholder) this._confirmInsertPlaceholder(placeholder, index);
+        this._closePlaceholderDialog();
       }
-      this._closePlaceholderDialog();
     }
 
     _updatePlaceholder(placeholder) {
-      this._markToolbarClicked();
-      if (this._placeholderRange) {
-        const index = this._placeholderRange.index - 1;
-        this._editor.deleteText(index, this._placeholderRange.length);
-        this._insertPlaceholderText(index, placeholder);
-        this._editor.setSelection(index, 0);
+      const detail = { placeholder };
+      const event = new CustomEvent(`placeholder-before-update`, { bubbles: true, cancelable: true, detail });
+      const cancelled = !this.dispatchEvent(event);
+      if (!cancelled) {
+        this._markToolbarClicked();
+        if (placeholder && this._placeholderRange) {
+          this._confirmRemovePlaceholder(placeholder);
+          this._confirmInsertPlaceholder(placeholder, this._placeholderRange.index);
+        }
+        this._closePlaceholderDialog();
       }
-      this._closePlaceholderDialog();
     }
 
-    _insertPlaceholderText(index, placeholder) {
+    _confirmInsertPlaceholder(placeholder, index = 0) {
       const placeholderOptions = this._getPlaceholderOptions(placeholder);
       const detail = { placeholder: placeholderOptions };
       if (this.placeholderAltAppearance) placeholderOptions.altAppearance = true;
       this._editor.insertEmbed(index, 'placeholder', placeholderOptions);
+      this._editor.setSelection(index + 1, 0);
       this.dispatchEvent(new CustomEvent('placeholder-insert', { bubbles: true, cancelable: false, detail }));
+    }
+
+    _getSelection(focus = false) {
+      return this._editor.getSelection(focus);
     }
 
     _getPlaceholderOptions(placeholder) {
@@ -1387,8 +1394,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       return placeholderOptions;
     }
 
-    _removePlaceholder() {
-      const placeholder = this._getSelectedPlaceholder();
+    _removePlaceholder(placeholder = this.selectedPlaceholder) {
       if (placeholder) {
         const detail = { placeholder };
         const event = new CustomEvent(`placeholder-before-delete`, { bubbles: true, cancelable: true, detail });
@@ -1397,14 +1403,12 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       }
     }
 
-    _confirmRemovePlaceholder() {
-      const placeholder = this._getSelectedPlaceholder();
+    _confirmRemovePlaceholder(placeholder = this.selectedPlaceholder) {
       if (placeholder && this._placeholderRange) {
         const detail = { placeholder };
-        const index = this._placeholderRange.index - 1;
         this._markToolbarClicked();
-        this._editor.deleteText(index, this._placeholderRange.length);
-        this._editor.setSelection(index, 0);
+        this._editor.deleteText(this._placeholderRange.index, this._placeholderRange.length);
+        this._editor.setSelection(this._placeholderRange.index, 0);
         this._closePlaceholderDialog();
         this.dispatchEvent(new CustomEvent(`placeholder-delete`, { bubbles: true, cancelable: false, detail }));
       }
@@ -1413,12 +1417,12 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     _closePlaceholderDialog() {
       this._placeholderEditing = false;
       this._placeholder = '';
-      this._placeholderIndex = null;
+      this._insertPlaceholderIndex = null;
       this._placeholderRange = null;
     }
 
     _onPlaceholderEditConfirm() {
-      if (this._placeholderIndex !== null) this._insertPlaceholder(this._placeholder, this._placeholderIndex);
+      if (this._insertPlaceholderIndex !== null) this._insertPlaceholder(this._placeholder, this._insertPlaceholderIndex);
       else if (this._placeholderRange) this._updatePlaceholder(this._placeholder, this._placeholderRange);
     }
 

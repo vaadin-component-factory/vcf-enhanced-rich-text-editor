@@ -276,7 +276,6 @@ class PlaceholderBlot extends Embed {
 
   static create(value) {
     const node = super.create();
-    node.setAttribute('contenteditable', false);
     PlaceholderBlot.storeValue(node, value);
     PlaceholderBlot.setText(node);
     return node;
