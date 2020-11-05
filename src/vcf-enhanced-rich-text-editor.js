@@ -720,6 +720,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           });
         }
       });
+      this._ready = true;
     }
 
     _prepareToolbar() {
@@ -1404,7 +1405,11 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     _confirmRemovePlaceholder(placeholder = this.selectedPlaceholder) {
-      if (placeholder && this._placeholderRange) {
+      if (!this._placeholderRange) {
+        const range = this._getSelection();
+        this._placeholderRange = { index: range.index - 1, length: 1 };
+      }
+      if (placeholder) {
         const detail = { placeholder };
         this._markToolbarClicked();
         this._editor.deleteText(this._placeholderRange.index, this._placeholderRange.length);
@@ -1449,8 +1454,10 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           })
         );
         this._silentTextChange = true;
-        const detail = { altAppearance: this.placeholderAltAppearance, appearanceLabel: this.placeholderAppearance };
-        this.dispatchEvent(new CustomEvent('placeholder-appearance-change', { bubbles: true, cancelable: false, detail }));
+        if (this._ready) {
+          const detail = { altAppearance: this.placeholderAltAppearance, appearanceLabel: this.placeholderAppearance };
+          this.dispatchEvent(new CustomEvent('placeholder-appearance-change', { bubbles: true, cancelable: false, detail }));
+        }
       }
     }
 
@@ -1499,12 +1506,27 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
      */
 
     /**
-     * Fired before a placeholder is inserted.
+     * Fired after clicking addPlaceholder button.
      *
-     * @event placeholder-before-insert
+     * @event placeholder-button-click
+     * ```
+     * e.detail = { position: number }
+     * ```
+     */
+
+    /**
+     * Fired before updating a placeholder.
+     *
+     * @event placeholder-before-update
      * ```
      * e.detail = { placeholder: object }
      * ```
+     */
+
+    /**
+     * Fired before a placeholder is inserted.
+     *
+     * @event placeholder-before-insert
      */
 
     /**
