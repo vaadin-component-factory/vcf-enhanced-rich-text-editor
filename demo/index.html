@@ -37,9 +37,9 @@
           <script>
             window.addEventListener('WebComponentsReady', () => {
               const rte = document.querySelector('vcf-enhanced-rich-text-editor');
-              rte.value = '[{"insert":"The company "},{"insert":{"placeholder":{"text":"N-1=Vaadin","format":{"italic":true},"altFormat":{"italic":false,"bold":true}}}},{"insert":", located in "},{"insert":{"placeholder":{"text":"A-1=Turku, 20540","altFormat":{"link":"https://goo.gl/maps/EX8RTEMUWeEAdkNN8"}}}},{"insert":", was founded in "},{"insert":{"placeholder":{"text":"D-1=01-01-2000"}}},{"insert":"."}]';
+              rte.value = '[{"insert":"The company "},{"insert":{"placeholder":{"text":"N-1=Vaadin","format":{"italic":true},"altFormat":{"italic":false,"bold":true, "script": \"sub\"}}}},{"insert":", located in "},{"insert":{"placeholder":{"text":"A-1=Turku, 20540","altFormat":{"link":"https://goo.gl/maps/EX8RTEMUWeEAdkNN8"}}}},{"insert":", was founded in "},{"insert":{"placeholder":{"text":"D-1=01-01-2000"}}},{"insert":"."}]';
               rte.placeholders = [
-                {text: 'N-1=Vaadin', format: {italic: true}, altFormat: {italic: false, bold: true}},
+                {text: 'N-1=Vaadin', format: {italic: true}, altFormat: {italic: false, bold: true, script: 'sub'}},
                 {text: 'A-1=Turku, 20540', altFormat: {link: 'https://goo.gl/maps/EX8RTEMUWeEAdkNN8'}},
                 'D-1=01-01-2000'
               ];

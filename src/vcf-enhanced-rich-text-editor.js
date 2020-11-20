@@ -127,6 +127,14 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
    *
    * See [ThemableMixin – how to apply styles for shadow parts](https://github.com/vaadin/vaadin-themable-mixin/wiki)
    *
+   * ### Keyboard Hotkeys
+   *
+   * Keyboard Hotkeys | Description
+   * --|--
+   * `Alt + F10` | Focus on the toolbar.
+   * `Shift + Space` | Insert non-breaking space.
+   * `Ctrl + P` (Mac: `Meta + P`) | Insert placeholder.
+   *
    * @memberof Vaadin
    * @mixes Vaadin.ElementMixin
    * @mixes Vaadin.ThemableMixin
@@ -704,23 +712,47 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         if (opt !== null) {
           const timeout = 50;
           this.__debounceSetPlaceholder = Debouncer.debounce(this.__debounceSetPlaceholder, timeOut.after(timeout), () => {
-            const placeholder = this.selectedPlaceholder;
-            if (placeholder) {
+            const placeholders = this.selectedPlaceholders;
+            if (placeholders.length) {
+              this._inPlaceholder = true;
               this.$.placeholderBtn.classList.add('ql-active');
               this.$.placeholderBtn.setAttribute('on', true);
-              const detail = { placeholder };
-              const range = this._getSelection();
-              this._placeholderRange = { index: range.index - 1, length: 1 };
+              const detail = { placeholders };
               this.dispatchEvent(new CustomEvent('placeholder-select', { bubbles: true, cancelable: false, detail }));
             } else {
+              if (this._inPlaceholder === true) this._inPlaceholder = false;
               this.$.placeholderBtn.classList.remove('ql-active');
               this.$.placeholderBtn.removeAttribute('on');
-              this._placeholderRange = null;
+            }
+            if (this._inPlaceholder === false) {
+              this.dispatchEvent(new CustomEvent('placeholder-leave', { bubbles: true }));
+              delete this._inPlaceholder;
             }
           });
         }
       });
+
+      // Prevent cursor inside placeholder
+      this._editor.root.addEventListener('selectstart', e => {
+        let node = e.target.nodeType === 3 ? e.target.parentElement : e.target;
+        const isPlaceholder = node => node.classList.contains('ql-placeholder');
+        while (node.parentElement && !isPlaceholder(node)) node = node.parentElement;
+        if (isPlaceholder(node)) {
+          e.preventDefault();
+          this._setSelectionNode(node.childNodes[2], 1);
+        }
+      });
+
       this._ready = true;
+    }
+
+    _setSelectionNode(node, index) {
+      const sel = window.getSelection();
+      const range = document.createRange();
+      range.setStart(node, index);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
     }
 
     _prepareToolbar() {
@@ -754,6 +786,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         this._markToolbarClicked();
         this.placeholderAltAppearance = !this.placeholderAltAppearance;
       });
+
       return toolbar;
     }
 
@@ -940,7 +973,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         {
           key: DELETE_KEY,
           handler: () => {
-            if (this.selectedPlaceholder) this._removePlaceholder();
+            if (this.selectedPlaceholders.length) this._removePlaceholders();
             else return true;
           }
         },
@@ -955,6 +988,9 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         var index = this.quill.getSelection().index;
         this.quill.insertEmbed(index, 'nbsp', '');
       });
+
+      // Ctrl + P inserts placeholder.
+      keyboard.addBinding({ key: 80, shortKey: true }, () => this._onPlaceholderClick());
     }
 
     _emitChangeEvent() {
@@ -1349,6 +1385,17 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       return (op && op.insert.placeholder) || null;
     }
 
+    get selectedPlaceholders() {
+      const range = this._getSelection();
+      const placeholders = [];
+      for (let i = range.index - 1; i < range.index + range.length; i++) {
+        const op = this._editor.getContents(i, 1).ops[0];
+        const placeholder = (op && op.insert.placeholder) || null;
+        if (placeholder) placeholders.push(placeholder);
+      }
+      return placeholders;
+    }
+
     _insertPlaceholder(placeholder, index = 0) {
       this._markToolbarClicked();
       const detail = { placeholder };
@@ -1364,7 +1411,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       const event = new CustomEvent(`placeholder-before-update`, { bubbles: true, cancelable: true, detail });
       const cancelled = !this.dispatchEvent(event);
       if (!cancelled && placeholder && this._placeholderRange) {
-        this._confirmRemovePlaceholder(placeholder);
+        this._confirmRemovePlaceholders(placeholder);
         this._confirmInsertPlaceholder(placeholder, this._placeholderRange.index);
       }
       this._closePlaceholderDialog();
@@ -1396,26 +1443,27 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       return placeholderOptions;
     }
 
-    _removePlaceholder(placeholder = this.selectedPlaceholder) {
-      if (placeholder) {
-        const detail = { placeholder };
+    _removePlaceholders(placeholders = this.selectedPlaceholders) {
+      this._markToolbarClicked();
+      if (placeholders.length) {
+        const detail = { placeholders };
         const event = new CustomEvent(`placeholder-before-delete`, { bubbles: true, cancelable: true, detail });
         const cancelled = !this.dispatchEvent(event);
-        if (!cancelled) this._confirmRemovePlaceholder();
+        if (!cancelled) this._confirmRemovePlaceholders();
       }
+      this._closePlaceholderDialog();
     }
 
-    _confirmRemovePlaceholder(placeholder = this.selectedPlaceholder) {
-      if (!this._placeholderRange) {
+    _confirmRemovePlaceholders(placeholders = this.selectedPlaceholders) {
+      if (placeholders.length) {
         const range = this._getSelection();
-        this._placeholderRange = { index: range.index - 1, length: 1 };
-      }
-      if (placeholder) {
-        const detail = { placeholder };
-        this._markToolbarClicked();
-        this._editor.deleteText(this._placeholderRange.index, this._placeholderRange.length);
-        this._editor.setSelection(this._placeholderRange.index, 0);
-        this._closePlaceholderDialog();
+        let deleteRange = range;
+        if (!this._placeholderRange) this._placeholderRange = { index: range.index - 1, length: 1 };
+        if (range.length > 1) deleteRange = range;
+        else deleteRange = this._placeholderRange;
+        const detail = { placeholders };
+        this._editor.deleteText(deleteRange.index, deleteRange.length);
+        this._editor.setSelection(deleteRange.index, 0);
         this.dispatchEvent(new CustomEvent(`placeholder-delete`, { bubbles: true, cancelable: false, detail }));
       }
     }
@@ -1438,7 +1486,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     _onPlaceholderEditRemove() {
-      this._removePlaceholder();
+      this._removePlaceholders();
       this._closePlaceholderDialog();
     }
 

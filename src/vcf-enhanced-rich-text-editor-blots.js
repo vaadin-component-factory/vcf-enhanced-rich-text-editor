@@ -218,7 +218,7 @@ class TabsContBlot extends Block {
           }
         }
 
-        // TODO fix currsor shifting
+        // TODO fix cursor shifting
         separator.innerHTML = '&#65279;';
       });
     }
@@ -266,7 +266,7 @@ class PlaceholderBlot extends Embed {
     const placeholder = PlaceholderBlot.loadValue(node);
     if (placeholder.altFormat) {
       const altTextNode = node.querySelector('[alt]');
-      PlaceholderBlot.deltaToInline(altTextNode, placeholder.altFormat);
+      if (altTextNode) PlaceholderBlot.deltaToInline(altTextNode, placeholder.altFormat);
     }
     if (placeholder.format) {
       const contentNode = node.querySelector('[contenteditable="false"]');
@@ -327,6 +327,10 @@ class PlaceholderBlot extends Embed {
             break;
           case 'link':
             this._wrapContent('a', node, [{ name: 'href', value: value }]);
+            break;
+          case 'script':
+            if (value === 'super') this._wrapContent('sup', node);
+            else if (value === 'sub') this._wrapContent('sub', node);
             break;
           default:
             node.style[key] = value;
