@@ -322,7 +322,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     static get version() {
-      return '1.3.10';
+      return '1.3.11';
     }
 
     static get properties() {
