@@ -59,7 +59,8 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     CLICKED: 2
   };
 
-  const DELETE_KEY = 8;
+  const DELETE_KEY = 46;
+  const BACKSPACE_KEY = 8;
   const TAB_KEY = 9;
   const QL_EDITOR_PADDING_LEFT = 16;
 
@@ -743,6 +744,23 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         }
       });
 
+      // Placeholder delete on character keypress
+      this._editor.root.addEventListener('keypress', e => {
+        const sel = this._editor.getSelection();
+        if (this._isCharacterKey(e) && sel.length && this.selectedPlaceholders.length) {
+          e.preventDefault();
+          this._removePlaceholders(this.selectedPlaceholders, false, e.key);
+        }
+      });
+
+      // Placeholder insert on paste
+      this._editor.clipboard.addMatcher('.ql-placeholder', (node, delta) => {
+        const index = this._editor.selection.savedRange.index;
+        const placeholder = node.dataset.placeholder;
+        this._confirmInsertPlaceholders([{ placeholder, index }], false, true);
+        return delta;
+      });
+
       this._ready = true;
     }
 
@@ -967,6 +985,19 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
       keyboard.bindings[TAB_KEY] = [tabStopBinding, ...originalBindings, moveFocusBinding];
 
+      // Backspace key bindings
+      const backspaceKeyBindings = keyboard.bindings[BACKSPACE_KEY];
+      keyboard.bindings[BACKSPACE_KEY] = [
+        {
+          key: BACKSPACE_KEY,
+          handler: () => {
+            if (this.selectedPlaceholders.length) this._removePlaceholders();
+            else return true;
+          }
+        },
+        ...backspaceKeyBindings
+      ];
+
       // Delete key bindings
       const deleteKeyBindings = keyboard.bindings[DELETE_KEY];
       keyboard.bindings[DELETE_KEY] = [
@@ -980,6 +1011,44 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         ...deleteKeyBindings
       ];
 
+      // Z key bindings
+      const Z_KEY = 90;
+      const zKeyBindings = keyboard.bindings[Z_KEY];
+      keyboard.bindings[Z_KEY] = [
+        {
+          key: Z_KEY,
+          metaKey: true,
+          handler: () => {
+            this._undoPlaceholderEvents();
+            return true;
+          }
+        },
+        {
+          key: Z_KEY,
+          shiftKey: true,
+          metaKey: true,
+          handler: () => {
+            this._undoPlaceholderEvents();
+            return true;
+          }
+        },
+        ...zKeyBindings
+      ];
+
+      // V key bindings
+      const V_KEY = 86;
+      keyboard.bindings[V_KEY] = [
+        {
+          key: V_KEY,
+          metaKey: true,
+          handler: () => {
+            const placeholders = this.selectedPlaceholders;
+            if (placeholders.length) this._confirmRemovePlaceholders(placeholders, false, true);
+            return true;
+          }
+        }
+      ];
+
       // alt-f10 focuses a toolbar button
       keyboard.addBinding({ key: 121, altKey: true, handler: focusToolbar });
 
@@ -991,6 +1060,84 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
       // Ctrl + P inserts placeholder.
       keyboard.addBinding({ key: 80, shortKey: true }, () => this._onPlaceholderClick());
+    }
+
+    _emitPlaceholderHistoryEvents(ops) {
+      const placeholders = [];
+      let insert = true;
+      for (const op of ops) {
+        if (op.delete) {
+          insert = false;
+          break;
+        }
+      }
+      if (insert) {
+        // Get placeholders from insert ops
+        let insertIndex = -1;
+        const end = this._editor.getLength() + 1;
+        for (const op of ops) {
+          if (op.retain) insertIndex = op.retain;
+          if (op.insert) {
+            insertIndex = insertIndex > 0 ? insertIndex : end;
+            const placeholder = op.insert.placeholder;
+            if (placeholder) {
+              placeholders.push({ placeholder, index: insertIndex });
+              insertIndex++;
+            } else if (typeof op.insert === 'string') {
+              insertIndex += op.insert.length;
+            }
+          }
+        }
+      } else {
+        // Get placeholders from delete ops
+        let deleteIndex = -1;
+        let deleteLength = 0;
+        for (const op of ops) {
+          if (op.retain) deleteIndex = op.retain;
+          if (op.delete) {
+            deleteIndex = deleteIndex > 0 ? deleteIndex : 0;
+            deleteLength = op.delete;
+            const selected = this._getPlaceholdersInSelection(deleteIndex, deleteLength);
+            selected.forEach(placeholder => placeholders.push(placeholder));
+            deleteIndex = -1;
+            deleteLength = 0;
+          }
+        }
+      }
+      if (placeholders.length) {
+        const placeholderHistoryEventMethod = `_confirm${insert ? 'Insert' : 'Remove'}Placeholders`;
+
+        // Event only confirm insert/delete
+        this[placeholderHistoryEventMethod](placeholders, false, true);
+      }
+      return true;
+    }
+
+    _isCharacterKey(e) {
+      let result = false;
+      // This is IE, which only fires keypress events for printable keys
+      if (typeof e.keyCode === 'undefined') result = true;
+      else if (typeof e.which == 'number' && e.which > 0) {
+        // In other browsers except old versions of WebKit, evt.which is
+        // only greater than zero if the keypress is a printable key.
+        // We need to filter out backspace and ctrl/alt/meta key combinations
+        result = !e.ctrlKey && !e.metaKey && !e.altKey && e.keyCode !== 8;
+      }
+      return result;
+    }
+
+    _undoPlaceholderEvents() {
+      const historyStack = this._editor.history.stack;
+      const undo = historyStack.undo[historyStack.undo.length - 1] || [];
+      if (undo && undo.undo) this._emitPlaceholderHistoryEvents(undo.undo.ops);
+      return true;
+    }
+
+    _redoPlaceholderEvents() {
+      const historyStack = this._editor.history.stack;
+      const redo = historyStack.redo[historyStack.redo.length - 1] || [];
+      if (redo && redo.redo) this._emitPlaceholderHistoryEvents(redo.redo.ops);
+      return true;
     }
 
     _emitChangeEvent() {
@@ -1141,12 +1288,14 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
     _undo(e) {
       e.preventDefault();
+      this._undoPlaceholderEvents();
       this._editor.history.undo();
       this._editor.focus();
     }
 
     _redo(e) {
       e.preventDefault();
+      this._redoPlaceholderEvents();
       this._editor.history.redo();
       this._editor.focus();
     }
@@ -1396,12 +1545,26 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       return placeholders;
     }
 
-    _insertPlaceholder(placeholder, index = 0) {
+    _getPlaceholdersInSelection(index, length) {
+      const sel = this._editor.getSelection();
+      index = index || sel.index;
+      length = length || sel.length;
+      this._editor.setSelection(index, length, SOURCE.SILENT);
+      const placeholders = this.selectedPlaceholders;
+      if (index !== sel.index && length !== sel.length) {
+        this._editor.setSelection(sel.index, sel.length, SOURCE.SILENT);
+      }
+      return placeholders;
+    }
+
+    _insertPlaceholders(placeholders, index = 0, remove = false) {
+      if (!Array.isArray(placeholders)) placeholders = [{ placeholder: placeholders, index }];
       this._markToolbarClicked();
-      const detail = { placeholder };
+      const detail = { placeholders };
       const event = new CustomEvent(`placeholder-before-insert`, { bubbles: true, cancelable: true, detail });
       const cancelled = !this.dispatchEvent(event);
-      if (!cancelled && placeholder) this._confirmInsertPlaceholder(placeholder, index);
+      if (!cancelled && placeholders) this._confirmInsertPlaceholders(placeholders, index);
+      else if (remove) this._confirmRemovePlaceholders(placeholders, true);
       this._closePlaceholderDialog();
     }
 
@@ -1412,7 +1575,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       const cancelled = !this.dispatchEvent(event);
       if (!cancelled && placeholder && this._placeholderRange) {
         this._confirmRemovePlaceholders(placeholder);
-        this._confirmInsertPlaceholder(placeholder, this._placeholderRange.index);
+        this._confirmInsertPlaceholders([{ placeholder, index: this._placeholderRange.index }]);
       }
       this._closePlaceholderDialog();
     }
@@ -1422,13 +1585,18 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       if (index) this._insertPlaceholderIndex = index;
     }
 
-    _confirmInsertPlaceholder(placeholder = this._placeholder, index = this._insertPlaceholderIndex) {
-      const placeholderOptions = this._getPlaceholderOptions(placeholder);
-      const detail = { placeholder: placeholderOptions };
-      if (this.placeholderAltAppearance) placeholderOptions.altAppearance = true;
-      this._editor.insertEmbed(index, 'placeholder', placeholderOptions);
-      this._editor.setSelection(index + 1, 0);
-      this.dispatchEvent(new CustomEvent('placeholder-insert', { bubbles: true, cancelable: false, detail }));
+    _confirmInsertPlaceholders(placeholders, silent = false, eventsOnly = false) {
+      const detail = { placeholders };
+      let index = 0;
+      if (!eventsOnly) {
+        placeholders.forEach(({ placeholder, index: i }) => {
+          if (this.placeholderAltAppearance) placeholder.altAppearance = true;
+          this._editor.insertEmbed(index, 'placeholder', placeholder);
+          index = i;
+        });
+        this._editor.setSelection(index + 1, 0);
+      }
+      if (!silent) this.dispatchEvent(new CustomEvent('placeholder-insert', { bubbles: true, cancelable: false, detail }));
     }
 
     _getSelection(focus = false) {
@@ -1443,28 +1611,38 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       return placeholderOptions;
     }
 
-    _removePlaceholders(placeholders = this.selectedPlaceholders) {
+    _removePlaceholders(placeholders = this.selectedPlaceholders, restore = false, replace = '') {
       this._markToolbarClicked();
       if (placeholders.length) {
         const detail = { placeholders };
         const event = new CustomEvent(`placeholder-before-delete`, { bubbles: true, cancelable: true, detail });
         const cancelled = !this.dispatchEvent(event);
-        if (!cancelled) this._confirmRemovePlaceholders();
+        if (!cancelled) this._confirmRemovePlaceholders(placeholders, false, false, replace);
+        else if (restore) this._confirmInsertPlaceholders(placeholders, true);
       }
       this._closePlaceholderDialog();
     }
 
-    _confirmRemovePlaceholders(placeholders = this.selectedPlaceholders) {
+    _confirmRemovePlaceholders(placeholders = this.selectedPlaceholders, silent = false, eventsOnly = false, replace = '') {
       if (placeholders.length) {
-        const range = this._getSelection();
-        let deleteRange = range;
-        if (!this._placeholderRange) this._placeholderRange = { index: range.index - 1, length: 1 };
-        if (range.length > 1) deleteRange = range;
-        else deleteRange = this._placeholderRange;
-        const detail = { placeholders };
-        this._editor.deleteText(deleteRange.index, deleteRange.length);
-        this._editor.setSelection(deleteRange.index, 0);
-        this.dispatchEvent(new CustomEvent(`placeholder-delete`, { bubbles: true, cancelable: false, detail }));
+        if (!eventsOnly) {
+          const range = this._getSelection();
+          let deleteRange = range;
+          if (!this._placeholderRange) this._placeholderRange = { index: range.index - 1, length: 1 };
+          if (range.length > 1) deleteRange = range;
+          else deleteRange = this._placeholderRange;
+          this._editor.deleteText(deleteRange.index, deleteRange.length);
+          if (replace) {
+            this._editor.insertText(deleteRange.index, replace);
+            this._editor.setSelection(deleteRange.index + replace.length, 0);
+          } else {
+            this._editor.setSelection(deleteRange.index, 0);
+          }
+        }
+        if (!silent) {
+          const detail = { placeholders };
+          this.dispatchEvent(new CustomEvent('placeholder-delete', { bubbles: true, cancelable: false, detail }));
+        }
       }
     }
 
@@ -1476,8 +1654,9 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     _onPlaceholderEditConfirm() {
-      if (this._insertPlaceholderIndex !== null) this._insertPlaceholder(this._placeholder, this._insertPlaceholderIndex);
-      else if (this._placeholderRange) this._updatePlaceholder(this._placeholder, this._placeholderRange);
+      const placeholder = this._getPlaceholderOptions(this._placeholder);
+      if (this._insertPlaceholderIndex !== null) this._insertPlaceholders(placeholder, this._insertPlaceholderIndex);
+      else if (this._placeholderRange) this._updatePlaceholder(placeholder, this._placeholderRange);
     }
 
     _onPlaceholderEditCancel() {
