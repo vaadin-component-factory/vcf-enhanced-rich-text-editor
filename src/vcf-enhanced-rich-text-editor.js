@@ -1025,7 +1025,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       keyboard.bindings[Z_KEY] = [
         {
           key: Z_KEY,
-          metaKey: true,
+          shortKey: true,
           handler: () => {
             this._undoPlaceholderEvents();
             return true;
@@ -1034,7 +1034,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         {
           key: Z_KEY,
           shiftKey: true,
-          metaKey: true,
+          shortKey: true,
           handler: () => {
             this._undoPlaceholderEvents();
             return true;
@@ -1048,7 +1048,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       keyboard.bindings[V_KEY] = [
         {
           key: V_KEY,
-          metaKey: true,
+          shortKey: true,
           handler: () => {
             const placeholders = this.selectedPlaceholders;
             if (placeholders.length) this._confirmRemovePlaceholders(placeholders, false, true);
