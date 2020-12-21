@@ -1596,14 +1596,14 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
     _confirmInsertPlaceholders(placeholders = this._insertPlaceholdersList, silent = false, eventsOnly = false) {
       const detail = { placeholders: placeholders.map(i => i.placeholder) };
-      let index = 0;
+      let selectIndex = 0;
       if (!eventsOnly) {
         placeholders.forEach(({ placeholder, index: i }) => {
           if (this.placeholderAltAppearance) placeholder.altAppearance = true;
-          this._editor.insertEmbed(index, 'placeholder', placeholder);
-          index = i;
+          this._editor.insertEmbed(i, 'placeholder', placeholder);
+          selectIndex = i;
         });
-        this._editor.setSelection(index + 1, 0);
+        this._editor.setSelection(selectIndex + 1, 0);
       }
       if (!silent) this.dispatchEvent(new CustomEvent('placeholder-insert', { bubbles: true, cancelable: false, detail }));
     }
