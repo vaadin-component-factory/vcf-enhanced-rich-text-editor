@@ -322,7 +322,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     static get version() {
-      return '1.3.12';
+      return '1.3.13';
     }
 
     static get properties() {
@@ -755,9 +755,8 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
       // Placeholder insert on paste
       this._editor.clipboard.addMatcher('.ql-placeholder', (node, delta) => {
-        const index = this._editor.selection.savedRange.index;
         const placeholder = node.dataset.placeholder;
-        this._confirmInsertPlaceholders([{ placeholder, index }], false, true);
+        this._confirmInsertPlaceholders([placeholder], false, true);
         return delta;
       });
 
@@ -1081,19 +1080,10 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       }
       if (insert) {
         // Get placeholders from insert ops
-        let insertIndex = -1;
-        const end = this._editor.getLength() + 1;
         for (const op of ops) {
-          if (op.retain) insertIndex = op.retain;
           if (op.insert) {
-            insertIndex = insertIndex > 0 ? insertIndex : end;
             const placeholder = op.insert.placeholder;
-            if (placeholder) {
-              placeholders.push({ placeholder, index: insertIndex });
-              insertIndex++;
-            } else if (typeof op.insert === 'string') {
-              insertIndex += op.insert.length;
-            }
+            if (placeholder) placeholders.push(placeholder);
           }
         }
       } else {
@@ -1566,11 +1556,12 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     _insertPlaceholders(placeholders, index = 0, remove = false) {
-      if (!Array.isArray(placeholders)) placeholders = [{ placeholder: placeholders, index }];
+      if (!Array.isArray(placeholders)) placeholders = [placeholders];
       this._markToolbarClicked();
       const detail = { placeholders };
       const event = new CustomEvent(`placeholder-before-insert`, { bubbles: true, cancelable: true, detail });
       const cancelled = !this.dispatchEvent(event);
+      this._insertPlaceholdersList = placeholders;
       if (!cancelled && placeholders) this._confirmInsertPlaceholders(placeholders, index);
       else if (remove) this._confirmRemovePlaceholders(placeholders, true);
       this._closePlaceholderDialog();
@@ -1593,7 +1584,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       if (index) this._insertPlaceholderIndex = index;
     }
 
-    _confirmInsertPlaceholders(placeholders, silent = false, eventsOnly = false) {
+    _confirmInsertPlaceholders(placeholders = this._insertPlaceholdersList, silent = false, eventsOnly = false) {
       const detail = { placeholders };
       let index = 0;
       if (!eventsOnly) {
