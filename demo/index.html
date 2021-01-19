@@ -30,13 +30,29 @@
   <body>
     <main class="vertical-section-container centered hidden">
       <h4><a href="api/#/elements/Vaadin.VcfEnhancedRichTextEditor">API documentation ↗</a></h4>
+      <h3>Custom Buttons</h3>
+      <demo-snippet>
+        <template>
+          <vcf-enhanced-rich-text-editor id="custom-buttons" style="height: 300px;">
+            <button><iron-icon icon="vaadin:hand"></iron-icon></button>
+          </vcf-enhanced-rich-text-editor>
+          <script>
+            window.addEventListener('WebComponentsReady', () => {
+              const rte = document.querySelector('#custom-buttons')
+              const btn = rte.querySelector('button');
+              const editor = rte._editor;
+              btn.addEventListener('click', () => editor.insertText(editor.getLength(), 'Hello World!'));
+            });
+          </script>
+        </template>
+      </demo-snippet>
       <h3>Placeholders</h3>
       <demo-snippet>
         <template>
-          <vcf-enhanced-rich-text-editor style="height: 300px;"></vcf-enhanced-rich-text-editor>
+          <vcf-enhanced-rich-text-editor id="placeholders" style="height: 300px;"></vcf-enhanced-rich-text-editor>
           <script>
             window.addEventListener('WebComponentsReady', () => {
-              const rte = document.querySelector('vcf-enhanced-rich-text-editor');
+              const rte = document.querySelector('#placeholders');
               rte.value = '[{"insert":"The company "},{"insert":{"placeholder":{"text":"N-1=Vaadin","format":{"italic":true},"altFormat":{"italic":false,"bold":true, "script": \"sub\"}}}},{"insert":", located in "},{"insert":{"placeholder":{"text":"A-1=Turku, 20540","altFormat":{"link":"https://goo.gl/maps/EX8RTEMUWeEAdkNN8"}}}},{"insert":", was founded in "},{"insert":{"placeholder":{"text":"D-1=01-01-2000"}}},{"insert":"."}]';
               rte.placeholders = [
                 {text: 'N-1=Vaadin', format: {italic: true}, altFormat: {italic: false, bold: true, script: 'sub'}},

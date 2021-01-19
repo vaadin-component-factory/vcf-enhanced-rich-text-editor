@@ -45,7 +45,8 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     alignment: ['alignLeft', 'alignCenter', 'alignRight'],
     'rich-text': ['image', 'link'],
     block: ['blockquote', 'codeBlock', 'placeholder', 'placeholderAppearance'],
-    format: ['readonly', 'clean']
+    format: ['readonly', 'clean'],
+    custom: []
   };
 
   const SOURCE = {
@@ -271,6 +272,10 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
               <!-- Clean -->
               <button type="button" class="ql-clean" part="toolbar-button toolbar-button-clean" title$="[[i18n.clean]]" style="display: [[_buttonDisplay(toolbarButtons, 'clean')]];"></button>
+            </span>
+
+            <span part="toolbar-group toolbar-group-custom" style="display: [[_buttonGroupDisplay(toolbarButtons, 'custom')]];">
+              <slot on-slot-change="_onSlotChange"></slot>
             </span>
 
             <input id="fileInput" type="file" accept="image/png, image/gif, image/jpeg, image/bmp, image/x-icon" on-change="_uploadImage" />
@@ -562,7 +567,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     _buttonGroupDisplay(toolbarButtons, group) {
       var visible = false;
       TOOLBAR_BUTTON_GROUPS[group].forEach(button => {
-        if (toolbarButtons[button] != false) {
+        if (toolbarButtons[button] !== false) {
           visible = true;
           return;
         }
@@ -625,6 +630,11 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
     static get observers() {
       return ['_valueChanged(value, _editor)', '_disabledChanged(disabled, readonly, _editor)', '_tabStopsChanged(tabStops, _editor)'];
+    }
+
+    constructor() {
+      super();
+      this._setCustomButtons();
     }
 
     ready() {
@@ -764,6 +774,10 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       this._ready = true;
     }
 
+    _onSlotChange() {
+      this._setCustomButtons();
+    }
+
     _setSelectionNode(node, index) {
       const sel = window.getSelection();
       const range = document.createRange();
@@ -771,6 +785,17 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       range.collapse(true);
       sel.removeAllRanges();
       sel.addRange(range);
+    }
+
+    _setCustomButtons() {
+      const buttons = this._customButtons;
+      TOOLBAR_BUTTON_GROUPS.custom = [];
+      buttons.forEach((btn, i) => {
+        const icon = btn.querySelector('iron-icon');
+        if (icon) icon.style.height = '20px';
+        btn.setAttribute('part', `toolbar-button toolbar-button-custom-${i}`);
+        TOOLBAR_BUTTON_GROUPS.custom.push(btn.innerText);
+      });
     }
 
     _prepareToolbar() {
@@ -1283,10 +1308,14 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       });
     }
 
+    get _customButtons() {
+      return Array.from(this.querySelectorAll('button, vaadin-button, [part="custom-button"]'));
+    }
+
     get _toolbarButtons() {
-      return Array.from(this.shadowRoot.querySelectorAll('[part="toolbar"] button')).filter(btn => {
-        return btn.clientHeight > 0;
-      });
+      return Array.from(this.shadowRoot.querySelectorAll('[part="toolbar"] button'))
+        .filter(btn => btn.clientHeight > 0)
+        .concat(this._customButtons);
     }
 
     _clear() {

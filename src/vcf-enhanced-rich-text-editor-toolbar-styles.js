@@ -11,7 +11,8 @@ documentContainer.innerHTML = `
           flex-shrink: 0;
         }
 
-        [part~="toolbar-button"] {
+        [part~="toolbar-button"],
+        ::slotted([part~="toolbar-button"]) {
           width: 2em;
           height: 2em;
           margin: 0;
@@ -24,15 +25,30 @@ documentContainer.innerHTML = `
           position: relative;
         }
 
-        [part~="toolbar-button"]:hover {
+        ::slotted([part~="toolbar-button"]) {
+          width: auto;
+          height: var(--lumo-size-m);
+          border-radius: var(--lumo-border-radius);
+          color: var(--lumo-contrast-80pct);
+          margin: 2px 1px;
+          cursor: default;
+          transition: background-color 100ms, color 100ms;
+          padding: 0 var(--lumo-space-s);
+        }
+
+        ::slotted([part~="toolbar-button"]:hover) {
+          background-color: var(--lumo-contrast-5pct);
+          color: var(--lumo-contrast);
+          box-shadow: none;
+        }
+
+        [part~="toolbar-button"]:hover,
+        ::slotted([part~="toolbar-button"]:hover) {
           outline: none;
         }
 
-        [part~="toolbar-button"][on] {
-          background-color: #eee;
-        }
-
-        [part~="toolbar-button"]::before {
+        [part~="toolbar-button"]::before,
+        ::slotted([part~="toolbar-button"]::before) {
           position: absolute;
           top: 50%;
           left: 50%;
