@@ -798,6 +798,43 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       });
     }
 
+    /**
+     * Adds custom toolbar button.
+     * @param {string} label
+     * @param {string} icon
+     * @param {Function} clickListener
+     * @param {KeyboardShortcut} keyboardShortcut
+     */
+    addCustomButton(label, tooltip, icon = '', clickListener, keyboardShortcut) {
+      const btn = document.createElement('vaadin-button');
+      btn.innerText = label;
+      btn.title = tooltip;
+      if (icon) {
+        const iconEl = document.createElement('iron-icon');
+        iconEl.setAttribute('icon', icon);
+        if (!label) btn.setAttribute('theme', 'icon');
+        else iconEl.setAttribute('slot', 'prefix');
+        btn.appendChild(iconEl);
+      }
+      if (clickListener) btn.addEventListener('click', e => clickListener(e));
+      if (keyboardShortcut) {
+        const keyboard = this._editor.getModule('keyboard');
+        const bindings = keyboard.bindings[keyboardShortcut.key] || [];
+        keyboard.bindings[keyboardShortcut.key] = [
+          {
+            key: keyboardShortcut.key,
+            shiftKey: keyboardShortcut.shiftKey,
+            shortKey: keyboardShortcut.shortKey,
+            altKey: keyboardShortcut.altKey,
+            handler: keyboardShortcut.handler
+          },
+          ...bindings
+        ];
+      }
+      this.appendChild(btn);
+      this._setCustomButtons();
+    }
+
     _prepareToolbar() {
       const clean = Quill.imports['modules/toolbar'].DEFAULTS.handlers.clean;
       const self = this;

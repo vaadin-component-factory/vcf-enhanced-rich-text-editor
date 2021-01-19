@@ -33,15 +33,46 @@
       <h3>Custom Buttons</h3>
       <demo-snippet>
         <template>
-          <vcf-enhanced-rich-text-editor id="custom-buttons" style="height: 300px;">
-            <button><iron-icon icon="vaadin:hand"></iron-icon></button>
+          <vcf-enhanced-rich-text-editor id="custom-buttons">
+            <!-- Add custom buttons with HTML -->
+            <button title="Greeting"><iron-icon icon="vaadin:hand"></iron-icon></button>
           </vcf-enhanced-rich-text-editor>
           <script>
             window.addEventListener('WebComponentsReady', () => {
               const rte = document.querySelector('#custom-buttons')
               const btn = rte.querySelector('button');
               const editor = rte._editor;
-              btn.addEventListener('click', () => editor.insertText(editor.getLength(), 'Hello World!'));
+              const insertText = (text, options) => editor.insertText(editor.getLength(), text, options);
+
+              // Button handlers
+              const handler1 = () => insertText('Hello World!');
+              const handler2 = () => insertText('+', {bold: true});
+              const handler3 = () => {
+                editor.formatText(0, editor.getLength(), {
+                  'color': '#FFF',
+                  'background': '#396',
+                  'bold': true
+                });
+              };
+
+              // Add click listener for button added with HTML
+              btn.addEventListener('click', handler1);
+
+              // Add custom buttons with JS
+              rte.addCustomButton(
+                '',
+                'Custom Button 2',
+                'vaadin:plus',
+                handler2,
+                { key: 80, shiftKey: true, shortKey: true, handler: handler2 } // Ctrl (Cmd) + Shft + P
+              )
+              rte.addCustomButton(
+                'Green',
+                'Green theme',
+                'vaadin:chevron-right',
+                handler3,
+                { key: 71, altKey: true, shortKey: true, handler: handler3 } // Ctrl (Cmd) + Alt + G
+              )
             });
           </script>
         </template>
