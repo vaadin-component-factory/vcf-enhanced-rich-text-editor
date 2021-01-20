@@ -35,12 +35,14 @@
         <template>
           <vcf-enhanced-rich-text-editor id="custom-buttons">
             <!-- Add custom buttons with HTML -->
-            <button title="Greeting"><iron-icon icon="vaadin:hand"></iron-icon></button>
+            <button id="custom-button" title="Greeting" slot="toolbar">
+              <iron-icon icon="vaadin:hand"></iron-icon>
+            </button>
           </vcf-enhanced-rich-text-editor>
           <script>
             window.addEventListener('WebComponentsReady', () => {
               const rte = document.querySelector('#custom-buttons')
-              const btn = rte.querySelector('button');
+              const btn = rte.querySelector('#custom-button');
               const editor = rte._editor;
               const insertText = (text, options) => editor.insertText(editor.getLength(), text, options);
 
