@@ -30,13 +30,62 @@
   <body>
     <main class="vertical-section-container centered hidden">
       <h4><a href="api/#/elements/Vaadin.VcfEnhancedRichTextEditor">API documentation ↗</a></h4>
+      <h3>Custom Buttons</h3>
+      <demo-snippet>
+        <template>
+          <vcf-enhanced-rich-text-editor id="custom-buttons">
+            <!-- Add custom buttons with HTML -->
+            <button id="custom-button" title="Greeting" slot="toolbar">
+              <iron-icon icon="vaadin:hand"></iron-icon>
+            </button>
+          </vcf-enhanced-rich-text-editor>
+          <script>
+            window.addEventListener('WebComponentsReady', () => {
+              const rte = document.querySelector('#custom-buttons')
+              const btn = rte.querySelector('#custom-button');
+              const editor = rte._editor;
+              const insertText = (text, options) => editor.insertText(editor.getLength(), text, options);
+
+              // Button handlers
+              const handler1 = () => insertText('Hello World!');
+              const handler2 = () => insertText('+', {bold: true});
+              const handler3 = () => {
+                editor.formatText(0, editor.getLength(), {
+                  'color': '#FFF',
+                  'background': '#396',
+                  'bold': true
+                });
+              };
+
+              // Add click listener for button added with HTML
+              btn.addEventListener('click', handler1);
+
+              // Add custom buttons with JS
+              rte.addCustomButton(
+                '',
+                'Custom Button 2',
+                'vaadin:plus',
+                handler2,
+                { key: 80, shiftKey: true, shortKey: true, handler: handler2 } // Ctrl (Cmd) + Shft + P
+              )
+              rte.addCustomButton(
+                'Green',
+                'Green theme',
+                'vaadin:chevron-right',
+                handler3,
+                { key: 71, altKey: true, shortKey: true, handler: handler3 } // Ctrl (Cmd) + Alt + G
+              )
+            });
+          </script>
+        </template>
+      </demo-snippet>
       <h3>Placeholders</h3>
       <demo-snippet>
         <template>
-          <vcf-enhanced-rich-text-editor style="height: 300px;"></vcf-enhanced-rich-text-editor>
+          <vcf-enhanced-rich-text-editor id="placeholders" style="height: 300px;"></vcf-enhanced-rich-text-editor>
           <script>
             window.addEventListener('WebComponentsReady', () => {
-              const rte = document.querySelector('vcf-enhanced-rich-text-editor');
+              const rte = document.querySelector('#placeholders');
               rte.value = '[{"insert":"The company "},{"insert":{"placeholder":{"text":"N-1=Vaadin","format":{"italic":true},"altFormat":{"italic":false,"bold":true, "script": \"sub\"}}}},{"insert":", located in "},{"insert":{"placeholder":{"text":"A-1=Turku, 20540","altFormat":{"link":"https://goo.gl/maps/EX8RTEMUWeEAdkNN8"}}}},{"insert":", was founded in "},{"insert":{"placeholder":{"text":"D-1=01-01-2000"}}},{"insert":"."}]';
               rte.placeholders = [
                 {text: 'N-1=Vaadin', format: {italic: true}, altFormat: {italic: false, bold: true, script: 'sub'}},

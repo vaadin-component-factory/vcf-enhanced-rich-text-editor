@@ -45,7 +45,8 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     alignment: ['alignLeft', 'alignCenter', 'alignRight'],
     'rich-text': ['image', 'link'],
     block: ['blockquote', 'codeBlock', 'placeholder', 'placeholderAppearance'],
-    format: ['readonly', 'clean']
+    format: ['readonly', 'clean'],
+    custom: []
   };
 
   const SOURCE = {
@@ -271,6 +272,10 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
               <!-- Clean -->
               <button type="button" class="ql-clean" part="toolbar-button toolbar-button-clean" title$="[[i18n.clean]]" style="display: [[_buttonDisplay(toolbarButtons, 'clean')]];"></button>
+            </span>
+
+            <span part="toolbar-group toolbar-group-custom" style="display: [[_buttonGroupDisplay(toolbarButtons, 'custom')]];">
+              <slot name="toolbar" on-slot-change="_onToolbarSlotChange"></slot>
             </span>
 
             <input id="fileInput" type="file" accept="image/png, image/gif, image/jpeg, image/bmp, image/x-icon" on-change="_uploadImage" />
@@ -562,7 +567,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     _buttonGroupDisplay(toolbarButtons, group) {
       var visible = false;
       TOOLBAR_BUTTON_GROUPS[group].forEach(button => {
-        if (toolbarButtons[button] != false) {
+        if (toolbarButtons[button] !== false) {
           visible = true;
           return;
         }
@@ -625,6 +630,11 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
     static get observers() {
       return ['_valueChanged(value, _editor)', '_disabledChanged(disabled, readonly, _editor)', '_tabStopsChanged(tabStops, _editor)'];
+    }
+
+    constructor() {
+      super();
+      this._setCustomButtons();
     }
 
     ready() {
@@ -764,6 +774,10 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       this._ready = true;
     }
 
+    _onToolbarSlotChange() {
+      this._setCustomButtons();
+    }
+
     _setSelectionNode(node, index) {
       const sel = window.getSelection();
       const range = document.createRange();
@@ -773,10 +787,88 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       sel.addRange(range);
     }
 
+    _setCustomButtons() {
+      const buttons = this._customButtons;
+      TOOLBAR_BUTTON_GROUPS.custom = [];
+      buttons.forEach((btn, i) => {
+        btn.setAttribute('part', `toolbar-button toolbar-button-custom-${i}`);
+        TOOLBAR_BUTTON_GROUPS.custom.push(btn.innerText);
+      });
+    }
+
+    /**
+     * Adds custom toolbar button.
+     * @param {string} label
+     * @param {string} icon
+     * @param {Function} clickListener
+     * @param {KeyboardShortcut} keyboardShortcut
+     */
+    addCustomButton(label, tooltip, icon = '', clickListener, keyboardShortcut) {
+      const btn = document.createElement('vaadin-button');
+      btn.setAttribute('slot', 'toolbar');
+      this.setCustomButtonLabel(label, btn);
+      this.setCustomButtonTooltip(tooltip, btn);
+      this.setCustomButtonIcon(icon, btn);
+      this.setCustomButtonClickListener(clickListener, btn);
+      this.setCustomButtonKeyboardShortcut(keyboardShortcut, btn);
+      this.appendChild(btn);
+      this._setCustomButtons();
+    }
+
+    setCustomButtonLabel(label, btn) {
+      if (btn && label) btn.innerText = label;
+    }
+
+    setCustomButtonTooltip(tooltip, btn) {
+      if (btn && tooltip) btn.title = tooltip;
+    }
+
+    setCustomButtonIcon(icon, btn, suffix = false) {
+      if (btn && icon) {
+        let iconEl = btn.querySelector('iron-icon');
+        if (!iconEl) {
+          iconEl = document.createElement('iron-icon');
+          btn.appendChild(iconEl);
+        }
+        if (btn.tagName.toLowerCase() !== 'vaadin-button') {
+          const vaadinBtn = document.createElement('vaadin-button');
+          vaadinBtn.setAttribute('title', btn.getAttribute('title'));
+          vaadinBtn.setAttribute('part', btn.getAttribute('part'));
+          vaadinBtn.appendChild(iconEl);
+          vaadinBtn.innerText = btn.innerText;
+          btn.parentElement.replaceChild(vaadinBtn, btn);
+          btn = vaadinBtn;
+        }
+        if (!btn.innerText) btn.setAttribute('theme', 'icon');
+        else iconEl.setAttribute('slot', suffix ? 'suffix' : 'prefix');
+        iconEl.setAttribute('icon', icon);
+      }
+    }
+
+    setCustomButtonClickListener(clickListener, btn) {
+      if (btn && clickListener) btn.addEventListener('click', e => clickListener(e));
+    }
+
+    setCustomButtonKeyboardShortcut(keyboardShortcut, btn) {
+      if (btn && keyboardShortcut) {
+        const keyboard = this._editor.getModule('keyboard');
+        const bindings = keyboard.bindings[keyboardShortcut.key] || [];
+        keyboard.bindings[keyboardShortcut.key] = [
+          {
+            key: keyboardShortcut.key,
+            shiftKey: keyboardShortcut.shiftKey,
+            shortKey: keyboardShortcut.shortKey,
+            altKey: keyboardShortcut.altKey,
+            handler: keyboardShortcut.handler
+          },
+          ...bindings
+        ];
+      }
+    }
+
     _prepareToolbar() {
       const clean = Quill.imports['modules/toolbar'].DEFAULTS.handlers.clean;
       const self = this;
-
       const toolbar = {
         container: this.shadowRoot.querySelector('[part="toolbar"]'),
         handlers: {
@@ -1283,10 +1375,14 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       });
     }
 
+    get _customButtons() {
+      return Array.from(this.querySelectorAll('button, vaadin-button, [part="custom-button"]')).filter(el => el.getAttribute('slot') === 'toolbar');
+    }
+
     get _toolbarButtons() {
-      return Array.from(this.shadowRoot.querySelectorAll('[part="toolbar"] button')).filter(btn => {
-        return btn.clientHeight > 0;
-      });
+      return Array.from(this.shadowRoot.querySelectorAll('[part="toolbar"] button'))
+        .filter(btn => btn.clientHeight > 0)
+        .concat(this._customButtons);
     }
 
     _clear() {

@@ -1,21 +1,22 @@
 import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
 import '@polymer/iron-demo-helpers/demo-snippet';
+import '@vaadin/vaadin-icons';
 import '../theme/lumo/vcf-enhanced-rich-text-editor';
 
 window.addEventListener('WebComponentsReady', () => {
   setTimeout(() => {
-    const rte0 = document.querySelectorAll('demo-snippet')[1].querySelector('vcf-enhanced-rich-text-editor');
-    if (!rte0.hasAttribute('theme') && rte0.className.indexOf('min-height') === -1) {
-      rte0.tabStops = [
+    const rte = document.querySelectorAll('demo-snippet')[2].querySelector('vcf-enhanced-rich-text-editor');
+    if (!rte.hasAttribute('theme') && rte.className.indexOf('min-height') === -1) {
+      rte.tabStops = [
         { direction: 'left', position: 150 },
         { direction: 'middle', position: 350 },
         { direction: 'right', position: 500 }
       ];
-      rte0.value = `[{"attributes":{"tab":"3"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"﻿"},{"attributes":{"underline":true,"line-part":true},"insert":"3rd tab-stop"},{"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"},{"insert":"\\nThis line is just a normal text. Tab-stops are not affecting it.\\n\\n"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"bold":true,"line-part":true},"insert":"Product"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"bold":true,"line-part":true},"insert":"Price"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"bold":true,"line-part":true},"insert":"Quantity"},{"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"Apples"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"2.00"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"5"},{"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"Salmon"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"25.00"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"2"},{"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"tab":"true"},"insert":"﻿"},{"insert":"\\n"},{"attributes":{"tab":"true"},"insert":"﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿"},{"insert":"\\n"},{"attributes":{"tab":"true"},"insert":"﻿"},{"attributes":{"bold":true,"tab":"1"},"insert":"﻿"},{"insert":"\\n"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"tab":"true"},"insert":"﻿"},{"attributes":{"tab":"1"},"insert":"﻿"},{"insert":"\\n"}]`;
+      rte.value = `[{"attributes":{"tab":"3"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"﻿"},{"attributes":{"underline":true,"line-part":true},"insert":"3rd tab-stop"},{"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"},{"insert":"\\nThis line is just a normal text. Tab-stops are not affecting it.\\n\\n"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"bold":true,"line-part":true},"insert":"Product"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"bold":true,"line-part":true},"insert":"Price"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"bold":true,"line-part":true},"insert":"Quantity"},{"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"Apples"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"2.00"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"5"},{"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"Salmon"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"25.00"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"line-part":true},"insert":"2"},{"attributes":{"tabs-cont":"TABS-CONT"},"insert":"\\n"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"tab":"true"},"insert":"﻿"},{"insert":"\\n"},{"attributes":{"tab":"true"},"insert":"﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿"},{"insert":"\\n"},{"attributes":{"tab":"true"},"insert":"﻿"},{"attributes":{"bold":true,"tab":"1"},"insert":"﻿"},{"insert":"\\n"},{"attributes":{"tab":"1"},"insert":"﻿"},{"attributes":{"tab":"true"},"insert":"﻿"},{"attributes":{"tab":"1"},"insert":"﻿"},{"insert":"\\n"}]`;
     }
 
     Array.from(document.querySelectorAll('demo-snippet'))
-      .splice(2)
+      .splice(3, 3)
       .forEach(demo => {
         const rte = demo.querySelector('vcf-enhanced-rich-text-editor');
         if (!rte.hasAttribute('theme') && rte.className.indexOf('min-height') === -1) {
