@@ -45,8 +45,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     alignment: ['alignLeft', 'alignCenter', 'alignRight'],
     'rich-text': ['image', 'link'],
     block: ['blockquote', 'codeBlock', 'placeholder', 'placeholderAppearance'],
-    format: ['readonly', 'clean'],
-    custom: []
+    format: ['readonly', 'clean']
   };
 
   const SOURCE = {
@@ -274,7 +273,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
               <button type="button" class="ql-clean" part="toolbar-button toolbar-button-clean" title$="[[i18n.clean]]" style="display: [[_buttonDisplay(toolbarButtons, 'clean')]];"></button>
             </span>
 
-            <span part="toolbar-group toolbar-group-custom" style="display: [[_buttonGroupDisplay(toolbarButtons, 'custom')]];">
+            <span part="toolbar-group toolbar-group-custom">
               <slot name="toolbar" on-slot-change="_onToolbarSlotChange"></slot>
             </span>
 
@@ -789,11 +788,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
     _setCustomButtons() {
       const buttons = this._customButtons;
-      TOOLBAR_BUTTON_GROUPS.custom = [];
-      buttons.forEach((btn, i) => {
-        btn.setAttribute('part', `toolbar-button toolbar-button-custom-${i}`);
-        TOOLBAR_BUTTON_GROUPS.custom.push(btn.innerText);
-      });
+      buttons.forEach((btn, i) => btn.setAttribute('part', `toolbar-button toolbar-button-custom-${i}`));
     }
 
     /**
