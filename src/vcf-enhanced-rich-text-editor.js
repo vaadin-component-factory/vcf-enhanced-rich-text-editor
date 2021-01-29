@@ -756,7 +756,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       // Placeholder delete on character keypress
       this._editor.root.addEventListener('keypress', e => {
         const sel = this._editor.getSelection();
-        if (this._isCharacterKey(e) && sel.length && this.selectedPlaceholders.length) {
+        if (sel && this._isCharacterKey(e) && sel.length && this.selectedPlaceholders.length) {
           e.preventDefault();
           this._removePlaceholders(this.selectedPlaceholders, false, e.key);
         }
@@ -777,13 +777,15 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       this._setCustomButtons();
     }
 
-    _setSelectionNode(node, index) {
+    _setSelectionNode(node, index = 0) {
       const sel = window.getSelection();
       const range = document.createRange();
       range.setStart(node, index);
       range.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(range);
+      if (sel) {
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
     }
 
     _setCustomButtons() {
@@ -1050,8 +1052,8 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       const tabStopBinding = {
         key: TAB_KEY,
         handler: function() {
-          if (self.tabStops.length > 0) {
-            const selection = self._getSelection();
+          const selection = self._getSelection();
+          if (self.tabStops.length > 0 && selection) {
             self._editor.format(PreTabBlot.blotName, true);
             self._editor.format(TabsContBlot.blotName, true);
             setTimeout(() => {
@@ -1093,7 +1095,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           handler: () => {
             const sel = this._editor.getSelection();
             let nextPlaceholder = false;
-            if (sel.length === 0) {
+            if (sel && sel.length === 0) {
               const index = sel.index + 1;
               const ops = this._editor.getContents(index).ops || [];
               nextPlaceholder = ops[0].insert && ops[0].insert.placeholder;
@@ -1629,25 +1631,32 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     get selectedPlaceholder() {
-      const op = this._editor.getContents(this._getSelection().index - 1, 1).ops[0];
-      return (op && op.insert.placeholder) || null;
+      const range = this._getSelection();
+      let placeholder = null;
+      if (range) {
+        const op = this._editor.getContents(this._getSelection().index - 1, 1).ops[0];
+        placeholder = (op && op.insert.placeholder) || null;
+      }
+      return placeholder;
     }
 
     get selectedPlaceholders() {
       const range = this._getSelection();
       const placeholders = [];
-      for (let i = range.index - 1; i < range.index + range.length; i++) {
-        const op = this._editor.getContents(i, 1).ops[0];
-        const placeholder = (op && op.insert.placeholder) || null;
-        if (placeholder) placeholders.push(placeholder);
+      if (range) {
+        for (let i = range.index - 1; i < range.index + range.length; i++) {
+          const op = this._editor.getContents(i, 1).ops[0];
+          const placeholder = (op && op.insert.placeholder) || null;
+          if (placeholder) placeholders.push(placeholder);
+        }
       }
       return placeholders;
     }
 
     _getPlaceholdersInSelection(index, length) {
       const sel = this._editor.getSelection();
-      index = index || sel.index;
-      length = length || sel.length;
+      index = index || (sel && sel.index);
+      length = length || (sel && sel.length);
       this._editor.setSelection(index, length, SOURCE.SILENT);
       const placeholders = this.selectedPlaceholders;
       if (index !== sel.index && length !== sel.length) {
@@ -1727,16 +1736,19 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       if (placeholders.length) {
         if (!eventsOnly) {
           const range = this._getSelection();
-          let deleteRange = range;
-          if (!this._placeholderRange) this._placeholderRange = { index: range.index - 1, length: 1 };
-          if (range.length > 1) deleteRange = range;
-          else deleteRange = this._placeholderRange;
-          this._editor.deleteText(deleteRange.index, deleteRange.length);
-          if (replace) {
-            this._editor.insertText(deleteRange.index, replace);
-            this._editor.setSelection(deleteRange.index + replace.length, 0);
-          } else {
-            this._editor.setSelection(deleteRange.index, 0);
+          if (range) {
+            let deleteRange = range;
+            if (!this._placeholderRange) this._placeholderRange = { index: range.index - 1, length: 1 };
+            if (range.length < 1) deleteRange = this._placeholderRange;
+            if (deleteRange) {
+              this._editor.deleteText(deleteRange.index, deleteRange.length);
+              if (replace) {
+                this._editor.insertText(deleteRange.index, replace);
+                this._editor.setSelection(deleteRange.index + replace.length, 0);
+              } else {
+                this._editor.setSelection(deleteRange.index, 0);
+              }
+            }
           }
         }
         if (!silent) {
