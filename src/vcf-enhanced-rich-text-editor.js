@@ -284,7 +284,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
             <div style="position:relative; overflow: hidden; box-sizing: content-box; background: url('[[_rulerHori]]') repeat-x; flex-grow: 1; height: 15px !important; padding: 0;" on-click="_addTabStop" part="horizontalRuler"></div>
           </div>
 
-          <div style="display: flex; flex-grow: 1;">
+          <div style="display: flex; flex-grow: 1; overflow: auto;">
             <div style="overflow: hidden; box-sizing: content-box; background: url('[[_rulerVert]]') repeat-y; width: 15px !important; flex-shrink: 0;"></div>
             <div part="content"></div>
           </div>
