@@ -149,7 +149,6 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
-            overflow: hidden;
           }
 
           :host([hidden]),
