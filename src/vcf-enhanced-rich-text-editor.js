@@ -1821,6 +1821,89 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     /**
+     * Adds shortcut binding to a specific standard toolbar button.
+     *
+     * @param {string} button
+     * @param {number} key
+     * @param {boolean} shortKey
+     * @param {boolean} shiftKey
+     * @param {boolean} altKey
+     */
+    addStandardButtonBinding(button, key, shortKey, shiftKey, altKey) {
+      const btnTitle = this.i18n[button];
+      if (btnTitle) {
+        var toolbarBtn = Array.from(this.shadowRoot.querySelectorAll('[part="toolbar"] button')).filter(btn => btn.title == btnTitle)[0];
+
+        if (toolbarBtn) {
+          const keyboard = this._editor.getModule('keyboard');
+
+          let handler = btnTitle;
+
+          if (button.includes('align')) {
+            handler = 'align';
+          }
+          if (button.includes('script')) {
+            handler = 'script';
+          }
+          if (button == 'h1' || button == 'h2' || button == 'h3') {
+            handler = 'header';
+          }
+          if (button.includes('list')) {
+            handler = 'list';
+          }
+          if (button.includes('placeholder')) {
+            handler = 'placeholder';
+          }
+          if (button == 'codeBlock') {
+            handler = 'code-block';
+          }
+
+          let buttonHandler = () => {
+            const toolbar = this._editor.getModule('toolbar');
+            const value = !toolbarBtn.classList.contains('ql-active') && (toolbarBtn.value || !toolbarBtn.hasAttribute('value'));
+            toolbar.handlers[handler].call(toolbar, value);
+          };
+
+          if (button == 'link') {
+            buttonHandler = () => this._onLinkClick();
+          }
+
+          if (button == 'image') {
+            buttonHandler = () => this._onImageClick();
+          }
+
+          if (button == 'redo') {
+            buttonHandler = () => this._redo();
+          }
+
+          if (button == 'undo') {
+            buttonHandler = () => this._undo();
+          }
+
+          if (button == 'readonly') {
+            buttonHandler = () => this._onReadonlyClick();
+          }
+
+          if (button == 'clean') {
+            buttonHandler = this._editor.getModule('toolbar').handlers[button];
+          }
+
+          const bindings = keyboard.bindings[key] || [];
+          keyboard.bindings[key] = [
+            {
+              key: key,
+              shiftKey: shiftKey,
+              shortKey: shortKey,
+              altKey: altKey,
+              handler: buttonHandler
+            },
+            ...bindings
+          ];
+        }
+      }
+    }
+
+    /**
      * Fired when the user commits a value change.
      *
      * @event change
