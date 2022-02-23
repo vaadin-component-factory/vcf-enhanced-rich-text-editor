@@ -1867,23 +1867,18 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           if (button == 'link') {
             buttonHandler = () => this._onLinkClick();
           }
-
           if (button == 'image') {
             buttonHandler = () => this._onImageClick();
           }
-
           if (button == 'redo') {
             buttonHandler = () => this._redo();
           }
-
           if (button == 'undo') {
             buttonHandler = () => this._undo();
           }
-
           if (button == 'readonly') {
             buttonHandler = () => this._onReadonlyClick();
           }
-
           if (button == 'clean') {
             buttonHandler = this._editor.getModule('toolbar').handlers[button];
           }
@@ -1901,6 +1896,31 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           ];
         }
       }
+    }
+
+    /**
+     * Adds custom shortcut to focus toolbar.
+     *
+     * @param {number} key
+     * @param {boolean} shortKey
+     * @param {boolean} shiftKey
+     * @param {boolean} altKey
+     */
+    addToolbarFocusBinding(key, shortKey, shiftKey, altKey) {
+      const keyboard = this._editor.getModule('keyboard');
+
+      const focusToolbar = () => {
+        this._markToolbarFocused();
+        this._toolbar.querySelector('button:not([tabindex])').focus();
+      };
+
+      keyboard.addBinding({
+        key: key,
+        shiftKey: shiftKey,
+        shortKey: shortKey,
+        altKey: altKey,
+        handler: focusToolbar
+      });
     }
 
     /**
