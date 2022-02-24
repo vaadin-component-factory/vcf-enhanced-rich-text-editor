@@ -135,6 +135,25 @@
           </script>
         </template>
       </demo-snippet>
+      <h3>Custom shortcuts for toolbar standard buttons</h3>
+      <demo-snippet>
+        <template>
+          <vcf-enhanced-rich-text-editor id="custom-toolbar-shortcuts"></vcf-enhanced-rich-text-editor>
+          <script>
+            window.addEventListener('WebComponentsReady', () => {
+              var rte = document.querySelector('#custom-toolbar-shortcuts');
+              // shift + f9 for align center 
+              rte.addStandardButtonBinding("alignCenter", 120 , false, true, false);
+              // shift + P for superscript
+              rte.addStandardButtonBinding("superscript", 80 , false, true, false);
+              // ctrol + B for header 1
+              rte.addStandardButtonBinding("h1", 66 , true, false, false);
+              // f9 to load an image
+              rte.addStandardButtonBinding("image", 120, false, false, false);
+            });
+          </script>
+        </template>
+      </demo-snippet>
     </main>
   </body>
 </html>
