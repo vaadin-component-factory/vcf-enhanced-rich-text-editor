@@ -1914,13 +1914,17 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         this._toolbar.querySelector('button:not([tabindex])').focus();
       };
 
-      keyboard.addBinding({
-        key: key,
-        shiftKey: shiftKey,
-        shortKey: shortKey,
-        altKey: altKey,
-        handler: focusToolbar
-      });
+      const bindings = keyboard.bindings[key] || [];
+      keyboard.bindings[key] = [
+        {
+          key: key,
+          shiftKey: shiftKey,
+          shortKey: shortKey,
+          altKey: altKey,
+          handler: focusToolbar
+        },
+        ...bindings
+      ];
     }
 
     /**
