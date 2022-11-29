@@ -68,7 +68,9 @@ documentContainer.innerHTML = `
         [part~="toolbar-button-align-justify"] iron-icon, 
         [part~="toolbar-button-align-left"] iron-icon,
         [part~="toolbar-button-align-center"] iron-icon,
-        [part~="toolbar-button-align-right"] iron-icon {
+        [part~="toolbar-button-align-right"] iron-icon,
+        [part~="toolbar-button-deindent"] iron-icon, 
+        [part~="toolbar-button-indent"] iron-icon {
           padding: 0.20em;
           box-sizing: border-box !important;
         }

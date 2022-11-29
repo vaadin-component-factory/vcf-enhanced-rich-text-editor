@@ -34,7 +34,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
   const Quill = window.Quill;
 
-  const HANDLERS = ['bold', 'italic', 'underline', 'strike', 'header', 'script', 'list', 'align', 'blockquote', 'code-block', 'placeholder'];
+  const HANDLERS = ['bold', 'italic', 'underline', 'strike', 'header', 'script', 'list', 'indent', 'align', 'blockquote', 'code-block', 'placeholder'];
 
   const TOOLBAR_BUTTON_GROUPS = {
     history: ['undo', 'redo'],
@@ -42,6 +42,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     heading: ['h1', 'h2', 'h3'],
     'glyph-transformation': ['subscript', 'superscript'],
     list: ['listOrdered', 'listBullet'],
+    indent: ['deindent', 'indent'],
     alignment: ['alignLeft', 'alignCenter', 'alignRight', 'alignJustify'],
     'rich-text': ['image', 'link'],
     block: ['blockquote', 'codeBlock', 'placeholder', 'placeholderAppearance'],
@@ -99,6 +100,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
    * `toolbar-group-heading`              | The group for heading controls
    * `toolbar-group-glyph-transformation` | The group for glyph transformation controls
    * `toolbar-group-group-list`           | The group for group list controls
+   * `toolbar-group-group-indent`         | The group for indent controls
    * `toolbar-group-alignment`            | The group for alignment controls
    * `toolbar-group-rich-text`            | The group for rich text controls
    * `toolbar-group-block`                | The group for preformatted block controls
@@ -117,6 +119,8 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
    * `toolbar-button-superscript`         | The "superscript" button
    * `toolbar-button-list-ordered`        | The "ordered list" button
    * `toolbar-button-list-bullet`         | The "bullet list" button
+   * `toolbar-button-deindent`            | The "decrease indent" button
+   * `toolbar-button-indent`              | The "increase indent" button
    * `toolbar-button-align-left`          | The "left align" button
    * `toolbar-button-align-center`        | The "center align" button
    * `toolbar-button-align-right`         | The "right align" button
@@ -229,6 +233,16 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
               <!-- List buttons -->
               <button type="button" class="ql-list" value="ordered" part="toolbar-button toolbar-button-list-ordered" title$="[[i18n.listOrdered]]" style="display: [[_buttonDisplay(toolbarButtons, 'listOrdered')]];"></button>
               <button type="button" class="ql-list" value="bullet" part="toolbar-button toolbar-button-list-bullet" title$="[[i18n.listBullet]]" style="display: [[_buttonDisplay(toolbarButtons, 'listBullet')]];"></button>
+            </span>
+
+            <span part="toolbar-group toolbar-group-indent" style="display: [[_buttonGroupDisplay(toolbarButtons, 'indent')]];">
+              <!-- List buttons -->
+              <button type="button" class="ql-indent" value="-1" part="toolbar-button toolbar-button-deindent" title$="[[i18n.deindent]]" style="display: [[_buttonDisplay(toolbarButtons, 'deindent')]];">
+                <iron-icon icon="vaadin:deindent"></iron-icon>
+              </button>
+              <button type="button" class="ql-indent" value="+1" part="toolbar-button toolbar-button-indent" title$="[[i18n.indent]]" style="display: [[_buttonDisplay(toolbarButtons, 'indent')]];">
+                <iron-icon icon="vaadin:indent"></iron-icon>
+              </button>
             </span>
 
             <span part="toolbar-group toolbar-group-alignment" style="display: [[_buttonGroupDisplay(toolbarButtons, 'alignment')]];">
@@ -410,6 +424,8 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
               superscript: 'superscript',
               listOrdered: 'list ordered',
               listBullet: 'list bullet',
+              deindent: 'decrease indent',
+              indent: 'increase indent',
               alignLeft: 'align left',
               alignCenter: 'align center',
               alignRight: 'align right',
@@ -1356,7 +1372,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       Array.from(editor.classList).forEach(c => (content = content.replace(new RegExp('\\s*' + c, 'g'), '')));
 
       // Remove Quill classes, e.g. ql-syntax, except for align
-      content = content.replace(/\s*ql-(?!align)[\w\-]*\s*/g, '');
+      content = content.replace(/\s*ql-(?!align||indent)[\w\-]*\s*/g, '');
 
       // Replace Quill align classes with inline styles
       ['right', 'center', 'justify'].forEach(align => {
@@ -1861,6 +1877,9 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           }
           if (button.includes('list')) {
             handler = 'list';
+          }
+          if (button.includes('indent')) {
+            handler = 'indent';
           }
           if (button.includes('placeholder')) {
             handler = 'placeholder';
