@@ -42,7 +42,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     heading: ['h1', 'h2', 'h3'],
     'glyph-transformation': ['subscript', 'superscript'],
     list: ['listOrdered', 'listBullet'],
-    alignment: ['alignLeft', 'alignCenter', 'alignRight'],
+    alignment: ['alignLeft', 'alignCenter', 'alignRight', 'alignJustify'],
     'rich-text': ['image', 'link'],
     block: ['blockquote', 'codeBlock', 'placeholder', 'placeholderAppearance'],
     format: ['readonly', 'clean']
@@ -120,6 +120,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
    * `toolbar-button-align-left`          | The "left align" button
    * `toolbar-button-align-center`        | The "center align" button
    * `toolbar-button-align-right`         | The "right align" button
+   * `toolbar-button-align-justify`       | The "justify align" button
    * `toolbar-button-image`               | The "image" button
    * `toolbar-button-link`                | The "link" button
    * `toolbar-button-blockquote`          | The "blockquote" button
@@ -232,9 +233,18 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
             <span part="toolbar-group toolbar-group-alignment" style="display: [[_buttonGroupDisplay(toolbarButtons, 'alignment')]];">
               <!-- Align buttons -->
-              <button type="button" class="ql-align" value="" part="toolbar-button toolbar-button-align-left" title$="[[i18n.alignLeft]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignLeft')]];"></button>
-              <button type="button" class="ql-align" value="center" part="toolbar-button toolbar-button-align-center" title$="[[i18n.alignCenter]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignCenter')]];"></button>
-              <button type="button" class="ql-align" value="right" part="toolbar-button toolbar-button-align-right" title$="[[i18n.alignRight]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignRight')]];"></button>
+              <button type="button" class="ql-align" value="" part="toolbar-button toolbar-button-align-left" title$="[[i18n.alignLeft]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignLeft')]];">
+                <iron-icon icon="vaadin:align-left"></iron-icon>
+              </button>
+              <button type="button" class="ql-align" value="center" part="toolbar-button toolbar-button-align-center" title$="[[i18n.alignCenter]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignCenter')]];">
+                <iron-icon icon="vaadin:align-center"></iron-icon>
+              </button>
+              <button type="button" class="ql-align" value="right" part="toolbar-button toolbar-button-align-right" title$="[[i18n.alignRight]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignRight')]];">
+                <iron-icon icon="vaadin:align-right"></iron-icon>
+              </button>
+              <button type="button" class="ql-align" value="justify" part="toolbar-button toolbar-button-align-justify" title$="[[i18n.alignJustify]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignJustify')]];">
+                <iron-icon icon="vaadin:align-justify"></iron-icon>
+              </button>
             </span>
 
             <span part="toolbar-group toolbar-group-rich-text" style="display: [[_buttonGroupDisplay(toolbarButtons, 'rich-text')]];">
@@ -403,6 +413,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
               alignLeft: 'align left',
               alignCenter: 'align center',
               alignRight: 'align right',
+              alignJustify: 'align justify',
               image: 'image',
               link: 'link',
               blockquote: 'blockquote',
