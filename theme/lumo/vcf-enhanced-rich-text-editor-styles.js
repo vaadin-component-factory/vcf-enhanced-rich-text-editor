@@ -132,19 +132,7 @@ const documentContainer = html`
         [part~='toolbar-button-list-bullet']::before {
           content: var(--lumo-icons-unordered-list);
         }
-
-        [part~='toolbar-button-align-left']::before {
-          content: var(--lumo-icons-align-left);
-        }
-
-        [part~='toolbar-button-align-center']::before {
-          content: var(--lumo-icons-align-center);
-        }
-
-        [part~='toolbar-button-align-right']::before {
-          content: var(--lumo-icons-align-right);
-        }
-
+        
         [part~='toolbar-button-blockquote']::before {
           font-size: var(--lumo-font-size-xxl);
         }

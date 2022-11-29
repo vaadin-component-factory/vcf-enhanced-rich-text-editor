@@ -58,14 +58,19 @@ documentContainer.innerHTML = `
         [part~="toolbar-button-undo"]::before,
         [part~="toolbar-button-redo"]::before,
         [part~="toolbar-button-list-ordered"]::before,
-        [part~="toolbar-button-list-bullet"]::before,
-        [part~="toolbar-button-align-left"]::before,
-        [part~="toolbar-button-align-center"]::before,
-        [part~="toolbar-button-align-right"]::before,
+        [part~="toolbar-button-list-bullet"]::before,       
         [part~="toolbar-button-image"]::before,
         [part~="toolbar-button-link"]::before,
         [part~="toolbar-button-clean"]::before {
           font-family: "vaadin-rte-icons", sans-serif;
+        }
+
+        [part~="toolbar-button-align-justify"] iron-icon, 
+        [part~="toolbar-button-align-left"] iron-icon,
+        [part~="toolbar-button-align-center"] iron-icon,
+        [part~="toolbar-button-align-right"] iron-icon {
+          padding: 0.20em;
+          box-sizing: border-box !important;
         }
 
         [part~="toolbar-group"] {

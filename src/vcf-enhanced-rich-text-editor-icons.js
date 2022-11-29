@@ -29,18 +29,6 @@ documentContainer.innerHTML = `
   <dom-module id="vcf-enhanced-rich-text-editor-icons">
     <template>
       <style>
-        [part~="toolbar-button-align-center"]::before {
-          content: var(--vaadin-rte-icons-align-center);
-        }
-
-        [part~="toolbar-button-align-left"]::before {
-          content: var(--vaadin-rte-icons-align-left);
-        }
-
-        [part~="toolbar-button-align-right"]::before {
-          content: var(--vaadin-rte-icons-align-right);
-        }
-
         [part~="toolbar-button-clean"]::before {
           content: var(--vaadin-rte-icons-clean);
         }
