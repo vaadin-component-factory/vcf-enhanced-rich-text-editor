@@ -71,7 +71,7 @@ documentContainer.innerHTML = `
         [part~="toolbar-button-align-right"] iron-icon,
         [part~="toolbar-button-deindent"] iron-icon, 
         [part~="toolbar-button-indent"] iron-icon {
-          padding: 0.20em;
+          padding: 0.25em;
           box-sizing: border-box !important;
         }
 
