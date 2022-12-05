@@ -81,6 +81,17 @@ const documentContainer = html`
           font-size: 20px;
         }
 
+        /* SVG extra icon set */
+        [part~="toolbar-button-align-justify"] iron-icon, 
+        [part~="toolbar-button-align-left"] iron-icon,
+        [part~="toolbar-button-align-center"] iron-icon,
+        [part~="toolbar-button-align-right"] iron-icon,
+        [part~="toolbar-button-deindent"] iron-icon, 
+        [part~="toolbar-button-indent"] iron-icon,
+        [part~="toolbar-button-readonly"] iron-icon {
+          --rte-extra-icons-stroke-color: var(--material-secondary-text-color);
+        }
+
         /* TODO unsupported selector */
         [part='content'] > .ql-editor {
           padding: 0 16px;

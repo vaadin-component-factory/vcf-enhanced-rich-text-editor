@@ -63,16 +63,16 @@ documentContainer.innerHTML = `
         [part~="toolbar-button-link"]::before,
         [part~="toolbar-button-clean"]::before {
           font-family: "vaadin-rte-icons", sans-serif;
-        }
+        }    
 
         [part~="toolbar-button-align-justify"] iron-icon, 
         [part~="toolbar-button-align-left"] iron-icon,
         [part~="toolbar-button-align-center"] iron-icon,
         [part~="toolbar-button-align-right"] iron-icon,
         [part~="toolbar-button-deindent"] iron-icon, 
-        [part~="toolbar-button-indent"] iron-icon {
-          padding: 0.25em;
-          box-sizing: border-box !important;
+        [part~="toolbar-button-indent"] iron-icon,
+        [part~="toolbar-button-readonly"] iron-icon {
+          --rte-extra-icons-stroke-color: var(--lumo-contrast-80pct);
         }
 
         [part~="toolbar-group"] {

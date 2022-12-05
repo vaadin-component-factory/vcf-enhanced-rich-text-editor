@@ -132,6 +132,17 @@ const documentContainer = html`
         [part~='toolbar-button-list-bullet']::before {
           content: var(--lumo-icons-unordered-list);
         }
+
+        [part~="toolbar-button-align-justify"] iron-icon, 
+        [part~="toolbar-button-align-left"] iron-icon,
+        [part~="toolbar-button-align-center"] iron-icon,
+        [part~="toolbar-button-align-right"] iron-icon,
+        [part~="toolbar-button-deindent"] iron-icon, 
+        [part~="toolbar-button-indent"] iron-icon,
+        [part~="toolbar-button-readonly"] iron-icon {
+          --rte-extra-icons-stroke-color: var(--lumo-contrast-60pct);
+        }
+
         
         [part~='toolbar-button-blockquote']::before {
           font-size: var(--lumo-font-size-xxl);
