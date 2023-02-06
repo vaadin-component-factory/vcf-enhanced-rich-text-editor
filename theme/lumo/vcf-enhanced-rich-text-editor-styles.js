@@ -1,26 +1,13 @@
-import '@vaadin/vaadin-lumo-styles/color.js';
 import '@vaadin/vaadin-lumo-styles/font-icons.js';
 import '@vaadin/vaadin-lumo-styles/sizing.js';
 import '@vaadin/vaadin-lumo-styles/spacing.js';
 import '@vaadin/vaadin-lumo-styles/style.js';
-import '@vaadin/vaadin-lumo-styles/typography.js';
-import '@vaadin/vaadin-button/theme/lumo/vaadin-button.js';
-import '@vaadin/vaadin-confirm-dialog/theme/lumo/vaadin-confirm-dialog.js';
-import '@vaadin/vaadin-text-field/theme/lumo/vaadin-text-field.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { color } from '@vaadin/vaadin-lumo-styles/color.js';
+import { typography } from '@vaadin/vaadin-lumo-styles/typography.js';
+import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-const documentContainer = html`
-  <dom-module id="lumo-rich-text-editor" theme-for="vcf-enhanced-rich-text-editor">
-    <template>
-      <style include="lumo-rich-text-editor-theme lumo-rich-text-editor-content">
-        /* empty style block breaks polymer lint. see https://github.com/Polymer/tools/issues/408 */
-      </style>
-    </template>
-  </dom-module>
-  <dom-module id="lumo-rich-text-editor-theme">
-    <template>
-      <style>
-        :host {
+const richTextEditor = css`
+  :host {
           min-height: calc(var(--lumo-size-m) * 8);
         }
 
@@ -133,13 +120,13 @@ const documentContainer = html`
           content: var(--lumo-icons-unordered-list);
         }
 
-        [part~="toolbar-button-align-justify"] iron-icon, 
-        [part~="toolbar-button-align-left"] iron-icon,
-        [part~="toolbar-button-align-center"] iron-icon,
-        [part~="toolbar-button-align-right"] iron-icon,
-        [part~="toolbar-button-deindent"] iron-icon, 
-        [part~="toolbar-button-indent"] iron-icon,
-        [part~="toolbar-button-readonly"] iron-icon {
+        [part~="toolbar-button-align-justify"] vaadin-icon, 
+        [part~="toolbar-button-align-left"] vaadin-icon,
+        [part~="toolbar-button-align-center"] vaadin-icon,
+        [part~="toolbar-button-align-right"] vaadin-icon,
+        [part~="toolbar-button-deindent"] vaadin-icon, 
+        [part~="toolbar-button-indent"] vaadin-icon,
+        [part~="toolbar-button-readonly"] vaadin-icon {
           --rte-extra-icons-stroke-color: var(--lumo-contrast-60pct);
         }
 
@@ -218,17 +205,9 @@ const documentContainer = html`
 
         :host([theme~='compact']) [part~='toolbar-group'] {
           margin: 0 calc(var(--lumo-space-m) / 2 - 1px);
-        }
-      </style>
-    </template>
-  </dom-module>
-  <dom-module id="lumo-rich-text-editor-content">
-    <template>
-      <style include="lumo-color lumo-typography">
-        /* empty style block breaks polymer lint. see https://github.com/Polymer/tools/issues/408 */
-      </style>
-    </template>
-  </dom-module>
+        } 
 `;
 
-document.head.appendChild(documentContainer.content);
+registerStyles('vcf-enhanced-rich-text-editor', [color, typography, richTextEditor], {
+  moduleId: 'lumo-rich-text-editor',
+});

@@ -65,13 +65,13 @@ documentContainer.innerHTML = `
           font-family: "vaadin-rte-icons", sans-serif;
         }    
 
-        [part~="toolbar-button-align-justify"] iron-icon, 
-        [part~="toolbar-button-align-left"] iron-icon,
-        [part~="toolbar-button-align-center"] iron-icon,
-        [part~="toolbar-button-align-right"] iron-icon,
-        [part~="toolbar-button-deindent"] iron-icon, 
-        [part~="toolbar-button-indent"] iron-icon,
-        [part~="toolbar-button-readonly"] iron-icon {
+        [part~="toolbar-button-align-justify"] vaadin-icon, 
+        [part~="toolbar-button-align-left"] vaadin-icon,
+        [part~="toolbar-button-align-center"] vaadin-icon,
+        [part~="toolbar-button-align-right"] vaadin-icon,
+        [part~="toolbar-button-deindent"] vaadin-icon, 
+        [part~="toolbar-button-indent"] vaadin-icon,
+        [part~="toolbar-button-readonly"] vaadin-icon {
           --rte-extra-icons-stroke-color: var(--lumo-contrast-80pct);
         }
 

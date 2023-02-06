@@ -1,6 +1,6 @@
 import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
 import '@polymer/iron-demo-helpers/demo-snippet';
-import '@vaadin/vaadin-icons';
+import '@vaadin/icons';
 import '../theme/lumo/vcf-enhanced-rich-text-editor';
 
 window.addEventListener('WebComponentsReady', () => {

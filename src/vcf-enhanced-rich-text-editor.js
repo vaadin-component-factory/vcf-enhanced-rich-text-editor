@@ -12,13 +12,13 @@ import { Debouncer } from '@polymer/polymer/lib/utils/debounce';
 import { resetMouseCanceller } from '@polymer/polymer/lib/utils/gestures';
 import { useShadow } from '@polymer/polymer/lib/utils/settings';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin';
-import { ElementMixin } from '@vaadin/vaadin-element-mixin';
-import '@vaadin/vaadin-button';
-import '@vaadin/vaadin-confirm-dialog';
-import '@vaadin/vaadin-text-field';
-import '@vaadin/vaadin-combo-box';
+import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
+import '@vaadin/button';
+import '@vaadin/confirm-dialog';
+import '@vaadin/text-field';
+import '@vaadin/combo-box';
 import '@vaadin/vaadin-license-checker/vaadin-license-checker';
-import '@vaadin/vaadin-icons';
+import '@vaadin/icons';
 import './vendor/vaadin-quill';
 import './vcf-enhanced-rich-text-editor-styles';
 import './vcf-enhanced-rich-text-editor-toolbar-styles';
@@ -239,26 +239,26 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
             <span part="toolbar-group toolbar-group-indent" style="display: [[_buttonGroupDisplay(toolbarButtons, 'indent')]];">
               <!-- List buttons -->
               <button type="button" class="ql-indent" value="-1" part="toolbar-button toolbar-button-deindent" title$="[[i18n.deindent]]" style="display: [[_buttonDisplay(toolbarButtons, 'deindent')]];">
-                <iron-icon icon="vcf-erte-extra-icons:deindent-icon"></iron-icon>
+                <vaadin-icon icon="vcf-erte-extra-icons:deindent-icon"></vaadin-icon>
               </button>
               <button type="button" class="ql-indent" value="+1" part="toolbar-button toolbar-button-indent" title$="[[i18n.indent]]" style="display: [[_buttonDisplay(toolbarButtons, 'indent')]];">
-                <iron-icon icon="vcf-erte-extra-icons:indent-icon"></iron-icon>
+                <vaadin-icon icon="vcf-erte-extra-icons:indent-icon"></vaadin-icon>
               </button>
             </span>
 
             <span part="toolbar-group toolbar-group-alignment" style="display: [[_buttonGroupDisplay(toolbarButtons, 'alignment')]];">
               <!-- Align buttons -->
               <button type="button" class="ql-align" value="" part="toolbar-button toolbar-button-align-left" title$="[[i18n.alignLeft]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignLeft')]];">
-                <iron-icon icon="vcf-erte-extra-icons:align-left-icon"></iron-icon>
+                <vaadin-icon icon="vcf-erte-extra-icons:align-left-icon"></vaadin-icon>
               </button>
               <button type="button" class="ql-align" value="center" part="toolbar-button toolbar-button-align-center" title$="[[i18n.alignCenter]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignCenter')]];">
-                <iron-icon icon="vcf-erte-extra-icons:align-center-icon"></iron-icon>
+                <vaadin-icon icon="vcf-erte-extra-icons:align-center-icon"></vaadin-icon>
               </button>
               <button type="button" class="ql-align" value="right" part="toolbar-button toolbar-button-align-right" title$="[[i18n.alignRight]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignRight')]];">
-                <iron-icon icon="vcf-erte-extra-icons:align-right-icon"></iron-icon>
+                <vaadin-icon icon="vcf-erte-extra-icons:align-right-icon"></vaadin-icon>
               </button>
               <button type="button" class="ql-align" value="justify" part="toolbar-button toolbar-button-align-justify" title$="[[i18n.alignJustify]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignJustify')]];">
-                <iron-icon icon="vcf-erte-extra-icons:align-justify-icon"></iron-icon>
+                <vaadin-icon icon="vcf-erte-extra-icons:align-justify-icon"></vaadin-icon>
               </button>
             </span>
 
@@ -290,7 +290,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
             <span part="toolbar-group toolbar-group-format" style="display: [[_buttonGroupDisplay(toolbarButtons, 'format')]];">
               <!-- Read-only -->
               <button type="button" class="rte-readonly" part="toolbar-button toolbar-button-readonly" title$="[[i18n.readonly]]" style="display: [[_buttonDisplay(toolbarButtons, 'readonly')]];" on-click="_onReadonlyClick">
-                <iron-icon icon="vcf-erte-extra-icons:lock-icon"></iron-icon>
+                <vaadin-icon icon="vcf-erte-extra-icons:lock-icon"></vaadin-icon>
               </button>
 
               <!-- Clean -->
@@ -849,9 +849,9 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
     setCustomButtonIcon(icon, btn, suffix = false) {
       if (btn && icon) {
-        let iconEl = btn.querySelector('iron-icon');
+        let iconEl = btn.querySelector('vaadin-icon');
         if (!iconEl) {
-          iconEl = document.createElement('iron-icon');
+          iconEl = document.createElement('vaadin-icon');
           btn.appendChild(iconEl);
         }
         if (btn.tagName.toLowerCase() !== 'vaadin-button') {
@@ -1573,7 +1573,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     _addTabStopIcon(tabStop) {
-      var icon = document.createElement('iron-icon');
+      var icon = document.createElement('vaadin-icon');
       let iconIcon;
       if (tabStop.direction == 'left') {
         iconIcon = 'vaadin:caret-right';

@@ -1,21 +1,9 @@
 import '@vaadin/vaadin-material-styles/color.js';
-import '@vaadin/vaadin-material-styles/typography.js';
-import '@vaadin/vaadin-button/theme/material/vaadin-button.js';
-import '@vaadin/vaadin-confirm-dialog/theme/material/vaadin-confirm-dialog.js';
-import '@vaadin/vaadin-text-field/theme/material/vaadin-text-field.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { typography } from '@vaadin/vaadin-material-styles/typography.js';
+import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-const documentContainer = html`
-  <dom-module id="material-rich-text-editor" theme-for="vcf-enhanced-rich-text-editor">
-    <template>
-      <style include="material-rich-text-editor-theme material-rich-text-editor-content">
-        /* empty style block breaks polymer lint. see https://github.com/Polymer/tools/issues/408 */
-      </style>
-    </template>
-  </dom-module>
-  <dom-module id="material-rich-text-editor-theme">
-    <template>
-      <style>
+const richTextEditor = css`
+
         :host {
           background-color: var(--material-background-color);
           min-height: 288px;
@@ -82,13 +70,13 @@ const documentContainer = html`
         }
 
         /* SVG extra icon set */
-        [part~="toolbar-button-align-justify"] iron-icon, 
-        [part~="toolbar-button-align-left"] iron-icon,
-        [part~="toolbar-button-align-center"] iron-icon,
-        [part~="toolbar-button-align-right"] iron-icon,
-        [part~="toolbar-button-deindent"] iron-icon, 
-        [part~="toolbar-button-indent"] iron-icon,
-        [part~="toolbar-button-readonly"] iron-icon {
+        [part~="toolbar-button-align-justify"] vaadin-icon, 
+        [part~="toolbar-button-align-left"] vaadin-icon,
+        [part~="toolbar-button-align-center"] vaadin-icon,
+        [part~="toolbar-button-align-right"] vaadin-icon,
+        [part~="toolbar-button-deindent"] vaadin-icon, 
+        [part~="toolbar-button-indent"] vaadin-icon,
+        [part~="toolbar-button-readonly"] vaadin-icon {
           --rte-extra-icons-stroke-color: var(--material-secondary-text-color);
         }
 
@@ -109,19 +97,13 @@ const documentContainer = html`
         :host(:not([theme~='no-border']):not([readonly])) [part='content'] {
           border-top: 1px solid rgba(0, 0, 0, 0.12);
         }
-      </style>
-    </template>
-  </dom-module>
-  <dom-module id="material-rich-text-editor-content">
-    <template>
-      <style include="material-color material-typography">
+
         b,
         strong {
           font-weight: 600;
         }
-      </style>
-    </template>
-  </dom-module>
 `;
 
-document.head.appendChild(documentContainer.content);
+registerStyles('vcf-enhanced-rich-text-editor', [typography, richTextEditor], {
+  moduleId: 'material-rich-text-editor',
+});
