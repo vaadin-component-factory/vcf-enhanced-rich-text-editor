@@ -1942,7 +1942,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
       const focusToolbar = () => {
         this._markToolbarFocused();
-        this._toolbar.querySelector('button:not([tabindex])').focus();
+        this._toolbar.querySelector('button:not([style*="display: none"]):not([style*="display:none"])').focus();
       };
 
       const bindings = keyboard.bindings[key] || [];
