@@ -1404,9 +1404,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     get _toolbarButtons() {
-      return Array.from(this.shadowRoot.querySelectorAll('[part="toolbar"] button'))
-        .filter(btn => btn.clientHeight > 0)
-        .concat(this._customButtons);
+      return Array.from(this.shadowRoot.querySelectorAll('[part="toolbar"] button')).concat(this._customButtons);
     }
 
     _clear() {
