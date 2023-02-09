@@ -1,6 +1,6 @@
 {
   "name": "@vaadin-component-factory/vcf-enhanced-rich-text-editor",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Web Component providing rich text editor functionality. This component is fork of vaadin-rich-text-editor, with enhanced functionality.",
   "main": "vcf-enhanced-rich-text-editor.js",
   "author": "Vaadin Ltd",
