@@ -29,31 +29,31 @@ documentContainer.innerHTML = `
   <dom-module id="vcf-enhanced-rich-text-editor-icons">
     <template>
       <style>
-        [part~="toolbar-button-clean"]::before {
+        [part~="toolbar-button-clean-icon"]::before {
           content: var(--vaadin-rte-icons-clean);
         }
 
-        [part~="toolbar-button-image"]::before {
+        [part~="toolbar-button-image-icon"]::before {
           content: var(--vaadin-rte-icons-image);
         }
 
-        [part~="toolbar-button-link"]::before {
+        [part~="toolbar-button-link-icon"]::before {
           content: var(--vaadin-rte-icons-link);
         }
 
-        [part~="toolbar-button-list-bullet"]::before {
+        [part~="toolbar-button-list-bullet-icon"]::before {
           content: var(--vaadin-rte-icons-list-bullet);
         }
 
-        [part~="toolbar-button-list-ordered"]::before {
+        [part~="toolbar-button-list-ordered-icon"]::before {
           content: var(--vaadin-rte-icons-list-ordered);
         }
 
-        [part~="toolbar-button-redo"]::before {
+        [part~="toolbar-button-redo-icon"]::before {
           content: var(--vaadin-rte-icons-redo);
         }
 
-        [part~="toolbar-button-undo"]::before {
+        [part~="toolbar-button-undo-icon"]::before {
           content: var(--vaadin-rte-icons-undo);
         }
       </style>
