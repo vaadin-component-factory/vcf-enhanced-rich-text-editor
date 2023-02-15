@@ -937,10 +937,25 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           e.preventDefault();
           let index = buttons.indexOf(e.target);
           buttons[index].setAttribute('tabindex', '-1');
-          if (e.keyCode === 39 && ++index === buttons.length) {
-            index = 0;
-          } else if (e.keyCode === 37 && --index === -1) {
-            index = buttons.length - 1;
+
+          // need to get in consideration if placeholders or any other button are hidden
+          // or not when navigating through arrow keys
+          if (e.keyCode === 39) {
+            ++index;
+            while (index < buttons.length && this._isHiddenButton(buttons, index)) {
+              ++index;
+            }
+            if (index === buttons.length) {
+              index = buttons.indexOf(this._getFirstVisibleToolbarButton());
+            }
+          } else if (e.keyCode === 37) {
+            --index;
+            while (index > -1 && index < buttons.length && this._isHiddenButton(buttons, index)) {
+              --index;
+            }
+            if (index === -1) {
+              index = buttons.length - 1;
+            }
           }
           buttons[index].removeAttribute('tabindex');
           buttons[index].focus();
@@ -958,6 +973,10 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           this._markToolbarFocused();
         }
       });
+    }
+
+    _isHiddenButton(buttons, index) {
+      return buttons[index].hidden || buttons[index].style.display == 'none';
     }
 
     _markToolbarClicked() {
@@ -1940,7 +1959,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
       const focusToolbar = () => {
         this._markToolbarFocused();
-        this._toolbar.querySelector('button:not([style*="display: none"]):not([style*="display:none"])').focus();
+        this._getFirstVisibleToolbarButton().focus();
       };
 
       const bindings = keyboard.bindings[key] || [];
@@ -1954,6 +1973,10 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         },
         ...bindings
       ];
+    }
+
+    _getFirstVisibleToolbarButton() {
+      return this._toolbar.querySelector('button:not([style*="display: none"]):not([style*="display:none"]):not([hidden])');
     }
 
     /**
