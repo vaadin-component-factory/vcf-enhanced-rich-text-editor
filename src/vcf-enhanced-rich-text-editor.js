@@ -199,82 +199,162 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           <div part="toolbar">
             <span part="toolbar-group toolbar-group-history" style="display: [[_buttonGroupDisplay(toolbarButtons, 'history')]];">
               <!-- Undo and Redo -->
-              <button type="button" part="toolbar-button toolbar-button-undo" on-click="_undo" title$="[[i18n.undo]]" style="display: [[_buttonDisplay(toolbarButtons, 'undo')]];"></button>
-              <button type="button" part="toolbar-button toolbar-button-redo" on-click="_redo" title$="[[i18n.redo]]" style="display: [[_buttonDisplay(toolbarButtons, 'redo')]];"></button>
+              <button type="button" part="toolbar-button toolbar-button-undo" on-click="_undo" title$="[[i18n.undo]]" style="display: [[_buttonDisplay(toolbarButtons, 'undo')]];">
+                <slot name="undo">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-undo-icon"></vaadin-icon>
+                </slot>
+              </button>
+              <button type="button" part="toolbar-button toolbar-button-redo" on-click="_redo" title$="[[i18n.redo]]" style="display: [[_buttonDisplay(toolbarButtons, 'redo')]];">
+                <slot name="redo">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-redo-icon"></vaadin-icon>
+                </slot>
+              </button>
             </span>
 
             <span part="toolbar-group toolbar-group-emphasis" style="display: [[_buttonGroupDisplay(toolbarButtons, 'emphasis')]];">
               <!-- Bold -->
-              <button class="ql-bold" part="toolbar-button toolbar-button-bold" title$="[[i18n.bold]]" style="display: [[_buttonDisplay(toolbarButtons, 'bold')]];"></button>
+              <button class="ql-bold" part="toolbar-button toolbar-button-bold" title$="[[i18n.bold]]" style="display: [[_buttonDisplay(toolbarButtons, 'bold')]];">
+                <slot name="bold">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-bold-icon"></vaadin-icon>
+                </slot>
+              </button>
 
               <!-- Italic -->
-              <button class="ql-italic" part="toolbar-button toolbar-button-italic" title$="[[i18n.italic]]" style="display: [[_buttonDisplay(toolbarButtons, 'italic')]];"></button>
+              <button class="ql-italic" part="toolbar-button toolbar-button-italic" title$="[[i18n.italic]]" style="display: [[_buttonDisplay(toolbarButtons, 'italic')]];">
+                <slot name="italic">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-italic-icon"></vaadin-icon>
+                </slot>
+              </button>
 
               <!-- Underline -->
-              <button class="ql-underline" part="toolbar-button toolbar-button-underline" title$="[[i18n.underline]]" style="display: [[_buttonDisplay(toolbarButtons, 'underline')]];"></button>
+              <button class="ql-underline" part="toolbar-button toolbar-button-underline" title$="[[i18n.underline]]" style="display: [[_buttonDisplay(toolbarButtons, 'underline')]];">
+                <slot name="underline">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-underline-icon"></vaadin-icon>
+                </slot>
+              </button>
 
               <!-- Strike -->
-              <button class="ql-strike" part="toolbar-button toolbar-button-strike" title$="[[i18n.strike]]" style="display: [[_buttonDisplay(toolbarButtons, 'strike')]];"></button>
+              <button class="ql-strike" part="toolbar-button toolbar-button-strike" title$="[[i18n.strike]]" style="display: [[_buttonDisplay(toolbarButtons, 'strike')]];">
+                <slot name="strike">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-strike-icon"></vaadin-icon>
+                </slot>
+              </button>
             </span>
 
             <span part="toolbar-group toolbar-group-heading" style="display: [[_buttonGroupDisplay(toolbarButtons, 'heading')]];">
               <!-- Header buttons -->
-              <button type="button" class="ql-header" value="1" part="toolbar-button toolbar-button-h1" title$="[[i18n.h1]]" style="display: [[_buttonDisplay(toolbarButtons, 'h1')]];"></button>
-              <button type="button" class="ql-header" value="2" part="toolbar-button toolbar-button-h2" title$="[[i18n.h2]]" style="display: [[_buttonDisplay(toolbarButtons, 'h2')]];"></button>
-              <button type="button" class="ql-header" value="3" part="toolbar-button toolbar-button-h3" title$="[[i18n.h3]]" style="display: [[_buttonDisplay(toolbarButtons, 'h3')]];"></button>
+              <button type="button" class="ql-header" value="1" part="toolbar-button toolbar-button-h1" title$="[[i18n.h1]]" style="display: [[_buttonDisplay(toolbarButtons, 'h1')]];">
+                <slot name="h1">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-h1-icon"></vaadin-icon>
+                </slot>
+              </button>
+              <button type="button" class="ql-header" value="2" part="toolbar-button toolbar-button-h2" title$="[[i18n.h2]]" style="display: [[_buttonDisplay(toolbarButtons, 'h2')]];">
+                <slot name="h2">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-h2-icon"></vaadin-icon>
+                </slot>
+              </button>
+              <button type="button" class="ql-header" value="3" part="toolbar-button toolbar-button-h3" title$="[[i18n.h3]]" style="display: [[_buttonDisplay(toolbarButtons, 'h3')]];">
+                <slot name="h3">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-h3-icon"></vaadin-icon>
+                </slot>
+              </button>
             </span>
 
             <span part="toolbar-group toolbar-group-glyph-transformation" style="display: [[_buttonGroupDisplay(toolbarButtons, 'glyph-transformation')]];">
               <!-- Subscript and superscript -->
-              <button class="ql-script" value="sub" part="toolbar-button toolbar-button-subscript" title$="[[i18n.subscript]]" style="display: [[_buttonDisplay(toolbarButtons, 'subscript')]];"></button>
-              <button class="ql-script" value="super" part="toolbar-button toolbar-button-superscript" title$="[[i18n.superscript]]" style="display: [[_buttonDisplay(toolbarButtons, 'superscript')]];"></button>
+              <button class="ql-script" value="sub" part="toolbar-button toolbar-button-subscript" title$="[[i18n.subscript]]" style="display: [[_buttonDisplay(toolbarButtons, 'subscript')]];">
+                <slot name="subscript">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-subscript-icon"></vaadin-icon>
+                </slot>
+              </button>
+              <button class="ql-script" value="super" part="toolbar-button toolbar-button-superscript" title$="[[i18n.superscript]]" style="display: [[_buttonDisplay(toolbarButtons, 'superscript')]];">
+                <slot name="superscript">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-superscript-icon"></vaadin-icon>
+                </slot>
+              </button>
             </span>
 
             <span part="toolbar-group toolbar-group-list" style="display: [[_buttonGroupDisplay(toolbarButtons, 'list')]];">
               <!-- List buttons -->
-              <button type="button" class="ql-list" value="ordered" part="toolbar-button toolbar-button-list-ordered" title$="[[i18n.listOrdered]]" style="display: [[_buttonDisplay(toolbarButtons, 'listOrdered')]];"></button>
-              <button type="button" class="ql-list" value="bullet" part="toolbar-button toolbar-button-list-bullet" title$="[[i18n.listBullet]]" style="display: [[_buttonDisplay(toolbarButtons, 'listBullet')]];"></button>
+              <button type="button" class="ql-list" value="ordered" part="toolbar-button toolbar-button-list-ordered" title$="[[i18n.listOrdered]]" style="display: [[_buttonDisplay(toolbarButtons, 'listOrdered')]];">
+                <slot name="listOrdered">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-list-ordered-icon"></vaadin-icon>
+                </slot>
+              </button>
+              <button type="button" class="ql-list" value="bullet" part="toolbar-button toolbar-button-list-bullet" title$="[[i18n.listBullet]]" style="display: [[_buttonDisplay(toolbarButtons, 'listBullet')]];">
+                <slot name="listBullet">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-list-bullet-icon"></vaadin-icon>
+                </slot>
+              </button>
             </span>
 
             <span part="toolbar-group toolbar-group-indent" style="display: [[_buttonGroupDisplay(toolbarButtons, 'indent')]];">
               <!-- List buttons -->
               <button type="button" class="ql-indent" value="-1" part="toolbar-button toolbar-button-deindent" title$="[[i18n.deindent]]" style="display: [[_buttonDisplay(toolbarButtons, 'deindent')]];">
-                <vaadin-icon icon="vcf-erte-extra-icons:deindent-icon"></vaadin-icon>
+                <slot name="deindent">
+                  <vaadin-icon icon="vcf-erte-extra-icons:deindent-icon" part="toolbar-button-deindent-icon"></vaadin-icon>
+                </slot>
               </button>
               <button type="button" class="ql-indent" value="+1" part="toolbar-button toolbar-button-indent" title$="[[i18n.indent]]" style="display: [[_buttonDisplay(toolbarButtons, 'indent')]];">
-                <vaadin-icon icon="vcf-erte-extra-icons:indent-icon"></vaadin-icon>
+                <slot name="indent">
+                  <vaadin-icon icon="vcf-erte-extra-icons:indent-icon" part="toolbar-button-indent-icon"></vaadin-icon>
+                </slot>
               </button>
             </span>
 
             <span part="toolbar-group toolbar-group-alignment" style="display: [[_buttonGroupDisplay(toolbarButtons, 'alignment')]];">
               <!-- Align buttons -->
               <button type="button" class="ql-align" value="" part="toolbar-button toolbar-button-align-left" title$="[[i18n.alignLeft]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignLeft')]];">
-                <vaadin-icon icon="vcf-erte-extra-icons:align-left-icon"></vaadin-icon>
+                <slot name="alignLeft">
+                  <vaadin-icon icon="vcf-erte-extra-icons:align-left-icon" part="toolbar-button-align-left-icon"></vaadin-icon>
+                </slot>
               </button>
               <button type="button" class="ql-align" value="center" part="toolbar-button toolbar-button-align-center" title$="[[i18n.alignCenter]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignCenter')]];">
-                <vaadin-icon icon="vcf-erte-extra-icons:align-center-icon"></vaadin-icon>
+                <slot name="alignCenter">
+                  <vaadin-icon icon="vcf-erte-extra-icons:align-center-icon" part="toolbar-button-align-center-icon"></vaadin-icon>
+                </slot>
               </button>
               <button type="button" class="ql-align" value="right" part="toolbar-button toolbar-button-align-right" title$="[[i18n.alignRight]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignRight')]];">
-                <vaadin-icon icon="vcf-erte-extra-icons:align-right-icon"></vaadin-icon>
+                <slot name="alignRight">
+                  <vaadin-icon icon="vcf-erte-extra-icons:align-right-icon" part="toolbar-button-align-right-icon"></vaadin-icon>
+                </slot>
               </button>
               <button type="button" class="ql-align" value="justify" part="toolbar-button toolbar-button-align-justify" title$="[[i18n.alignJustify]]" style="display: [[_buttonDisplay(toolbarButtons, 'alignJustify')]];">
-                <vaadin-icon icon="vcf-erte-extra-icons:align-justify-icon"></vaadin-icon>
+                <slot name="alignJustify">
+                  <vaadin-icon icon="vcf-erte-extra-icons:align-justify-icon" part="toolbar-button-align-justify-icon"></vaadin-icon>
+                </slot>
               </button>
             </span>
 
             <span part="toolbar-group toolbar-group-rich-text" style="display: [[_buttonGroupDisplay(toolbarButtons, 'rich-text')]];">
               <!-- Image -->
-              <button type="button" part="toolbar-button toolbar-button-image" title$="[[i18n.image]]" on-touchend="_onImageTouchEnd" on-click="_onImageClick" style="display: [[_buttonDisplay(toolbarButtons, 'image')]];"></button>
+              <button type="button" part="toolbar-button toolbar-button-image" title$="[[i18n.image]]" on-touchend="_onImageTouchEnd" on-click="_onImageClick" style="display: [[_buttonDisplay(toolbarButtons, 'image')]];">
+                <slot name="image">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-image-icon"></vaadin-icon>
+                </slot>
+              </button>
               <!-- Link -->
-              <button type="button" part="toolbar-button toolbar-button-link" title$="[[i18n.link]]" on-click="_onLinkClick" style="display: [[_buttonDisplay(toolbarButtons, 'link')]];"></button>
+              <button type="button" part="toolbar-button toolbar-button-link" title$="[[i18n.link]]" on-click="_onLinkClick" style="display: [[_buttonDisplay(toolbarButtons, 'link')]];">
+                <slot name="link">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-link-icon"></vaadin-icon>
+                </slot>
+              </button>
             </span>
 
             <span part="toolbar-group toolbar-group-block" style="display: [[_buttonGroupDisplay(toolbarButtons, 'block')]];">
               <!-- Blockquote -->
-              <button type="button" class="ql-blockquote" part="toolbar-button toolbar-button-blockquote" title$="[[i18n.blockquote]]" style="display: [[_buttonDisplay(toolbarButtons, 'blockquote')]];"></button>
+              <button type="button" class="ql-blockquote" part="toolbar-button toolbar-button-blockquote" title$="[[i18n.blockquote]]" style="display: [[_buttonDisplay(toolbarButtons, 'blockquote')]];">
+                <slot name="blockquote">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-blockquote-icon"></vaadin-icon>
+                </slot>
+              </button>
 
               <!-- Code block -->
-              <button type="button" class="ql-code-block" part="toolbar-button toolbar-button-code-block" title$="[[i18n.codeBlock]]" style="display: [[_buttonDisplay(toolbarButtons, 'codeBlock')]];"></button>
+              <button type="button" class="ql-code-block" part="toolbar-button toolbar-button-code-block" title$="[[i18n.codeBlock]]" style="display: [[_buttonDisplay(toolbarButtons, 'codeBlock')]];">
+                <slot name="codeBlock">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-code-block-icon"></vaadin-icon>
+                </slot>
+              </button>
 
               <!-- Placeholder -->
               <button id="placeholderBtn" type="button" class="ql-placeholder" part="toolbar-button toolbar-button-placeholder" title$="[[i18n.placeholder]]" style="display: [[_buttonDisplay(toolbarButtons, 'placeholder')]];" hidden>
@@ -290,11 +370,17 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
             <span part="toolbar-group toolbar-group-format" style="display: [[_buttonGroupDisplay(toolbarButtons, 'format')]];">
               <!-- Read-only -->
               <button type="button" class="rte-readonly" part="toolbar-button toolbar-button-readonly" title$="[[i18n.readonly]]" style="display: [[_buttonDisplay(toolbarButtons, 'readonly')]];" on-click="_onReadonlyClick">
-                <vaadin-icon icon="vcf-erte-extra-icons:lock-icon"></vaadin-icon>
+                <slot name="readonly">
+                  <vaadin-icon icon="vcf-erte-extra-icons:lock-icon" part="toolbar-button-readonly-icon"></vaadin-icon>
+                </slot>
               </button>
 
               <!-- Clean -->
-              <button type="button" class="ql-clean" part="toolbar-button toolbar-button-clean" title$="[[i18n.clean]]" style="display: [[_buttonDisplay(toolbarButtons, 'clean')]];"></button>
+              <button type="button" class="ql-clean" part="toolbar-button toolbar-button-clean" title$="[[i18n.clean]]" style="display: [[_buttonDisplay(toolbarButtons, 'clean')]];">
+                <slot name="clean">
+                  <vaadin-icon part="toolbar-button-icon toolbar-button-clean-icon"></vaadin-icon>
+                </slot>
+              </button>
             </span>
 
             <span part="toolbar-group toolbar-group-custom">

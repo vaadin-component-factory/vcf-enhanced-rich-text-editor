@@ -55,23 +55,23 @@ documentContainer.innerHTML = `
           transform: translate(-50%, -50%);
         }
 
-        [part~="toolbar-button-undo"]::before,
-        [part~="toolbar-button-redo"]::before,
-        [part~="toolbar-button-list-ordered"]::before,
-        [part~="toolbar-button-list-bullet"]::before,       
-        [part~="toolbar-button-image"]::before,
-        [part~="toolbar-button-link"]::before,
-        [part~="toolbar-button-clean"]::before {
+        [part~="toolbar-button-undo-icon"]::before,
+        [part~="toolbar-button-redo-icon"]::before,
+        [part~="toolbar-button-list-ordered-icon"]::before,
+        [part~="toolbar-button-list-bullet.icon"]::before,       
+        [part~="toolbar-button-image-icon"]::before,
+        [part~="toolbar-button-link-icon"]::before,
+        [part~="toolbar-button-clean-icon"]::before {
           font-family: "vaadin-rte-icons", sans-serif;
         }    
 
-        [part~="toolbar-button-align-justify"] vaadin-icon, 
-        [part~="toolbar-button-align-left"] vaadin-icon,
-        [part~="toolbar-button-align-center"] vaadin-icon,
-        [part~="toolbar-button-align-right"] vaadin-icon,
-        [part~="toolbar-button-deindent"] vaadin-icon, 
-        [part~="toolbar-button-indent"] vaadin-icon,
-        [part~="toolbar-button-readonly"] vaadin-icon {
+        [part~="toolbar-button-align-justify-icon"], 
+        [part~="toolbar-button-align-left-icon"],
+        [part~="toolbar-button-align-center-icon"],
+        [part~="toolbar-button-align-right-icon"],
+        [part~="toolbar-button-deindent-icon"], 
+        [part~="toolbar-button-indent-icon"],
+        [part~="toolbar-button-readonly-icon"] {
           --rte-extra-icons-stroke-color: var(--lumo-contrast-80pct);
         }
 
@@ -80,72 +80,72 @@ documentContainer.innerHTML = `
           margin: 0 0.5em;
         }
 
-        [part~="toolbar-button-bold"]::before {
+        [part~="toolbar-button-bold-icon"]::before {
           content: "B";
           font-weight: 700;
         }
 
-        [part~="toolbar-button-italic"]::before {
+        [part~="toolbar-button-italic-icon"]::before {
           content: "I";
           font-style: italic;
         }
 
-        [part~="toolbar-button-underline"]::before {
+        [part~="toolbar-button-underline-icon"]::before {
           content: "U";
           text-decoration: underline;
         }
 
-        [part~="toolbar-button-strike"]::before {
+        [part~="toolbar-button-strike-icon"]::before {
           content: "T";
           text-decoration: line-through;
         }
 
-        [part~="toolbar-button-h1"]::before {
+        [part~="toolbar-button-h1-icon"]::before {
           content: "H1";
           font-size: 1.25em;
         }
 
-        [part~="toolbar-button-h2"]::before {
+        [part~="toolbar-button-h2-icon"]::before {
           content: "H2";
           font-size: 1em;
         }
 
-        [part~="toolbar-button-h3"]::before {
+        [part~="toolbar-button-h3-icon"]::before {
           content: "H3";
           font-size: 0.875em;
         }
 
-        [part~="toolbar-button-h1"]::before,
-        [part~="toolbar-button-h2"]::before,
-        [part~="toolbar-button-h3"]::before {
+        [part~="toolbar-button-h1-icon"]::before,
+        [part~="toolbar-button-h2-icon"]::before,
+        [part~="toolbar-button-h3-icon"]::before {
           letter-spacing: -0.05em;
         }
 
-        [part~="toolbar-button-subscript"]::before,
-        [part~="toolbar-button-superscript"]::before {
+        [part~="toolbar-button-subscript-icon"]::before,
+        [part~="toolbar-button-superscript-icon"]::before {
           content: "X";
         }
 
-        [part~="toolbar-button-subscript"]::after,
-        [part~="toolbar-button-superscript"]::after {
+        [part~="toolbar-button-subscript-icon"]::after,
+        [part~="toolbar-button-superscript-icon"]::after {
           content: "2";
           position: absolute;
           top: 50%;
-          left: 70%;
+          left: 65%;
           font-size: 0.625em;
         }
 
-        [part~="toolbar-button-superscript"]::after {
+        [part~="toolbar-button-superscript-icon"]::after {
           top: 20%;
         }
 
-        [part~="toolbar-button-blockquote"]::before {
+        [part~="toolbar-button-blockquote-icon"]::before {
           content: "”";
           font-size: 2em;
           height: 0.6em;
         }
 
-        [part~="toolbar-button-code-block"]::before {
+        [part~="toolbar-button-code-block-icon"]::before {
           content: "</>";
           font-size: 0.875em;
         }

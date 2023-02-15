@@ -50,33 +50,33 @@ const richTextEditor = css`
         }
 
         /* SVG icons */
-        [part~='toolbar-button-undo']::before,
-        [part~='toolbar-button-redo']::before,
-        [part~='toolbar-button-list-ordered']::before,
-        [part~='toolbar-button-list-bullet']::before,
-        [part~='toolbar-button-image']::before,
-        [part~='toolbar-button-link']::before,
-        [part~='toolbar-button-clean']::before {
+        [part~='toolbar-button-undo-icon']::before,
+        [part~='toolbar-button-redo-icon']::before,
+        [part~='toolbar-button-list-ordered-icon']::before,
+        [part~='toolbar-button-list-bullet-icon']::before,
+        [part~='toolbar-button-image-icon']::before,
+        [part~='toolbar-button-link-icon']::before,
+        [part~='toolbar-button-clean-icon']::before {
           font-size: 24px;
           font-weight: 400;
         }
 
         /* Text icons */
-        [part~='toolbar-button-bold']::before,
-        [part~='toolbar-button-italic']::before,
-        [part~='toolbar-button-underline']::before,
-        [part~='toolbar-button-strike']::before {
+        [part~='toolbar-button-bold-icon']::before,
+        [part~='toolbar-button-italic-icon']::before,
+        [part~='toolbar-button-underline-icon']::before,
+        [part~='toolbar-button-strike-icon']::before {
           font-size: 20px;
         }
 
         /* SVG extra icon set */
-        [part~="toolbar-button-align-justify"] vaadin-icon, 
-        [part~="toolbar-button-align-left"] vaadin-icon,
-        [part~="toolbar-button-align-center"] vaadin-icon,
-        [part~="toolbar-button-align-right"] vaadin-icon,
-        [part~="toolbar-button-deindent"] vaadin-icon, 
-        [part~="toolbar-button-indent"] vaadin-icon,
-        [part~="toolbar-button-readonly"] vaadin-icon {
+        [part~="toolbar-button-align-justify-icon"], 
+        [part~="toolbar-button-align-left-icon"],
+        [part~="toolbar-button-align-center-icon"],
+        [part~="toolbar-button-align-right-icon"],
+        [part~="toolbar-button-deindent-icon"], 
+        [part~="toolbar-button-indent-icon"],
+        [part~="toolbar-button-readonly-icon"] {
           --rte-extra-icons-stroke-color: var(--material-secondary-text-color);
         }
 
