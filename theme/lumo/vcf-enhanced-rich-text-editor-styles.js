@@ -30,7 +30,8 @@ const richTextEditor = css`
           transition: background-color 100ms, color 100ms;
         }
 
-        [part~='toolbar-button']:focus {
+        [part~='toolbar-button']:focus,
+        ::slotted([part~="toolbar-button"]:focus) {
           outline: none;
           box-shadow: 0 0 0 2px var(--lumo-primary-color-50pct);
         }

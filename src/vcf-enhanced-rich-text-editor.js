@@ -667,6 +667,12 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
         _placeholder: {
           type: String,
           value: ''
+        },
+
+        _allToolbarButtons: {
+          type: Array,
+          notify: true,
+          value: () => []
         }
       };
     }
@@ -923,6 +929,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       this.setCustomButtonKeyboardShortcut(keyboardShortcut, btn);
       this.appendChild(btn);
       this._setCustomButtons();
+      this._updateToolbarButtons();
     }
 
     setCustomButtonLabel(label, btn) {
@@ -1010,14 +1017,23 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       return toolbar;
     }
 
+    connectedCallback() {
+      super.connectedCallback();
+      this._updateToolbarButtons();
+    }
+
+    _updateToolbarButtons() {
+      this._allToolbarButtons = this._toolbarButtons;
+      // Disable tabbing to all buttons but the first one
+      this._allToolbarButtons.forEach((button, index) => index > 0 && button.setAttribute('tabindex', '-1'));
+    }
+
     _addToolbarListeners() {
-      const buttons = this._toolbarButtons;
       const toolbar = this._toolbar;
 
-      // Disable tabbing to all buttons but the first one
-      buttons.forEach((button, index) => index > 0 && button.setAttribute('tabindex', '-1'));
-
       toolbar.addEventListener('keydown', e => {
+        const buttons = this._allToolbarButtons;
+
         // Use roving tab-index for the toolbar buttons
         if ([37, 39].indexOf(e.keyCode) > -1) {
           e.preventDefault();
@@ -1043,9 +1059,15 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
               index = buttons.length - 1;
             }
           }
-          buttons[index].removeAttribute('tabindex');
+
+          if ('vaadin-button' == buttons[index].tagName.toLowerCase()) {
+            buttons[index].setAttribute('tabindex', '0');
+          } else {
+            buttons[index].removeAttribute('tabindex');
+          }
           buttons[index].focus();
         }
+
         // Esc and Tab focuses the content
         if (e.keyCode === 27 || (e.keyCode === TAB_KEY && !e.shiftKey)) {
           e.preventDefault();
@@ -1055,6 +1077,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
 
       // mousedown happens before editor focusout
       toolbar.addEventListener('mousedown', e => {
+        const buttons = this._allToolbarButtons;
         if (buttons.indexOf(e.composedPath()[0]) > -1) {
           this._markToolbarFocused();
         }
@@ -1168,7 +1191,17 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     _patchKeyboard() {
       const focusToolbar = () => {
         this._markToolbarFocused();
-        this._toolbar.querySelector('button:not([tabindex])').focus();
+        const standardButton = this._toolbar.querySelector('button:not([tabindex])');
+        if (standardButton != null) {
+          standardButton.focus();
+        } else {
+          const button = Array.from(this.shadowRoot.querySelectorAll('[part="toolbar"] slot[name="toolbar"]'))[0]
+            .assignedElements()
+            .filter(e => e.getAttribute('tabindex') == 0 || e.getAttribute('tabindex') == undefined)[0];
+          if (button != null) {
+            button.focus();
+          }
+        }
       };
 
       const keyboard = this._editor.getModule('keyboard');
