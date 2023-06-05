@@ -479,6 +479,9 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           reflectToAttribute: true
         },
 
+        /**
+         * When true, the rulers are not visible.
+         */
         noRulers: {
           type: Boolean,
           value: false,
