@@ -479,6 +479,13 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
           reflectToAttribute: true
         },
 
+        noRulers: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          notify: true
+        },
+
         /**
          * When true, the user can not modify the editor content, but can copy it.
          */
@@ -747,7 +754,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     static get observers() {
-      return ['_valueChanged(value, _editor)', '_disabledChanged(disabled, readonly, _editor)', '_tabStopsChanged(tabStops, _editor)'];
+      return ['_valueChanged(value, _editor)', '_disabledChanged(disabled, readonly, _editor)', '_tabStopsChanged(tabStops, _editor)', '_noRulersChanged(noRulers)'];
     }
 
     constructor() {
@@ -1636,6 +1643,18 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       }
 
       this._oldDisabled = disabled;
+    }
+
+    _noRulersChanged(noRulers) {
+      if (noRulers) {
+        const container = this.shadowRoot.querySelector('.vcf-enhanced-rich-text-editor-container');
+        container.children[1].style.display = 'none';
+        container.children[2].children[0].style.display = 'none';
+      } else {
+        const container = this.shadowRoot.querySelector('.vcf-enhanced-rich-text-editor-container');
+        container.children[1].style.display = 'flex';
+        container.children[2].children[0].style.display = 'block';
+      }
     }
 
     _tabStopsChanged(tabStops, _editor) {
