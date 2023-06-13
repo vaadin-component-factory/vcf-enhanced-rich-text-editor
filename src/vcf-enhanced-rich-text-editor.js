@@ -390,13 +390,13 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
             <input id="fileInput" type="file" accept="image/png, image/gif, image/jpeg, image/bmp, image/x-icon" on-change="_uploadImage" />
           </div>
 
-          <div style="overflow: hidden; box-sizing: content-box; width: 100% !important; height: 15px !important; flex-shrink: 0; display: flex;">
-            <div style="overflow: hidden; box-sizing: content-box; border-color: rgb(158, 170, 182); border-style: solid; border-width: 0 1px 1px 0; width: 14px !important; height: 14px !important;"></div>
-            <div style="position:relative; overflow: hidden; box-sizing: content-box; background: url('[[_rulerHori]]') repeat-x; flex-grow: 1; height: 15px !important; padding: 0;" on-click="_addTabStop" part="horizontalRuler"></div>
+          <div style="overflow: hidden; box-sizing: content-box; width: 100% !important; height: 15px !important; flex-shrink: 0; display: [[_rulerDisplayFlexWrapper(noRulers)]];">
+            <div style="overflow: hidden; box-sizing: content-box; border-color: rgb(158, 170, 182); border-style: solid; border-width: 0 1px 1px 0; width: 14px !important; height: 14px !important; display: [[_rulerDisplay(noRulers)]];"></div>
+            <div style="position:relative; overflow: hidden; box-sizing: content-box; background: url('[[_rulerHori]]') repeat-x; flex-grow: 1; height: 15px !important; padding: 0; display: [[_rulerDisplay(noRulers)]];" on-click="_addTabStop" part="horizontalRuler"></div>
           </div>
 
           <div style="display: flex; flex-grow: 1; overflow: auto;">
-            <div style="overflow: hidden; box-sizing: content-box; background: url('[[_rulerVert]]') repeat-y; width: 15px !important; flex-shrink: 0;"></div>
+            <div style="overflow: hidden; box-sizing: content-box; background: url('[[_rulerVert]]') repeat-y; width: 15px !important; flex-shrink: 0; display: [[_rulerDisplay(noRulers)]];" part="verticalRuler"></div>
             <div part="content"></div>
           </div>
 
@@ -687,6 +687,22 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       };
     }
 
+    _rulerDisplay(noruler) {
+      if (noruler) {
+        return 'none';
+      } else {
+        return 'block';
+      }
+    }
+
+    _rulerDisplayFlexWrapper(noruler) {
+      if (noruler) {
+        return 'none';
+      } else {
+        return 'flex';
+      }
+    }
+
     _buttonDisplay(toolbarButtons, button) {
       if (toolbarButtons[button] === false) return 'none';
       return '';
@@ -757,7 +773,7 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
     }
 
     static get observers() {
-      return ['_valueChanged(value, _editor)', '_disabledChanged(disabled, readonly, _editor)', '_tabStopsChanged(tabStops, _editor)', '_noRulersChanged(noRulers)'];
+      return ['_valueChanged(value, _editor)', '_disabledChanged(disabled, readonly, _editor)', '_tabStopsChanged(tabStops, _editor)'];
     }
 
     constructor() {
@@ -1646,18 +1662,6 @@ Inline.order.push(PlaceholderBlot.blotName, ReadOnlyBlot.blotName, LinePartBlot.
       }
 
       this._oldDisabled = disabled;
-    }
-
-    _noRulersChanged(noRulers) {
-      if (noRulers) {
-        const container = this.shadowRoot.querySelector('.vcf-enhanced-rich-text-editor-container');
-        container.children[1].style.display = 'none';
-        container.children[2].children[0].style.display = 'none';
-      } else {
-        const container = this.shadowRoot.querySelector('.vcf-enhanced-rich-text-editor-container');
-        container.children[1].style.display = 'flex';
-        container.children[2].children[0].style.display = 'block';
-      }
     }
 
     _tabStopsChanged(tabStops, _editor) {
